@@ -1,0 +1,71 @@
+# Vector Store Specification
+
+This specification complements the encrypted persistence path described in the [architecture overview](./overview.md) by detailing the logical vector store that persists and retrieves embeddings.
+
+## Module Responsibilities
+- Persist embedding batches in encrypted shards keyed by repository and workspace lineage.
+- Expose retrieval primitives supporting similarity search, filtering, and manifest-backed pagination.
+- Maintain compaction and rotation routines that respect resource budgets and preserve audit trails.
+- Provide transactional hooks for ingestion and transport layers to coordinate writes and reads.
+
+## Public Interfaces
+
+| Interface | Description | Inputs | Outputs |
+|-----------|-------------|--------|---------|
+| `VectorStore::put(batch, manifest)` | Persist an embedding batch into a shard | `EmbeddingBatch`, `ManifestDiff`, encryption context | `StoreWriteReceipt` |
+| `VectorStore::query(criteria)` | Execute similarity search and filtering | Query criteria, tenant scope, consistency hints | `QueryResultSet` |
+| `VectorStore::compact(policy)` | Run shard compaction and index optimization | Compaction policy, resource budget | `CompactionReport` |
+| `VectorStore::rotate_keys(schedule)` | Trigger key rotation for shards | Rotation schedule, key handles | Updated shard descriptors |
+| `VectorStore::export(manifest_cursor)` | Stream embeddings and metadata for backup | Manifest cursor, export policy | Stream of encrypted payloads |
+
+## Data Models
+- **`ShardDescriptor`**: `{ shard_id, repo_id, workspace_ids[], key_id, size_bytes, last_compacted_at }`.
+- **`StoreWriteReceipt`**: `{ shard_id, batch_id, commit_ts, checksum, audit_pointer }`.
+- **`QueryCriteria`**: `{ repo_scope, filters{}, vector, k, consistency_mode }`.
+- **`QueryResultSet`**: `{ hits[], latency_ms, shard_scan_count, manifest_cursor }`.
+- **`CompactionReport`**: `{ shard_id, reclaimed_bytes, segments_merged, warnings[] }`.
+
+## Sequencing
+
+```mermaid
+sequenceDiagram
+    participant Pipeline as Ingestion Pipeline
+    participant Store as Vector Store
+    participant Encryptor as Encryption Engine
+    participant Ledger as Audit Ledger
+    participant Client as Query Client
+
+    Note over Pipeline,Store: Preconditions: Shard descriptors loaded, encryption keys active, manifest cursor consistent
+    Pipeline->>Store: put(batch, manifest)
+    Store->>Encryptor: Encrypt vectors + metadata
+    Encryptor-->>Store: Ciphertext payload + key reference
+    Store->>Ledger: Log write receipt and checksums
+    Store-->>Pipeline: StoreWriteReceipt
+    Client->>Store: query(criteria)
+    Store->>Encryptor: Decrypt relevant shard slices
+    Store-->>Client: QueryResultSet with manifest cursor
+    Note over Store,Client: Postconditions: Query statistics recorded, decrypted buffers scrubbed
+```
+
+## Preconditions & Postconditions
+- **Preconditions**
+  - Encryption engine exposes valid key handles for targeted shards.
+  - Manifest cursors from ingestion align with the latest committed shard state.
+  - Disk quotas and file descriptors are within configured budgets before writes or compactions begin.
+- **Postconditions**
+  - Every write produces a durable receipt referenced by the audit ledger.
+  - Compaction operations emit reports and do not violate key rotation policies.
+  - Query responses redact sensitive diagnostics while exposing necessary latency metrics.
+
+## Cross-Cutting Concerns
+- **Error Handling**: Differentiate between transient IO failures (retry) and shard corruption (quarantine + operator alert). Surface actionable diagnostics without exposing key material.
+- **Concurrency**: Support concurrent readers and writers through optimistic MVCC, ensuring ingestion commits do not block read paths beyond configured contention windows.
+- **Resource Limits**: Enforce shard size ceilings, compaction throttles, and buffer pool limits to maintain offline operation without exhausting local storage.
+- **Security Alignment**: Integrate with encryption policies defined in [encryption.md](./encryption.md) and the [Encryption Checklist](../security/threat-model.md#encryption-checklist).
+
+## Required Failing Tests
+Following the [test matrix](../testing/test-matrix.md#secure-storage--retrieval), author failing tests covering:
+- Unit tests targeting shard rotation helpers, receipt generation, and compaction boundary logic.
+- Integration tests verifying encrypted round-trip search across sharded stores.
+- Fuzz tests introducing randomized key schedules and tampered ciphertext manifests.
+- Performance tests enforcing latency budgets for rotation-aware index rebuilds.
