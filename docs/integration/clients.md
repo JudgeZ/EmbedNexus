@@ -173,12 +173,14 @@ client implementations. Tests will load the fixtures from
 captured during test runs. If transcripts are missing or drift from the golden copies,
 the CI matrix will fail.
 
-Continuous integration executes a `clients` workflow that fans out across
-`{python, node, go} × {stdio, http, tls}` on GitHub-hosted macOS, Windows, Ubuntu, and
-WSL runners. Each job uploads the live transcripts for inspection, enforces the
-transcript diff checks, and runs the language-specific linters (`ruff`, `eslint`, and
-`golangci-lint`). Until the client code lands, these jobs remain pending in the plan
-and will be enabled alongside the initial implementation PRs.
+Continuous integration executes a `clients` workflow that fans out across the transport
+matrix documented in [`docs/testing/ci-coverage.md`](../testing/ci-coverage.md). The
+matrix covers `{python, node, go} × {stdio+noise, http+tls, wsl-bridge}` combinations on
+GitHub-hosted macOS, Windows, Ubuntu, and WSL runners. Each job uploads the live
+transcripts for inspection, enforces the transcript diff checks, and runs the
+language-specific linters (`ruff`, `eslint`, and `golangci-lint`). Until the client code
+lands, these jobs remain pending in the plan and will be enabled alongside the initial
+implementation PRs.
 
 Refer to the [client implementation plan](./client-plan.md) for detailed guidance on
 fixture naming, transport adapters, and the TDD workflow that governs the roll-out.
