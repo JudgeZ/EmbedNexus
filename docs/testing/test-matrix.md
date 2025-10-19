@@ -39,6 +39,7 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 
 ### Filesystem Watch Service
 - **Planned feature focus**: Workspace filesystem watching latency with debounce and ignore rules.
+- **Measurement template**: [Filesystem Watcher Latency Metrics](./templates/watcher-latency-metrics.md) for capturing watcher timing evidence.
 - **Required failing tests**:
   - **Unit** – latency window heuristics for debounce helpers using the future fixture `tests/fixtures/filesystem/latency-window.yaml`.
   - **Integration** – propagation latency from watch events into ingestion queues replayed via `tests/fixtures/filesystem/workspace-replay/` with added clock skew controls.
@@ -48,6 +49,7 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 
 ### Archive Extraction Quotas
 - **Planned feature focus**: Controlled archive ingestion with byte quotas, type filters, and extraction latency limits.
+- **Measurement template**: [Archive Extraction Usage](./templates/archive-extraction-usage.md) for documenting quota and latency metrics.
 - **Required failing tests**:
   - **Unit** – quota calculators and MIME gatekeepers validated against `tests/fixtures/archives/quota-latency.toml`.
   - **Integration** – staged overflow extraction from `tests/fixtures/archives/overflow-latency.tar.zst` asserting quota violations and latency logging.
@@ -57,6 +59,7 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 
 ### Encryption & TLS Controls
 - **Planned feature focus**: Toggleable encryption-at-rest policies and deterministic TLS transport negotiation.
+- **Measurement template**: [Encryption & TLS Validation Logging](./templates/encryption-tls-validation.md) for recording encryption and handshake evidence.
 - **Required failing tests**:
   - **Encryption-at-rest unit** – key rotation toggle helpers verified with the fixture `tests/fixtures/security/encryption-latency.json`.
   - **Encryption-at-rest integration** – encrypted store rebuild with toggle permutations replaying `tests/golden/security/encryption-toggle.trace`.
