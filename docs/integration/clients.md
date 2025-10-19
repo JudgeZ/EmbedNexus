@@ -4,6 +4,10 @@
 > the implementations land in `clients/python`, `clients/node`, and `clients/go`, use
 > this document as a design preview and contributor guide rather than runnable
 > instructions.
+>
+> IDE transcript captures referenced throughout the integration plan are tracked in the
+> [IDE transcript catalog](./transcripts/ide/README.md). All transcript files remain
+> **TODO** until the client scripts expose the recording workflow described there.
 
 For the full implementation roadmap, transcript expectations, and CI test plan, see
 [`docs/integration/client-plan.md`](./client-plan.md).
