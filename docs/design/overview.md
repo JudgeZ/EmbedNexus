@@ -10,6 +10,12 @@ The finalized architecture prioritizes local execution, secure persistence, and 
 
 > **C4 Source of Truth:** Detailed architecture narratives and level-specific diagrams for the Context, Containers, Components, and Code views live in [`docs/design/c4/`](./c4/README.md). Update those assets together with the Mermaid diagrams in this overview to keep textual and visual documentation synchronized.
 
+### C4 Navigation
+- [Level 1 — Context](./c4/level-1-context/README.md)
+- [Level 2 — Containers](./c4/level-2-containers/README.md)
+- [Level 3 — Components](./c4/level-3-components/README.md)
+- [Level 4 — Code](./c4/level-4-code/README.md)
+
 ```mermaid
 flowchart LR
     subgraph Workspace["Local Workspace (Single or Multi-Repository)"]
