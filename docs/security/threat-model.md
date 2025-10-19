@@ -48,7 +48,10 @@ The following accountability tables document who maintains each critical mitigat
 | Mitigation Area | Primary Owner | Backup Owner | Review Cadence | Evidence Expectations |
 | --- | --- | --- | --- | --- |
 | Transport encryption controls (TLS configuration, certificate lifecycle) | Alex Smith (Security Officer) | Morgan Chen (Infrastructure Lead) | Monthly security sync and before any release that modifies network interfaces | TLS configuration diff, certificate rotation log, and automated transport-encryption checklist results |
-| Archive extraction hardening (sandboxing, allowed formats, decompression limits) | Priya Patel (Ingestion Lead) | Jordan Lee (Process Steward) | Bi-monthly ingestion review and whenever a new extractor or format handler is introduced | Latest sandbox validation report, extraction test suite results, and signed archive-handling checklist |
+| Authentication surfaces (session issuance, token validation, adapter hardening) | Alex Smith (Security Officer) | Morgan Chen (Infrastructure Lead) | Monthly security sync and prior to enabling new transports or adapters | Auth flow trace reviews, signed authentication checklist, and fuzz coverage artifacts for credential validation |
+| Access control policies (capability scoping, workspace segmentation) | Jane Doe (Governance Lead) | Alex Smith (Security Officer) | Quarterly governance audit and whenever capability models change | Access policy diff, capability-mapping checklist, and governance approval notes |
+| Archive extraction & file handling (sandboxing, allowed formats, decompression limits) | Priya Patel (Ingestion Lead) | Jordan Lee (Process Steward) | Bi-monthly ingestion review and whenever a new extractor or format handler is introduced | Latest sandbox validation report, extraction test suite results, and signed file-handling checklist |
+| Key management lifecycle (generation, rotation, escrow procedures) | Alex Smith (Security Officer) | Priya Patel (Ingestion Lead) | Monthly security sync and prior to releases touching encryption or storage subsystems | Key rotation log, KMS policy attestation, and completed key-management checklist |
 | Multi-repository isolation (workspace segmentation, credential scoping) | Jane Doe (Governance Lead) | Alex Smith (Security Officer) | Quarterly governance audit and pre-merge for cross-repo tooling changes | Access policy review notes, isolation test evidence, and approval from governance meeting minutes |
 
 ## Security Review Checklists
@@ -81,6 +84,50 @@ Use these checklists during design discussions, implementation, and PR review wh
 - [ ] Drop unnecessary capabilities (e.g., root privileges, kernel module loading) for sandboxed processes.
 - [ ] Monitor sandbox escapes and enforce automatic restarts or kill switches on violation detection.
 - [ ] Document sandbox policies and ensure CI validates their configuration.
+
+### Authentication Checklist
+
+_Primary owner: Alex Smith (Security Officer); Backup: Morgan Chen (Infrastructure Lead) — see mitigation ownership table._
+
+- [ ] Inventory every authentication surface (HTTP tokens, UDS peer credentials, STDIO shared secrets) and document supported credential types.
+- [ ] Verify token signing keys or credential stores are loaded from approved secure storage before binding adapters.
+- [ ] Enforce scoped capabilities on issued credentials and confirm defaults grant least privilege access paths.
+- [ ] Record failed authentication attempts with anonymized diagnostics and alert thresholds for brute-force activity.
+- [ ] Add negative and fuzz tests that cover expired tokens, replay attempts, and malformed credential handshakes.
+- [ ] Document session revocation flows and ensure adapters propagate revocation results to clients.
+
+### Access Control Checklist
+
+_Primary owner: Jane Doe (Governance Lead); Backup: Alex Smith (Security Officer) — see mitigation ownership table._
+
+- [ ] Enumerate roles and capability bundles aligned with design requirements, documenting which commands each role may invoke.
+- [ ] Validate workspace and repository scoping rules prevent cross-tenant or cross-repo leakage during routing.
+- [ ] Confirm manifest readers and vector queries enforce principal scoping and redact data outside granted capabilities.
+- [ ] Add authorization regression tests for least privilege paths and attempted escalation scenarios.
+- [ ] Ensure audit logs capture principal, capability, and decision rationale for every authorization event.
+- [ ] Review configuration defaults to guarantee new deployments inherit hardened access policies with documented exception workflows.
+
+### File Handling Checklist
+
+_Primary owner: Priya Patel (Ingestion Lead); Backup: Jordan Lee (Process Steward) — see mitigation ownership table._
+
+- [ ] Inventory all ingestion and extraction entry points, documenting allowed MIME types, extensions, and decompression limits.
+- [ ] Stage archive extraction in ephemeral directories with enforced ownership, permissions, and cleanup routines.
+- [ ] Validate ignore rules and path normalization guard against traversal, device files, or symlink abuse before persistence.
+- [ ] Instrument extraction tooling with resource ceilings (CPU, memory, disk) and abort triggers for suspicious payloads.
+- [ ] Add regression tests covering malformed archives, nested compression, and policy violations.
+- [ ] Capture checklist sign-off alongside ingestion changes, including links to sandbox validation and extraction logs.
+
+### Key Management Checklist
+
+_Primary owner: Alex Smith (Security Officer); Backup: Priya Patel (Ingestion Lead) — see mitigation ownership table._
+
+- [ ] Document key hierarchy (root, workspace, batch keys) and justify where each key class is generated and stored.
+- [ ] Enforce automated rotation schedules and record evidence for each rotation event in the audit ledger.
+- [ ] Validate keys are sealed with OS-native keyrings or hardware-backed stores; prohibit plaintext copies on disk.
+- [ ] Verify backup and recovery workflows include secure key escrow with dual-control procedures.
+- [ ] Add tests or scripts that fail if required keys, permissions, or policies are missing during startup.
+- [ ] Review incident response playbooks for compromised keys and ensure revocation steps are tested.
 
 ## Maintaining This Document
 
