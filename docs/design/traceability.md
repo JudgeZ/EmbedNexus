@@ -1,6 +1,6 @@
 # Architecture Traceability Index
 
-This index links the architecture commitments in the finalized overview to the subsystem specifications, required failing tests, and security review artifacts that collectively deliver the platform. Use it during planning and pull-request review to verify that each commitment has design depth, executable coverage, and documented mitigations.
+This index links the architecture commitments in the finalized overview to the subsystem specifications, required failing tests, and security review artifacts that collectively deliver the platform. Use it during planning and pull-request review to verify that each commitment has design depth, executable coverage, and documented mitigations. Cross-reference the [External References Catalog](../references/sources.md) for the authoritative sources that back each checklist and subsystem expectation.
 
 ## Traceability Map
 
