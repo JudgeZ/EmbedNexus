@@ -1,0 +1,149 @@
+name: Regenerate Golden Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_artifact_upload:
+        description: 'Skip artifact upload step to limit storage usage.'
+        required: false
+        default: 'false'
+      dry_run:
+        description: 'Set to true to only validate tooling availability without running generation commands.'
+        required: false
+        default: 'false'
+
+jobs:
+  goldens-linux:
+    name: Generate Linux-accessible goldens
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        if: inputs.dry_run != 'true'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install watchdog pyyaml typer rich click cryptography networkx
+
+      - name: Install system dependencies
+        if: inputs.dry_run != 'true'
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            openssl \
+            tshark \
+            jq \
+            shellcheck \
+            shfmt \
+            zstd
+
+      - name: Set up Rust toolchain
+        if: inputs.dry_run != 'true'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: cargo
+
+      - name: Prime Cargo dependencies
+        if: inputs.dry_run != 'true'
+        run: |
+          cargo fetch
+
+      - name: Generate archive-based goldens
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/archive_builder.rs; then
+            echo 'archive_builder.rs is a placeholder – skipping archive golden regeneration.'
+          else
+            cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
+          fi
+
+      - name: Generate routing goldens
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/routing_matrix.py; then
+            echo 'routing_matrix.py is a placeholder – skipping routing golden regeneration.'
+          else
+            python scripts/routing_matrix.py transcript --output tests/golden/routing/mcp-federation.transcript
+            python scripts/routing_matrix.py fuzz --output tests/golden/routing/fuzz-affinity.jsonl
+          fi
+
+      - name: Rebuild transport replays
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/offline_transport_buffer.py; then
+            echo 'offline_transport_buffer.py is a placeholder – skipping transport replay regeneration.'
+          else
+            python scripts/offline_transport_buffer.py replay --input tests/fixtures/transport/offline-queue/burst-drain.jsonl --transcript tests/golden/transport/offline-buffer-replay.transcript
+          fi
+
+      - name: Recreate manifest replay log
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/manifest_replay_harness.rs; then
+            echo 'manifest_replay_harness.rs is a placeholder – skipping manifest replay regeneration.'
+          else
+            cargo run --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000
+          fi
+
+      - name: Capture TLS and DPAPI goldens (manual placeholder)
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/trace_capture.sh; then
+            echo 'trace_capture.sh is a placeholder – document manual TLS/DPAPI capture steps in README.'
+          else
+            TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake
+            scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
+            scripts/trace_capture.sh --profile dpapi-audit --output tests/golden/security/dpapi-recovery-audit.jsonl
+            TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173
+          fi
+
+      - name: Run checksum verification
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/checksums.sh; then
+            echo 'checksums.sh is a placeholder – skipping checksum verification.'
+          else
+            bash scripts/checksums.sh --verify tests/golden/
+          fi
+
+      - name: Upload golden artifacts
+        if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-regeneration-output
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            tests/golden/**
+
+  windows-notes:
+    name: Windows-only capture guidance
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provide manual capture guidance
+        shell: pwsh
+        run: |
+          Write-Output 'TLS downgrade, DPAPI recovery, and WSL handshake captures require a domain-joined Windows workstation.'
+          Write-Output 'Use scripts/collect_dpapi.ps1 and scripts/wsl_transport_proxy.ps1 as described in docs/testing/fixtures-plan.md.'
+          Write-Output 'Upload captured artifacts and checksum manifests to the workflow run before completion.'

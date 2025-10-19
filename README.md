@@ -71,6 +71,46 @@ When implementing these utilities:
 - Update CI workflows to invoke the appropriate linters once the scripts move
   beyond placeholder status.
 
+## Automated Fixture & Golden Regeneration Workflows
+
+Two GitHub Actions workflows codify the regeneration sequences documented in the
+fixture management plan:
+
+- **Regenerate Fixture Corpus** (`.github/workflows/regenerate-fixtures.yml`) sets
+  up Python 3.11, installs the documented dependencies (`watchdog`, `pyyaml`,
+  `typer`, `rich`, `click`, `cryptography`, `networkx`), and primes the stable
+  Rust toolchain before invoking each fixture-generation script. The workflow
+  uploads the refreshed `tests/fixtures/` tree and fixture-adjacent goldens as a
+  short-lived artifact (`fixture-regeneration-output`) so reviewers can download
+  and inspect the regenerated assets.
+- **Regenerate Golden Artifacts** (`.github/workflows/regenerate-goldens.yml`)
+  mirrors the environment bootstrap and focuses on transcripts and logs under
+  `tests/golden/`, publishing the `golden-regeneration-output` artifact with the
+  captured results.
+
+Both workflows expose a manual `workflow_dispatch` trigger with two optional
+inputs:
+
+1. `dry_run=true` validates that the required toolchains install cleanly without
+   executing the placeholder scripts.
+2. `skip_artifact_upload=true` is available when local testing already captured
+   the artifacts and the Actions run should avoid storing duplicates.
+
+Because the scripts remain placeholders, each step detects the "Placeholder"
+markers and converts the generation command into a logged no-op. Once the CLI
+tools are implemented the guards fall away automatically, enabling full
+regeneration without editing the workflows. The checksum verification step
+similarly skips execution while `scripts/checksums.sh` is unimplemented; removing
+the placeholder will automatically turn on the `--verify` calls for both
+fixtures and goldens.
+
+Each workflow also includes a Windows runner job that emits manual instructions
+for DPAPI recovery and WSL handshake captures. Contributors must follow
+[`docs/testing/fixtures-plan.md`](docs/testing/fixtures-plan.md) to produce those
+artifacts on a domain-joined host and upload them to the corresponding workflow
+run before completion. Reference the Actions artifacts when updating fixture
+README files or the test matrix to maintain traceability.
+
 ## Upcoming Client & IDE Resources
 - Client integration patterns and validated scripts will land in [`docs/integration/clients.md`](docs/integration/clients.md); watch for connector templates and signing guidance.
 - IDE and editor onboarding lives in [`docs/integration/ide-overview.md`](docs/integration/ide-overview.md), which will link to language-specific SDKs and Marketplace packages as they are published.

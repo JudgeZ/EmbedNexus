@@ -1,0 +1,193 @@
+name: Regenerate Fixture Corpus
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_artifact_upload:
+        description: 'Skip artifact upload step to limit storage usage.'
+        required: false
+        default: 'false'
+      dry_run:
+        description: 'Set to true to only validate tooling availability without running generation commands.'
+        required: false
+        default: 'false'
+
+jobs:
+  fixtures-linux:
+    name: Generate Linux-accessible fixtures
+    runs-on: ubuntu-latest
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        if: inputs.dry_run != 'true'
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install watchdog pyyaml typer rich click cryptography networkx
+
+      - name: Install system dependencies
+        if: inputs.dry_run != 'true'
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            openssl \
+            tshark \
+            jq \
+            shellcheck \
+            shfmt \
+            zstd
+
+      - name: Set up Rust toolchain
+        if: inputs.dry_run != 'true'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: cargo
+
+      - name: Prime Cargo dependencies
+        if: inputs.dry_run != 'true'
+        run: |
+          cargo fetch
+
+      - name: Generate filesystem event fixtures
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/record_fs_events.py; then
+            echo 'record_fs_events.py is a placeholder – skipping filesystem fixture regeneration.'
+          else
+            python scripts/record_fs_events.py --config configs/filesystem/mock-events.yaml \
+              --replay-dir tests/fixtures/filesystem/workspace-replay/
+            if grep -q 'Placeholder' scripts/verify_event_order.py; then
+              echo 'verify_event_order.py is a placeholder – skipping ordering verification.'
+            else
+              python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/
+            fi
+          fi
+
+      - name: Generate archive scenarios
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/archive_builder.rs; then
+            echo 'archive_builder.rs is a placeholder – skipping archive generation.'
+          else
+            cargo run --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml
+            cargo run --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst
+            cargo run --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/
+            cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
+          fi
+
+      - name: Generate encryption toggle fixtures
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/generate_encryption_toggles.py; then
+            echo 'generate_encryption_toggles.py is a placeholder – skipping encryption toggle generation.'
+          else
+            python scripts/generate_encryption_toggles.py --output tests/fixtures/security/encryption-toggles.json
+          fi
+
+      - name: Capture TLS and DPAPI traces (manual placeholder)
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/trace_capture.sh; then
+            echo 'trace_capture.sh is a placeholder – document manual TLS/DPAPI capture steps in README.'
+          else
+            TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake
+            scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
+            scripts/trace_capture.sh --profile perf-window --output-dir tests/fixtures/security/perf-window/
+          fi
+
+      - name: Generate offline transport fixtures
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/offline_transport_buffer.py; then
+            echo 'offline_transport_buffer.py is a placeholder – skipping offline transport generation.'
+          else
+            python scripts/offline_transport_buffer.py capture --output-dir tests/fixtures/transport/offline-queue/ --profile air-gapped
+            python scripts/offline_transport_buffer.py verify tests/fixtures/transport/offline-queue/ --max-buffer 512
+            python scripts/offline_transport_buffer.py replay --input tests/fixtures/transport/offline-queue/burst-drain.jsonl --transcript tests/golden/transport/offline-buffer-replay.transcript
+          fi
+
+      - name: Run manifest replay harness
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/manifest_replay_harness.rs; then
+            echo 'manifest_replay_harness.rs is a placeholder – skipping ingestion manifest replay.'
+          else
+            cargo run --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000
+          fi
+
+      - name: Generate routing fixtures
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/routing_matrix.py; then
+            echo 'routing_matrix.py is a placeholder – skipping routing fixture generation.'
+          else
+            python scripts/routing_matrix.py matrix --output tests/fixtures/routing/multi-repo-matrix.json
+            python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/
+          fi
+
+      - name: Update shared fixture bundles
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/fixture_packager.py; then
+            echo 'fixture_packager.py is a placeholder – skipping shared fixture packaging.'
+          else
+            python scripts/fixture_packager.py build --output tests/fixtures/shared/
+            python scripts/fixture_packager.py validate tests/fixtures/shared/
+          fi
+
+      - name: Verify fixture checksums
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'Placeholder' scripts/checksums.sh; then
+            echo 'checksums.sh is a placeholder – skipping checksum verification.'
+          else
+            bash scripts/checksums.sh --verify tests/fixtures/ tests/golden/
+          fi
+
+      - name: Upload fixture artifacts
+        if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixture-regeneration-output
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            tests/fixtures/**
+            tests/golden/archives/fuzzed-manifests.jsonl
+            tests/golden/transport/offline-buffer-replay.transcript
+            tests/golden/ingestion/manifest-replay.log
+
+  windows-notes:
+    name: Windows-only capture guidance
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provide manual capture guidance
+        shell: pwsh
+        run: |
+          Write-Output 'DPAPI recovery and WSL handshake captures require a domain-joined Windows workstation.'
+          Write-Output 'Follow docs/testing/fixtures-plan.md for steps using scripts/collect_dpapi.ps1 and scripts/wsl_transport_proxy.ps1.'
+          Write-Output 'Upload resulting artifacts as workflow run attachments via the Actions UI.'
