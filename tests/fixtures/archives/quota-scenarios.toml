@@ -1,0 +1,2 @@
+# Placeholder TOML for quota scenarios.
+# Replace via cargo archive_builder --scenario quota.
