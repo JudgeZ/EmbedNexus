@@ -59,6 +59,20 @@ Use this log to capture the outcomes of each monthly governance review.
 
 ---
 
+## 2024-08-22
+- **Participants:** Jane Doe (Governance Lead), Alex Smith (Security Officer), Priya Patel (Process Steward), Jordan Lee (Documentation Scribe)
+- **Scope Summary:**
+  - `AGENTS.md` updates: Reaffirmed requirement to keep C4 assets synchronized with implementation planning.
+  - Security documentation updates: None this cycle.
+  - Process documentation updates: Clarified pull request expectations for maintaining C4 diagrams and narratives in `CONTRIBUTING.md`.
+- **Decisions:**
+  1. Governance and PR reviews must confirm updates to `docs/design/c4/` whenever design artefacts change — Process Steward — Immediate.
+- **Action Items:**
+  1. Notify feature teams about the strengthened C4 documentation reminder in the contributor guide — Documentation Scribe — 2024-08-26.
+- **Change Tracking Notes:** Updated `CONTRIBUTING.md` to call out C4 documentation responsibilities.
+
+---
+
 ## 2024-07-15
 - **Participants:** Jane Doe (Governance Lead), Alex Smith (Security Officer), Priya Patel (Process Steward), Jordan Lee (Documentation Scribe)
 - **Scope Summary:**
