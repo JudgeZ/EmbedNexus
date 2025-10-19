@@ -20,6 +20,7 @@ tests/
 │   │   ├── high-fanout/
 │   │   └── multi-repo-matrix.json
 │   ├── security/
+│   │   ├── dpapi-recovery/
 │   │   ├── encryption-toggles.json
 │   │   └── perf-window/
 │   └── shared/
@@ -33,9 +34,12 @@ tests/
     ├── routing/
     │   ├── fuzz-affinity.jsonl
     │   └── mcp-federation.transcript
-    └── security/
-        ├── tls-fuzz.log
-        └── tls-handshake.trace
+    ├── security/
+    │   ├── dpapi-recovery-audit.jsonl
+    │   ├── tls-fuzz.log
+    │   └── tls-handshake.trace
+    └── transport/
+        └── wsl-handshake-negotiation.trace
 ```
 
 The tree captures current references in the [test matrix](./test-matrix.md). Subdirectories remain dedicated to subsystem domains so that fixtures scale without cross-contamination.
@@ -101,6 +105,9 @@ Every fixture directory must contain a short `README.md` when multiple files coe
   2. Replay negative scenarios with `--profile tls-fuzz` to build `tests/golden/security/tls-fuzz.log`.
   3. Generate encryption toggle fixtures by running the configuration synthesizer: `python scripts/generate_encryption_toggles.py --output tests/fixtures/security/encryption-toggles.json` (requires `python -m pip install click cryptography`).
   4. Materialize performance datasets through `scripts/trace_capture.sh --profile perf-window --output-dir tests/fixtures/security/perf-window/` and confirm dataset size thresholds in the README.
+  5. Capture DPAPI recovery telemetry from a Windows host joined to the designated test domain: `powershell -File scripts/collect_dpapi.ps1 -OutputDir tests/fixtures/security/dpapi-recovery/` (requires Windows 11 22H2+, domain trust, and the DPAPI recovery agent certificate installed). Export the aggregated audit log to `tests/golden/security/dpapi-recovery-audit.jsonl` via `scripts/trace_capture.sh --profile dpapi-audit` while still on the Windows host.
+  6. Replay the WSL transport handshake while attached to the Windows event log forwarder: from WSL, run `TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173` with the Windows-side relay active. Confirm the DPAPI audit correlates with the handshake timestamp before committing the trace.
+  7. Document any host-specific configuration (DPAPI recovery agent thumbprint, WSL distribution name, Windows build number) inside the fixture-level README to satisfy the platform guidance requirements in the test matrix.
 
 ### Routing Scenarios
 
@@ -119,6 +126,11 @@ Every fixture directory must contain a short `README.md` when multiple files coe
   1. Update shared bundles with `python scripts/fixture_packager.py build --output tests/fixtures/shared/`.
   2. Validate schema compatibility by running `python scripts/fixture_packager.py validate tests/fixtures/shared/`.
   3. Document version increments in `tests/fixtures/shared/README.md`.
+
+### Platform-Specific Setup Notes
+
+- **Windows + WSL handshake replay**: Ensure the Windows host and the WSL distribution share the same user profile for DPAPI key material. The Windows relay service defined in `scripts/wsl_transport_proxy.ps1` must run with administrative privileges to forward loopback traffic to WSL. Disable third-party VPN clients during capture to avoid skewing latency metrics in `tests/golden/transport/wsl-handshake-negotiation.trace`.
+- **DPAPI recovery agent rotation**: Prior to regenerating `tests/fixtures/security/dpapi-recovery/`, validate that the recovery agent certificate has not expired and that the Windows event subscription to the Security log is active. Record certificate thumbprints and rotation dates in the fixture README to keep parity with the failing coverage described in `docs/testing/test-matrix.md#encryption--tls-controls`.
 
 ## Review Process
 

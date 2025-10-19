@@ -6,7 +6,7 @@ This module expands on the adapter responsibilities outlined in the [architectur
 - Provide authenticated, validated entry points for CLI, IDE, and automation clients.
 - Normalize requests into the runtime command router contract while preserving per-transport telemetry.
 - Enforce loopback-only exposure and enforceable session lifetimes to uphold offline-first guarantees.
-- Guarantee cross-platform compatibility (Linux, macOS, WSL) by insulating path translation and credential-handshake quirks for HTTP, STDIO, and UDS adapters.
+- Guarantee cross-platform compatibility (Linux, macOS, WSL) by insulating path translation and credential-handshake quirks for HTTP, STDIO, and UDS adapters, including telemetry parity for WSL loopback proxies.
 - Surface structured response envelopes with deterministic error codes so downstream automation remains resilient.
 
 ## Public Interfaces
@@ -64,10 +64,12 @@ sequenceDiagram
 - **Security Alignment**: Enforce threat model mitigations by logging validation failures and mapping them to the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist), [Authentication Checklist](../security/threat-model.md#authentication-checklist), and [Access Control Checklist](../security/threat-model.md#access-control-checklist); UDS peer credential checks must document assumptions about WSL interop sandboxes.
 - **Offline Expectations**: All adapters must degrade gracefully when the host is offline, providing deterministic retries and telemetry buffering that satisfy the offline-first contract described in [overview.md](./overview.md).
 - **Platform Notes**: Document how WSL path translation, Windows named pipe proxies, and macOS sandbox entitlements are handled so contributors can validate cross-platform behavior during implementation.
+- **WSL Telemetry Expectations**: Capture handshake metrics, DPAPI key-usage attestations, and loopback proxy latency under WSL by wiring transport logs into the telemetry sinks defined in `TransportConfig`; align the evidence with the failing coverage enumerated in the [Encryption & TLS Controls matrix](../testing/test-matrix.md#encryption--tls-controls).
 
 ## Test hooks
 Transport enablement depends on the failing coverage enumerated in the [Encryption & TLS Controls matrix entry](../testing/test-matrix.md#encryption--tls-controls). Establish these hooks before implementation and map their outcomes to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for auditability:
 - **TLS handshake negotiation hook** – Integration tests replaying `tests/golden/security/tls-negotiation.trace` to confirm deterministic cipher-suite downgrades are rejected across HTTP and UDS transports, capturing checklist evidence for both encryption enforcement and malformed payload handling.
 - **Session token hardening hook** – Unit and fuzz coverage over session issuance, STDIO framing, and credential propagation using `tests/golden/security/tls-negotiation.trace` variants and `tests/golden/security/tls-performance.jsonl` jitter profiles to demonstrate signature validation and payload sanitization guardrails prior to router dispatch.
 - **Toggle latency guard hook** – Performance tests exercising encryption-at-rest and TLS toggles with `tests/fixtures/security/encryption-latency.json` and `tests/golden/security/encryption-toggle.trace` under churn to measure connection setup latency against policy budgets while verifying log redaction requirements from the input validation checklist.
+- **WSL loopback regression hook** – Integration tests replaying `tests/golden/transport/wsl-handshake-negotiation.trace` and asserting DPAPI key reuse via `tests/golden/security/dpapi-recovery-audit.jsonl` while capturing WSL-specific telemetry pipelines for the transport matrix entry.
 - Each hook must be introduced as a failing test in accordance with the TDD mandate and cross-referenced in `docs/process/pr-release-checklist.md` alongside the security checklist items they satisfy.

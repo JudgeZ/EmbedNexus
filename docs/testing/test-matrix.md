@@ -67,6 +67,8 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **TLS unit** – cipher-suite negotiation validators referencing `tests/fixtures/security/tls-config-matrix.yaml` for coverage of mandatory/optional suites.
   - **TLS integration** – end-to-end handshake negotiation using the golden transcript `tests/golden/security/tls-negotiation.trace` across downgraded clients.
   - **TLS fuzz/performance** – fuzzed handshake transcripts and throughput guards sourced from `tests/golden/security/tls-performance.jsonl` ensuring downgrade protection and handshake latency targets.
+  - **WSL transport handshake regression** – failing integration coverage replaying `tests/golden/transport/wsl-handshake-negotiation.trace` across the Windows loopback proxy to confirm telemetry parity with native Linux/macOS adapters and to validate DPAPI-backed key recovery requirements before WSL session reuse.
+  - **Encrypted storage DPAPI recovery** – failing unit and integration coverage leveraging `tests/fixtures/security/dpapi-recovery/` and the golden event log `tests/golden/security/dpapi-recovery-audit.jsonl` to assert that encrypted shards restored inside WSL honor the Windows DPAPI recovery policy prior to re-keying.
 - **Traceability** – References the [Encryption Design](../design/encryption.md) for storage toggles, the [Transport Adapter Design](../design/transport.md) for negotiation sequencing, and the [Encryption](../security/threat-model.md#encryption-checklist) plus [Input Validation](../security/threat-model.md#input-validation-checklist) checklists.
 
 ### Multi-Repository Routing
