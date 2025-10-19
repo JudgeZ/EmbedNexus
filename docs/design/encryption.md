@@ -65,10 +65,10 @@ sequenceDiagram
 - **Offline Expectations**: Provide deterministic key caching and attestation batching for air-gapped sessions, replaying audit events once connectivity resumes.
 - **Platform Notes**: Document per-platform key derivation, secure storage prerequisites, and fallback behavior when native enclaves are unavailable.
 
-## Required Failing Tests
-In alignment with the [test matrix](../testing/test-matrix.md#encryption--tls-controls), implement failing tests that cover:
-- Unit tests for key negotiation toggles, rotation edge cases, and TLS configuration validators when sync endpoints are enabled.
-- Integration tests for encrypted sync and local persistence demonstrating rotation-aware unlock flows.
-- Fuzz tests mutating handshake transcripts and ciphertext blobs for downgrade and tampering resilience.
-- Performance tests capturing encryption overhead during index rebuilds across representative datasets.
-- Each suite must respect the TDD process by landing failing tests prior to implementation and referencing `docs/process/pr-release-checklist.md` when summarizing coverage.
+## Test hooks
+Encryption services must introduce failing coverage aligned with the [Encryption & TLS Controls matrix entry](../testing/test-matrix.md#encryption--tls-controls) before implementation. Tie each hook to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and [Key Management Checklist](../security/threat-model.md#key-management-checklist) to maintain the audit chain:
+- **Toggle negotiation hook** – Unit tests covering key negotiation toggles, rotation edge cases, and TLS validator behaviors using `tests/fixtures/security/encryption-latency.json` to ensure downgrade resistance and documented key lifecycle controls.
+- **Encrypted persistence hook** – Integration tests replaying `tests/golden/security/encryption-toggle.trace` to validate rotation-aware unlock flows and confirm attestation records meet encryption checklist requirements.
+- **Handshake fuzzing hook** – Fuzz coverage over `tests/golden/security/tls-negotiation.trace` and ciphertext blobs captured in `tests/golden/security/tls-performance.jsonl` to demonstrate tampering detection while recording the mitigations mandated by the key management checklist.
+- **Rebuild performance hook** – Performance tests capturing encryption overhead during index rebuilds against `tests/golden/security/encryption-toggle.trace` outputs to confirm policy budgets and attestation batching remain within acceptable envelopes.
+- Land each hook as a failing test ahead of implementation and reference `docs/process/pr-release-checklist.md` with the associated checklist mappings when presenting TDD evidence.
