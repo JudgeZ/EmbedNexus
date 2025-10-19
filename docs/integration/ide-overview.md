@@ -43,16 +43,23 @@ Enable Cursor's HTTPS-capable SSE bridge when you need to traverse corporate net
 }
 ```
 
-### WSL path convention
+### WSL launch bridge
 
-When Cursor runs on Windows while the MCP server runs inside WSL, reference the binary through the UNC namespace and map certificate paths to `/mnt` mounts:
+When Cursor runs on Windows while the MCP server runs inside WSL, invoke the binary through `wsl.exe -e` so Windows delegates execution to the Linux environment. Pass the desired distribution name with `-d` (omit to use the default) and continue to map certificate paths to `/mnt` mounts:
 
 ```json
 {
   "servers": {
     "cursor-local-embedding": {
-      "command": "\\\\wsl$\\Ubuntu\\usr\\local\\bin\\cursor-local-embedding",
-      "args": ["--transport", "stdio"],
+      "command": "wsl.exe",
+      "args": [
+        "-d",
+        "Ubuntu",
+        "-e",
+        "/usr/local/bin/cursor-local-embedding",
+        "--transport",
+        "stdio"
+      ],
       "env": {
         "SSL_CERT_FILE": "/mnt/c/Users/<user>/cursor/tls/rootCA.pem"
       }
@@ -98,17 +105,21 @@ servers:
       caFile: /etc/windsurf/tls/rootCA.pem
 ```
 
-### WSL path convention
+### WSL launch bridge
 
-When Windsurf (Windows) tunnels into a WSL-hosted server, mount the Linux socket through a loopback tunnel and reference `/mnt` paths for TLS assets:
+When Windsurf (Windows) tunnels into a WSL-hosted server, use `wsl.exe -e` to start the MCP server inside Linux and keep `/mnt` paths for TLS assets:
 
 ```yaml
 servers:
   cursor-local-embedding:
     transport: websocket
     url: ws://127.0.0.1:8882/mcp
-    command: \\wsl$\\Ubuntu\\usr\\local\\bin\\cursor-local-embedding
+    command: wsl.exe
     args:
+      - "-d"
+      - "Ubuntu"
+      - "-e"
+      - "/usr/local/bin/cursor-local-embedding"
       - "--transport"
       - "websocket"
       - "--port"
@@ -209,8 +220,8 @@ When enabling Noise framing, remember to:
 
 Running IDEs on Windows while hosting the MCP server inside WSL introduces path translation and certificate distribution challenges:
 
-- **Cursor**: Use the UNC path `\\wsl$\<DistroName>\` to reference binaries. Ensure the Windows-side certificate store trusts the Linux-generated CA by exporting it via `/mnt/c/Users/<user>/cursor/tls/rootCA.pem`.
-- **Windsurf**: Map websockets through `localhost` ports forwarded into WSL. Store TLS keys under `/etc/windsurf/tls` within WSL and expose read-only copies through `/mnt/c` for the Windows bridge process.
+- **Cursor**: Launch the MCP server with `wsl.exe -e /usr/local/bin/cursor-local-embedding` (add `-d <DistroName>` when using a non-default distribution). Export the Linux-generated CA to `/mnt/c/Users/<user>/cursor/tls/rootCA.pem` so Windows trusts it.
+- **Windsurf**: Map websockets through `localhost` ports forwarded into WSL and spawn the server with `wsl.exe -e`. Store TLS keys under `/etc/windsurf/tls` within WSL and expose read-only copies through `/mnt/c` for the Windows bridge process.
 - **VS Code**: Leverage Remote WSL so the MCP client runs entirely within the Linux environment. Use `${wslWorkspaceFolder}` variables to keep paths portable across machines.
 - **Other IDE bridges** (JetBrains Gateway, Neovim MCP clients): Prefer launching the bridge natively inside WSL and forward UI traffic to Windows. When that is not possible, rely on `wsl.exe -e` invocations with explicit `/mnt` paths and share TLS assets through the Windows certificate manager.
 
