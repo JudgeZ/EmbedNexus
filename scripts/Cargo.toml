@@ -1,0 +1,15 @@
+[package]
+name = "cursor-fixture-tools"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+
+[[bin]]
+name = "archive_builder"
+path = "archive_builder.rs"
+
+[[bin]]
+name = "manifest_replay_harness"
+path = "manifest_replay_harness.rs"
