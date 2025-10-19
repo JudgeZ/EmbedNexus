@@ -1,6 +1,6 @@
 # Test Matrix for Planned Feature Work
 
-This matrix catalogues the intentionally failing tests that must be in place before implementation begins on each subsystem. The objective is to drive test-first delivery so that every planned capability is protected by unit, integration, fuzz, and performance coverage ahead of landing code changes.
+This matrix catalogues the intentionally failing tests that must be in place before implementation begins on each subsystem. The objective is to drive test-first delivery so that every planned capability is protected by unit, integration, fuzz, and performance coverage ahead of landing code changes. Refer to the [Fixture and Golden Data Management Plan](./fixtures-plan.md) for guidance on creating and reviewing the shared assets referenced below.
 
 ## Subsystem Matrices
 
