@@ -1,10 +1,16 @@
 # Client Script Reference
 
-The repository ships lightweight client scripts for exercising the Cursor Local Embedding MCP server from Python, Node.js, and Go environments. This document explains how to run each script, what command-line arguments are supported, and the MCP envelopes you should expect to exchange with the server.
+> **Status:** The language-specific client scripts are under active development. Until
+> the implementations land in `clients/python`, `clients/node`, and `clients/go`, use
+> this document as a design preview and contributor guide rather than runnable
+> instructions.
 
-## Common Options
+For the full implementation roadmap, transcript expectations, and CI test plan, see
+[`docs/integration/client-plan.md`](./client-plan.md).
 
-All client scripts accept the following arguments:
+## Common Options (Planned)
+
+All client scripts will accept the following arguments once the tooling is merged:
 
 - `--transport`: Desired MCP transport (`stdio`, `sse`, or `websocket`).
 - `--prompt`: Natural-language text to embed.
@@ -20,9 +26,9 @@ flowchart LR
     D --> A
 ```
 
-## Python Client (`clients/python/client.py`)
+## Python Client (`clients/python/client.py` – planned)
 
-### Run Command
+### Planned Run Command
 
 ```bash
 python clients/python/client.py --transport stdio --prompt "Summarize integration steps" --model text-embedding-3-large
@@ -67,9 +73,9 @@ Response returned by the MCP server:
 }
 ```
 
-## Node.js Client (`clients/node/index.mjs`)
+## Node.js Client (`clients/node/index.mjs` – planned)
 
-### Run Command
+### Planned Run Command
 
 ```bash
 node clients/node/index.mjs --transport websocket --prompt "List supported IDEs" --model text-embedding-3-large
@@ -112,9 +118,9 @@ Typical response returned by the server:
 }
 ```
 
-## Go Client (`clients/go/main.go`)
+## Go Client (`clients/go/main.go` – planned)
 
-### Run Command
+### Planned Run Command
 
 ```bash
 go run clients/go/main.go --transport sse --prompt "Explain transport selection" --model text-embedding-3-large
@@ -159,7 +165,25 @@ Expected response from the MCP server:
 }
 ```
 
-## Interaction Timeline
+## Golden Transcript Fixtures and CI Coverage
+
+Contributors must author golden MCP transcript fixtures **before** wiring up the
+client implementations. Tests will load the fixtures from
+`tests/fixtures/<language>/<transport>.json` and diff them against live transcripts
+captured during test runs. If transcripts are missing or drift from the golden copies,
+the CI matrix will fail.
+
+Continuous integration executes a `clients` workflow that fans out across
+`{python, node, go} × {stdio, http, tls}` on GitHub-hosted macOS, Windows, Ubuntu, and
+WSL runners. Each job uploads the live transcripts for inspection, enforces the
+transcript diff checks, and runs the language-specific linters (`ruff`, `eslint`, and
+`golangci-lint`). Until the client code lands, these jobs remain pending in the plan
+and will be enabled alongside the initial implementation PRs.
+
+Refer to the [client implementation plan](./client-plan.md) for detailed guidance on
+fixture naming, transport adapters, and the TDD workflow that governs the roll-out.
+
+## Interaction Timeline (Conceptual)
 
 ```mermaid
 sequenceDiagram
