@@ -66,6 +66,17 @@ sequenceDiagram
 - **Platform Notes**: Document how WSL path translation, Windows named pipe proxies, and macOS sandbox entitlements are handled so contributors can validate cross-platform behavior during implementation.
 - **WSL Telemetry Expectations**: Capture handshake metrics, DPAPI key-usage attestations, and loopback proxy latency under WSL by wiring transport logs into the telemetry sinks defined in `TransportConfig`; align the evidence with the failing coverage enumerated in the [Encryption & TLS Controls matrix](../testing/test-matrix.md#encryption--tls-controls).
 
+### Offline Backpressure
+
+Offline buffering introduces elevated security and resource risks because retry queues accumulate sensitive payloads on disk. The adapter must:
+
+- Encrypt or seal buffered envelopes with the same policies used for live transport messages so air-gapped captures cannot leak plaintext commands.
+- Enforce size and age ceilings (`retry_budget.max_items`, `retry_budget.max_age`) with deterministic eviction that is validated by the [Offline Resilience & Replay matrix](../testing/test-matrix.md#offline-resilience--replay).
+- Emit audit breadcrumbs for enqueue/dequeue decisions without exposing user payloads, satisfying the [Access Control Checklist](../security/threat-model.md#access-control-checklist) requirement to trace privileged actions.
+- Surface bounded backpressure telemetry so operators can drain queues before storage reconnect, aligning with the fixtures described in the [Offline Queue & Replay Harnesses](../testing/fixtures-plan.md#offline-queue--replay-harnesses).
+
+Implementation must introduce failing coverage for these behaviors using the transport retry buffer integration and fuzz scenarios defined in the test matrix. The capture workflow in the fixtures plan produces deterministic queue snapshots for TDD, while the design-level guardrails ensure offline backlog growth cannot exhaust disk or leak encrypted payloads.
+
 ## Test hooks
 Transport enablement depends on the failing coverage enumerated in the [Encryption & TLS Controls matrix entry](../testing/test-matrix.md#encryption--tls-controls). Establish these hooks before implementation and map their outcomes to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for auditability:
 - **TLS handshake negotiation hook** – Integration tests replaying `tests/golden/security/tls-negotiation.trace` to confirm deterministic cipher-suite downgrades are rejected across HTTP and UDS transports, capturing checklist evidence for both encryption enforcement and malformed payload handling.

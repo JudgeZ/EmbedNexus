@@ -72,6 +72,17 @@ flowchart TD
 - **Platform Notes**: Document how case sensitivity, path length, and newline normalization differ across Linux, macOS, and WSL so deterministic chunking works across host environments.
 - **Offline Expectations**: The pipeline must queue manifest emissions and audit updates when storage or ledger sinks are temporarily unavailable, replaying them once the offline constraint clears.
 
+### Offline Replay Hooks
+
+When storage endpoints are unreachable, the orchestrator persists manifest diffs and ledger updates in a local retry buffer. To keep this backlog safe and replayable:
+
+- Persist manifests using the same encryption profile as live ledger writes and index them by monotonic sequence numbers to prevent reordering attacks during replay.
+- Enforce bounded retention windows (`replay.max_age_ms`) and size ceilings validated by the [Offline Resilience & Replay matrix](../testing/test-matrix.md#offline-resilience--replay).
+- Drain the backlog through the `manifest_replay_harness` described in the [Offline Queue & Replay Harnesses plan](../testing/fixtures-plan.md#offline-queue--replay-harnesses), ensuring the delayed-ledger fixtures remain authoritative for TDD.
+- Emit replay telemetry to the audit ledger once connectivity is restored, capturing before/after checksums so the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) requirements are satisfied.
+
+All implementation work must begin with failing manifest replay integration and performance tests sourced from the fixtures above, proving that ingestion can recover deterministically after prolonged storage outages without losing audit fidelity.
+
 ## Archive Extraction Quota Enforcement
 - **Quota Computation**: Archive extraction is constrained by a per-workspace byte ceiling (`quota.bytes_max`), file entry count ceiling (`quota.entries_max`), and a nested archive depth ceiling (`quota.nesting_max`). Each ceiling is calculated from the workspace profile selected by the scheduler and recorded alongside the registry manifest. Profiles apply deterministic multipliers for known large repositories and shrinkage factors for sandboxed clients. Before extraction begins, the orchestrator computes a cumulative budget (`quota.remaining_*`) and seeds the extractor with those counters so checks can be performed without round-trips.
 - **Latency Budgets**: Archive handlers must complete quota evaluation, extraction, and sanitation within a rolling `latency_budget_ms` window. Budgets are enforced via a monotonic timer: `start_time` is captured prior to the first entry inspection, interim checkpoints log elapsed milliseconds per stage, and exhaustion of the budget triggers a `QuotaLatencyExceeded` error that includes both elapsed time and residual quota state. The latency window is sized according to the [Archive Extraction Quotas tests](../testing/test-matrix.md#archive-extraction-quotas) to ensure deterministic behavior during regression runs.
