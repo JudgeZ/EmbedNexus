@@ -45,6 +45,20 @@ Use this log to capture the outcomes of each monthly governance review.
 
 ---
 
+## 2024-07-15
+- **Participants:** Jane Doe (Governance Lead), Alex Smith (Security Officer), Priya Patel (Process Steward), Jordan Lee (Documentation Scribe)
+- **Scope Summary:**
+  - `AGENTS.md` updates: Added mandatory maintenance of full C4 architecture documentation alongside Mermaid diagrams and pointed contributors to `docs/design/c4/` as the canonical location.
+  - Security documentation updates: None this cycle.
+  - Process documentation updates: Clarified design doc cross-references in `docs/design/overview.md` and established the C4 repository in `docs/design/c4/`.
+- **Decisions:**
+  1. Governance reviews and PR checks must verify that all architecture-impacting work updates the corresponding C4 level narratives and diagrams — Process Steward — Immediate.
+- **Action Items:**
+  1. Audit existing design changes from the last quarter to ensure C4 coverage is retroactively applied — Documentation Scribe — 2024-07-31.
+- **Change Tracking Notes:** Updated `AGENTS.md`, `docs/design/overview.md`, and established `docs/design/c4/README.md` to house C4 assets.
+
+---
+
 ## 2024-07-08
 - **Participants:** Jane Doe (Governance Lead), Alex Smith (Security Officer), Priya Patel (Process Steward), Jordan Lee (Documentation Scribe)
 - **Scope Summary:**
