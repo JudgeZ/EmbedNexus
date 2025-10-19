@@ -4,6 +4,7 @@ All contributors **must** review and follow this plan before beginning any codin
 
 ## Plan-Before-Code & TDD Discipline
 - Produce a written implementation plan and obtain agreement before modifying source files. Cross-reference the latest design specs in `docs/design/` and update them when planning introduces new workflows, encryption models, or client touchpoints.
+- Review and follow the documentation workflow in `docs/process/doc-review.md` so that design specs, security narratives, and integration guides are approved before implementation work begins.
 - Follow test-driven development (TDD): write or update failing tests that capture the desired behavior prior to implementing code changes, referencing the required coverage in `docs/testing/test-matrix.md`.
 - Preserve evidence of TDD in PRs (e.g., failing test logs, CI run links) so reviewers can confirm red-green cycles.
 
@@ -33,3 +34,4 @@ All contributors **must** review and follow this plan before beginning any codin
 - Revisit this workflow after every feature planning cycle and during the monthly governance review cadence.
 - Record updates for evolving requirements (e.g., new encryption algorithms, broader platform coverage, updated ingestion processes, expanded test matrices) to maintain alignment across contributors.
 - Capture a governance-log entry (see `docs/process/governance-log.md`) whenever this guidance changes so the whole team acknowledges the new expectations before coding begins.
+- When documentation reviews identify process changes, ensure the outcomes are reflected in `docs/process/doc-review.md` and linked from related design, security, or integration artifacts.
