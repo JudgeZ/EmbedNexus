@@ -61,7 +61,7 @@ sequenceDiagram
 - **Error Handling**: Normalize transport-specific errors into `TransportError` codes; surface remediation hints and ensure retries respect idempotency.
 - **Concurrency**: Use async executors per transport, isolating HTTP worker pools from STDIO single-flight handlers to prevent starvation.
 - **Resource Limits**: Enforce per-transport connection caps, request body limits, and back-pressure thresholds aligning with the offline-first resource profile.
-- **Security Alignment**: Enforce threat model mitigations by logging validation failures and mapping them to the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) and [Authentication Checklist](../security/threat-model.md#authentication-checklist); UDS peer credential checks must document assumptions about WSL interop sandboxes.
+- **Security Alignment**: Enforce threat model mitigations by logging validation failures and mapping them to the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist), [Authentication Checklist](../security/threat-model.md#authentication-checklist), and [Access Control Checklist](../security/threat-model.md#access-control-checklist); UDS peer credential checks must document assumptions about WSL interop sandboxes.
 - **Offline Expectations**: All adapters must degrade gracefully when the host is offline, providing deterministic retries and telemetry buffering that satisfy the offline-first contract described in [overview.md](./overview.md).
 - **Platform Notes**: Document how WSL path translation, Windows named pipe proxies, and macOS sandbox entitlements are handled so contributors can validate cross-platform behavior during implementation.
 

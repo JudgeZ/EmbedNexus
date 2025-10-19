@@ -118,7 +118,7 @@ sequenceDiagram
 
 ## Security Priorities and Validation
 - Enforce client-script validation before execution, rejecting untrusted or unsigned scripts and logging violations for forensic review while mapping enforcement steps to the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) and [Input Validation Checklist](../security/threat-model.md#input-validation-checklist).
-- Maintain zero-trust defaults: transports require explicit session authorization and role-bound capabilities; HTTP session issuance references the [Authentication Checklist](../security/threat-model.md#authentication-checklist) so each adapter documents the control surface.
+- Maintain zero-trust defaults: transports require explicit session authorization and role-bound capabilities; HTTP session issuance references the [Authentication Checklist](../security/threat-model.md#authentication-checklist) and role modeling adheres to the [Access Control Checklist](../security/threat-model.md#access-control-checklist) so each adapter documents the control surface.
 - Run continuous integrity checks on the encrypted store and manifest ledger; failed checks quarantine affected repositories and must be reconciled against the [Encryption Checklist](../security/threat-model.md#encryption-checklist).
 - Document threat modeling outcomes alongside implementation changes, referencing `docs/security/threat-model.md` for each release and capturing links to completed checklists in PR templates.
 
