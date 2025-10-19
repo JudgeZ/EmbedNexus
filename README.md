@@ -1,0 +1,1 @@
+# Cursor-Local-Embedding-MCP
