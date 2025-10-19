@@ -28,3 +28,17 @@ Use this log to capture the outcomes of each monthly governance review.
 - **Action Items:**
   1. Draft updated checklist language for `docs/process/pr-release-checklist.md` — Priya Patel — Review at next session
 - **Change Tracking Notes:** Reference PR #000 for context on checklist updates.
+
+---
+
+## 2024-06-14
+- **Participants:** TBD (Governance Lead), TBD (Security Officer), TBD (Process Steward), TBD (Documentation Scribe)
+- **Scope Summary:**
+  - `AGENTS.md` updates: Reinforced planning, TDD evidence capture, encryption design alignment, and client deliverable documentation expectations.
+  - Security documentation updates: Confirmed `docs/security/threat-model.md` remains current; no changes required this cycle.
+  - Process documentation updates: Expanded governance scope to cover design/test assets and refreshed the PR checklist with design/test references and client delivery notes.
+- **Decisions:**
+  1. Require governance-log announcements whenever contributor workflows change — Process Steward — Immediate.
+- **Action Items:**
+  1. Circulate updated contributor guidance to all active feature teams before kickoff meetings — Governance Lead — 2024-06-18.
+- **Change Tracking Notes:** Updated `AGENTS.md`, `CONTRIBUTING.md`, and `docs/process/pr-release-checklist.md`; governance scope clarified in `docs/process/governance.md`.

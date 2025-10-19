@@ -83,3 +83,4 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 1. Add each failing test to the appropriate suite before feature implementation begins. Reference the planned feature label in the test description to maintain traceability.
 2. Link new test coverage to existing CI job definitions so that failures surface immediately while the features remain pending.
 3. Document deviations or temporary skips inside the subsystem-specific testing READMEs with rationale and target removal milestones.
+4. Capture and archive the failing-then-passing test evidence (local logs or CI links) so reviewers can validate the TDD red/green cycle when the implementation lands.
