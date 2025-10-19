@@ -1,6 +1,6 @@
 # IDE Integration Overview
 
-This guide summarizes the supported IDE clients for the Cursor Local Embedding MCP server. Each section outlines minimum requirements, supported transport layers, and sample configuration snippets for connecting to the server.
+This guide summarizes the supported IDE clients for the Cursor Local Embedding MCP server. Each section outlines minimum requirements, supported transport layers, and sample configuration snippets for connecting to the server. Configuration guidance intentionally mirrors the transport flags and JSON-RPC envelopes described in [`docs/integration/clients.md`](./clients.md) and the implementation milestones captured in [`docs/integration/client-plan.md`](./client-plan.md) so that IDE setup remains aligned with the official client tooling.
 
 ## Cursor IDE
 
@@ -8,7 +8,7 @@ This guide summarizes the supported IDE clients for the Cursor Local Embedding M
   - Cursor Desktop v0.45 or later with MCP plugin support enabled.
   - Node.js 18+ runtime available for spawning MCP transports.
   - Local access to the `cursor-local-embedding` executable on the PATH.
-- **Supported transports**: `stdio`, `sse`, and `websocket` via Cursor's agent bridge.
+- **Supported transports**: `stdio`, `sse`, and `websocket` via Cursor's agent bridge. These map one-to-one to the transport matrix in the planned client scripts (`clients/python/client.py`, `clients/node/index.mjs`, `clients/go/main.go`).
 - **Configuration snippet** (add to `~/.cursor/mcp.json`):
 
 ```json
@@ -215,6 +215,7 @@ When enabling Noise framing, remember to:
 - Distribute server static public keys to clients through a secure channel.
 - Set `NOISE_KEY_PATH` or similar environment variables so the server can persist keys between restarts.
 - Combine Noise with process-level sandboxing for comprehensive defense-in-depth.
+- Ensure IDE bridges emit MCP requests that match the [`call_tool` envelopes documented for the language clients](./clients.md#expected-mcp-envelope). Noise protects the transport, but envelope structure continues to follow the JSON-RPC contract expected by the shared tooling.
 
 ## IDEs on Windows Subsystem for Linux (WSL)
 
@@ -226,6 +227,14 @@ Running IDEs on Windows while hosting the MCP server inside WSL introduces path 
 - **Other IDE bridges** (JetBrains Gateway, Neovim MCP clients): Prefer launching the bridge natively inside WSL and forward UI traffic to Windows. When that is not possible, rely on `wsl.exe -e` invocations with explicit `/mnt` paths and share TLS assets through the Windows certificate manager.
 
 Always synchronize time between Windows and WSL to prevent TLS handshake failures due to skewed certificate validity periods.
+
+## Alignment with Client Tooling
+
+The IDE configurations above must produce the same MCP traffic as the scripted clients currently in planning:
+
+- **Shared transport flags**: Each IDE example uses `--transport` values (`stdio`, `sse`, `websocket`) that match the argument conventions in [`clients/python/client.py`](./clients.md#python-client-clientspythonclientpy-%E2%80%93-planned), [`clients/node/index.mjs`](./clients.md#nodejs-client-clientsnodeindexmjs-%E2%80%93-planned), and [`clients/go/main.go`](./clients.md#go-client-clientsgomgingo-%E2%80%93-planned). When IDEs provide GUI toggles instead of raw arguments, map them directly to these canonical flags.
+- **MCP envelope parity**: The examples assume IDE bridges emit JSON-RPC `call_tool` envelopes with `create-embedding` parameters identical to the [expected payloads](./clients.md#expected-mcp-envelope). Aligning envelopes guarantees that fixtures defined in the [client plan](./client-plan.md#golden-transcript-fixtures-and-ci-coverage) remain valid when IDE automation runs in CI.
+- **Transcript capture**: Where IDEs support transcript export, store the artifacts under `artifacts/<ide>/<transport>.json` so they can share verification steps with the language clients described in the plan.
 
 ## Interaction Flow
 
