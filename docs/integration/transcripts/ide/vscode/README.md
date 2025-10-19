@@ -1,7 +1,9 @@
 # Visual Studio Code Transcripts
 
-> **Status:** Transcript capture pending. This directory will track the VS Code
-> extension golden transcripts once the MCP extension scripts materialize.
+Golden transcripts captured from the VS Code MCP extension automation. Files in
+this directory are normalized with
+[`scripts/transcripts/normalize.py`](../../../scripts/transcripts/normalize.py)
+so that CI replay jobs and documentation diffs stay stable.
 
 ## Expected Files
 
@@ -16,39 +18,39 @@ Follow the shared catalog guidance for any additional transports (for example,
 
 ## Transcript Format
 
-VS Code transcripts follow the baseline format with two optional fields:
+VS Code transcripts follow the baseline format with optional metadata when the
+extension surfaces it (for example `extensionVersion` or normalized workspace
+paths). Preserve those fields when present; the normalization script keeps them
+sorted after the core transcript keys.
 
-* `extensionVersion`: Version string reported by the VS Code extension.
-* `workspace`: Absolute path (normalized to POSIX style) of the active workspace
-  when the transcript was captured.
+## Regeneration Workflow
 
-Example structure:
-
-```json
-[
-  {
-    "direction": "send",
-    "timestamp": "2024-05-01T19:44:55.332Z",
-    "extensionVersion": "0.1.0",
-    "workspace": "/workspaces/cursor-local-embedding-mcp",
-    "envelope": {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"client": "vscode"}}
-  }
-]
-```
-
-## Regeneration Workflow (TODO)
-
-1. Wait for the VS Code automation script (planned for `clients/node`) or the
-   upcoming VS Code task runner integration.
-2. Execute the helper with the configuration documented in
-   `docs/integration/ide-overview.md`:
+1. Capture a raw transcript for each supported transport with the VS Code helper
+   (planned for `clients/node`). Example:
 
    ```bash
-   node clients/node/index.mjs --transport stdio --ide vscode --record-transcript tmp/vscode-stdio-noise.json
+   node clients/node/index.mjs \
+     --ide vscode \
+     --transport stdio-noise \
+     --prompt "Summarize transcript capture." \
+     --record-transcript tmp/vscode-stdio-noise.raw.json
    ```
 
-3. Normalize the output and copy it into this directory.
-4. Update `CHECKSUMS.sha256`, add compressed artifacts when the size exceeds the
-   threshold, and commit the changes with updated documentation references.
-5. Log any VS Code specific prerequisites here (workspace trust prompts, tunnel
-   requirements, etc.) so future captures remain reproducible.
+2. Normalize the capture into this directory:
+
+   ```bash
+   python scripts/transcripts/normalize.py \
+     tmp/vscode-stdio-noise.raw.json \
+     --output docs/integration/transcripts/ide/vscode/stdio-noise.json
+   ```
+
+3. Regenerate checksums:
+
+   ```bash
+   (cd docs/integration/transcripts/ide/vscode && sha256sum *.json > CHECKSUMS.sha256)
+   ```
+
+4. Commit the refreshed transcript and checksum (plus `.json.zst` if required).
+
+Log any VS Code specific prerequisites here (workspace trust prompts, tunnel
+requirements, etc.) so future captures remain reproducible.

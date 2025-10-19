@@ -1,0 +1,75 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-01T12:00:00.000Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "capabilities": {
+          "transports": [
+            "stdio-noise"
+          ]
+        },
+        "client": "cursor",
+        "protocolVersion": "2024-05-31"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-01T12:00:00.125Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-01T12:00:01.043Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "Normalize this transcript sample."
+        ],
+        "model": "cursor-local"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-01T12:00:01.208Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.12,
+              -0.04,
+              0.88
+            ]
+          }
+        ],
+        "model": "cursor-local"
+      }
+    }
+  }
+]

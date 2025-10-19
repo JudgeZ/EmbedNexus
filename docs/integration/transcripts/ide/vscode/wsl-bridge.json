@@ -1,0 +1,84 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-05T14:48:09.512Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "bridge": {
+          "launcher": "wsl.exe",
+          "shell": "pwsh"
+        },
+        "capabilities": {
+          "transports": [
+            "stdio"
+          ]
+        },
+        "client": "vscode",
+        "protocolVersion": "2024-05-31"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-05T14:48:09.754Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-05T14:48:10.132Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "VS Code WSL bridge"
+        ],
+        "model": "vscode-local",
+        "transport": "stdio",
+        "wsl": {
+          "distribution": "Ubuntu-22.04",
+          "path": "/home/vscode/project"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-05T14:48:10.369Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.38,
+              -0.05,
+              0.75
+            ]
+          }
+        ],
+        "model": "vscode-local"
+      }
+    }
+  }
+]

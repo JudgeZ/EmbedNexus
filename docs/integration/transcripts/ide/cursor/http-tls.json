@@ -1,0 +1,98 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-02T15:30:12.410Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "capabilities": {
+          "transports": [
+            "http+tls"
+          ]
+        },
+        "client": "cursor",
+        "protocolVersion": "2024-05-31",
+        "tls": {
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "certificateFingerprint": "DEVCA-1234"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-02T15:30:12.612Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "events": [
+            "server/ready"
+          ],
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-02T15:30:12.975Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "method": "server/ready",
+      "params": {
+        "transport": "http+tls",
+        "uri": "https://localhost:8765/events"
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-02T15:30:13.104Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "TLS transcript capture"
+        ],
+        "model": "cursor-local",
+        "transport": "http+tls"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-02T15:30:13.329Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.08,
+              -0.11,
+              0.74
+            ]
+          }
+        ],
+        "model": "cursor-local"
+      }
+    }
+  }
+]

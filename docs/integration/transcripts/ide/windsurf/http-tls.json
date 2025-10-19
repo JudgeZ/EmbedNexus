@@ -1,0 +1,97 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-04T09:05:33.584Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "capabilities": {
+          "transports": [
+            "http+tls"
+          ]
+        },
+        "client": "windsurf",
+        "protocolVersion": "2024-05-31",
+        "tls": {
+          "alpn": [
+            "h2"
+          ],
+          "sni": "windsurf.local"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-04T09:05:33.812Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "events": [
+            "server/ready"
+          ],
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-04T09:05:34.021Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "method": "server/ready",
+      "params": {
+        "transport": "http+tls",
+        "uri": "https://localhost:9443/events"
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-04T09:05:34.190Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "Windsurf TLS baseline"
+        ],
+        "model": "windsurf-local",
+        "transport": "http+tls"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-04T09:05:34.422Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.31,
+              -0.07,
+              0.65
+            ]
+          }
+        ],
+        "model": "windsurf-local"
+      }
+    }
+  }
+]

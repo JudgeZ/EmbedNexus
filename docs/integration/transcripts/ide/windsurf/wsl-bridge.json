@@ -1,0 +1,84 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-04T09:22:45.018Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "bridge": {
+          "launcher": "wsl.exe",
+          "shell": "bash"
+        },
+        "capabilities": {
+          "transports": [
+            "stdio"
+          ]
+        },
+        "client": "windsurf",
+        "protocolVersion": "2024-05-31"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-04T09:22:45.217Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-04T09:22:45.701Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "WSL handshake via Windsurf"
+        ],
+        "model": "windsurf-local",
+        "transport": "stdio",
+        "wsl": {
+          "distribution": "Ubuntu-22.04",
+          "path": "/home/wsl/projects/app"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-04T09:22:45.936Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.29,
+              -0.03,
+              0.58
+            ]
+          }
+        ],
+        "model": "windsurf-local"
+      }
+    }
+  }
+]

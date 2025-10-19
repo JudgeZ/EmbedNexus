@@ -1,0 +1,76 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-04T08:45:11.002Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "capabilities": {
+          "transports": [
+            "stdio-noise"
+          ]
+        },
+        "client": "windsurf",
+        "protocolVersion": "2024-05-31",
+        "workspaceRoot": "/Users/dev/src/project"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-04T08:45:11.214Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-04T08:45:11.947Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "Windsurf stdio Noise sample"
+        ],
+        "model": "windsurf-local"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-04T08:45:12.171Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.22,
+              -0.06,
+              0.59
+            ]
+          }
+        ],
+        "model": "windsurf-local"
+      }
+    }
+  }
+]

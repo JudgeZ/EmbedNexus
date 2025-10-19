@@ -11,6 +11,7 @@ with the guidance in `docs/testing/fixtures-plan.md` and the CI coverage plan.
 | --- | --- | --- | --- |
 | `record_fs_events.py` | Python 3.11 | `watchdog`, `pyyaml` | Capture file system events using per-scenario configs and emit deterministic YAML traces. |
 | `verify_event_order.py` | Python 3.11 | `pyyaml` | Validate ordering and integrity of previously captured file system event sequences. |
+| `transcripts/normalize.py` | Python 3.11 | Standard library (`argparse`, `json`) | Canonicalize transcript captures (timestamp rounding, key ordering, formatting) for deterministic diffs. |
 | `archive_builder.rs` | Rust (binary crate) | `cargo` toolchain, compression & serde crates (TBD) | Produce archive fixtures, scenario-specific bundles, and manifest streams for downstream sanitizers. |
 | `sanitize_jsonl.py` | Python 3.11 | `click`, `pyyaml`, `jsonschema` (TBD) | Normalize and scrub JSONL manifests emitted by the archive builder prior to promotion to goldens. |
 | `trace_capture.sh` | Bash | `openssl`, `tshark`, `jq`, POSIX utilities | Drive TLS/Noise capture sessions and stream traces to fixture directories. |
@@ -43,8 +44,10 @@ checks into CI once the scripts move beyond placeholders.
 
 ## Implementation Status
 
-All scripts currently exist as descriptive stubs. Populate the module docstrings or
-comment blocks with additional requirements as subsystem owners refine the fixture
-workflows. When promoting a stub to a real implementation, replace the placeholder
-main entry point with functional code and wire the script into the relevant `Makefile`
-or CI workflow to maintain traceability.
+`transcripts/normalize.py` is the first fully implemented helper and can be used
+immediately to enforce deterministic transcript formatting. The remaining scripts
+exist as descriptive stubs. Populate their module docstrings or comment blocks
+with additional requirements as subsystem owners refine the fixture workflows.
+When promoting a stub to a real implementation, replace the placeholder main
+entry point with functional code and wire the script into the relevant
+`Makefile` or CI workflow to maintain traceability.

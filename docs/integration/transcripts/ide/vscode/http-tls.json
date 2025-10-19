@@ -1,0 +1,100 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-05T14:30:44.411Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "capabilities": {
+          "transports": [
+            "http+tls"
+          ]
+        },
+        "client": "vscode",
+        "protocolVersion": "2024-05-31",
+        "tls": {
+          "alpn": [
+            "h2",
+            "http/1.1"
+          ],
+          "trustedCertificates": [
+            "dev-root-ca.pem"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-05T14:30:44.665Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "events": [
+            "server/ready"
+          ],
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-05T14:30:44.941Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "method": "server/ready",
+      "params": {
+        "transport": "http+tls",
+        "uri": "https://localhost:9443/events"
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-05T14:30:45.126Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "VS Code TLS baseline"
+        ],
+        "model": "vscode-local",
+        "transport": "http+tls"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-05T14:30:45.365Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.41,
+              -0.12,
+              0.79
+            ]
+          }
+        ],
+        "model": "vscode-local"
+      }
+    }
+  }
+]

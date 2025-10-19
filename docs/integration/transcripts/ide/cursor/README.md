@@ -1,7 +1,9 @@
 # Cursor IDE Transcripts
 
-> **Status:** Transcript capture pending. Populate this directory once the Cursor
-> bridge automation is wired into the client scripts.
+Baseline transcripts captured from the Cursor IDE bridge. Each JSON file contains
+the normalized exchange envelopes produced while replaying the language client
+fixtures against the Cursor Local Embedding MCP server. Use the shared
+normalization tooling whenever the captures are refreshed.
 
 ## Expected Files
 
@@ -21,39 +23,37 @@ MCP server. Encode them as a JSON array where each element contains:
 
 * `direction`: `"send"` or `"receive"` from the perspective of the client script.
 * `timestamp`: ISO-8601 UTC timestamp captured immediately before the envelope was
-  forwarded.
-* `envelope`: The raw JSON-RPC payload as produced or received by the bridge.
+  forwarded. The normalization tool rounds to millisecond precision.
+* `envelope`: The raw JSON-RPC payload as produced or received by the bridge,
+  recursively sorted to stabilize object key ordering.
 
-Example structure:
+## Regeneration Workflow
 
-```json
-[
-  {
-    "direction": "send",
-    "timestamp": "2024-05-01T18:22:13.112Z",
-    "envelope": {"jsonrpc": "2.0", "id": "1", "method": "initialize", "params": {"protocolVersion": "2024-03-01"}}
-  },
-  {
-    "direction": "receive",
-    "timestamp": "2024-05-01T18:22:13.214Z",
-    "envelope": {"jsonrpc": "2.0", "id": "1", "result": {"capabilities": {"tools": ["create-embedding"]}}}
-  }
-]
-```
-
-## Regeneration Workflow (TODO)
-
-1. Wait for the Cursor automation scripts in `clients/python` to land.
-2. From the repository root run the planned helper:
+1. Capture a raw transcript for each transport via the language client helper. Example:
 
    ```bash
-   python clients/python/client.py --transport stdio --prompt "<prompt>" --ide cursor --record-transcript tmp/cursor-stdio-noise.json
+   python clients/python/client.py \
+     --ide cursor \
+     --transport stdio-noise \
+     --prompt "Summarize transcript capture." \
+     --record-transcript tmp/cursor-stdio-noise.raw.json
    ```
 
-3. Normalize the output with the shared transcript formatter (to be published
-   under `scripts/transcripts/normalize.py`).
-4. Move the normalized file to this directory, update `CHECKSUMS.sha256`, and
-   commit both the JSON and compressed variants as required.
+2. Normalize the capture into this directory:
 
-Document any Cursor-specific flags (e.g., TLS certificate pinning, feature
-toggles) directly in this README when they become known.
+   ```bash
+   python scripts/transcripts/normalize.py \
+     tmp/cursor-stdio-noise.raw.json \
+     --output docs/integration/transcripts/ide/cursor/stdio-noise.json
+   ```
+
+3. Refresh checksums:
+
+   ```bash
+   (cd docs/integration/transcripts/ide/cursor && sha256sum *.json > CHECKSUMS.sha256)
+   ```
+
+4. Commit the updated transcript and checksum (plus `.json.zst` if required).
+
+Document Cursor-specific flags (TLS certificates, feature toggles, bridge
+arguments) here whenever additional steps are needed to reproduce the capture.
