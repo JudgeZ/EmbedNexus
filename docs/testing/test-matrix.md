@@ -78,6 +78,17 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Performance** – routing throughput guard validating scheduler latency across the scenario pack `tests/golden/routing/fanout-throughput.jsonl` and fixture directory `tests/fixtures/routing/high-fanout/`.
 - **Traceability** – Tied to the [Architecture Overview](../design/overview.md#local-ingestion-pipeline) for multi-repo orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Encryption](../security/threat-model.md#encryption-checklist) checklists governing cross-tenant routing.
 
+### Offline Queue & Replay Resilience
+- **Planned feature focus**: Transport retry buffers and ingestion manifest replay reliability under offline backpressure.
+- **Required failing tests**:
+  - **Transport retry buffer unit** – coverage for encrypted spool rotation, retry budget enforcement, and tamper detection using the fixture plan `tests/fixtures/transport/offline-retry/air-gapped-run.yaml`.
+  - **Transport retry buffer integration** – air-gapped transport harness that records request buffering and delayed flush using the golden transcript `tests/golden/transport/offline-retry-session.transcript` alongside the fixture directory `tests/fixtures/transport/offline-retry/`.
+  - **Transport retry buffer fuzz/performance** – randomized outage durations and burst submissions replayed from `tests/golden/transport/offline-jitter.jsonl` to verify bounded growth and drain latency targets.
+  - **Manifest replay unit** – deterministic manifest diff serializer exercising delayed storage availability via `tests/fixtures/ingestion/manifest-replay/delayed-ledger-window.yaml`.
+  - **Manifest replay integration** – offline-first ingestion job that captures manifest emission, checkpoint persistence, and replay idempotency using `tests/golden/ingestion/manifest-replay-cycle.log` and the fixture corpus `tests/fixtures/ingestion/manifest-replay/`.
+  - **Manifest replay fuzz/performance** – workload generated from `tests/golden/ingestion/manifest-replay-throughput.jsonl` asserting replay throughput and checksum validation across extended outage windows.
+- **Traceability** – Aligns with the [Transport Adapter Specification](../design/transport.md#offline-backpressure-security-notes) for retry buffering, the [Ingestion Pipeline Specification](../design/ingestion.md#offline-backpressure-security-notes) for manifest replay orchestration, and the [Encryption](../security/threat-model.md#encryption-checklist) plus [Audit Logging](../security/threat-model.md#audit-logging-checklist) checklists safeguarding offline queue artifacts.
+
 ## Shared Testing Assets
 
 - **Fixture Library**: Reuse the shared fixture bundle under `tests/fixtures/shared/` for cross-subsystem consistency. Extend fixtures instead of duplicating data and document each addition inside the fixture README files.

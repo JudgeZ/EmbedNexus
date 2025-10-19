@@ -16,12 +16,16 @@ tests/
 │   ├── filesystem/
 │   │   ├── mock-events.yaml
 │   │   └── workspace-replay/
+│   ├── ingestion/
+│   │   └── manifest-replay/
 │   ├── routing/
 │   │   ├── high-fanout/
 │   │   └── multi-repo-matrix.json
 │   ├── security/
 │   │   ├── encryption-toggles.json
 │   │   └── perf-window/
+│   ├── transport/
+│   │   └── offline-retry/
 │   └── shared/
 │       └── README.md
 └── golden/
@@ -30,9 +34,15 @@ tests/
     ├── filesystem/
     │   └── watch-fuzz.log
     ├── mcp/
+    ├── ingestion/
+    │   ├── manifest-replay-cycle.log
+    │   └── manifest-replay-throughput.jsonl
     ├── routing/
     │   ├── fuzz-affinity.jsonl
     │   └── mcp-federation.transcript
+    ├── transport/
+    │   ├── offline-jitter.jsonl
+    │   └── offline-retry-session.transcript
     └── security/
         ├── tls-fuzz.log
         └── tls-handshake.trace
@@ -101,6 +111,17 @@ Every fixture directory must contain a short `README.md` when multiple files coe
   2. Replay negative scenarios with `--profile tls-fuzz` to build `tests/golden/security/tls-fuzz.log`.
   3. Generate encryption toggle fixtures by running the configuration synthesizer: `python scripts/generate_encryption_toggles.py --output tests/fixtures/security/encryption-toggles.json` (requires `python -m pip install click cryptography`).
   4. Materialize performance datasets through `scripts/trace_capture.sh --profile perf-window --output-dir tests/fixtures/security/perf-window/` and confirm dataset size thresholds in the README.
+
+### Offline Queue & Manifest Replay Scenarios
+
+- **Tooling**: `scripts/offline_queue_recorder.py` (Python 3.11 + `click`, `rich`) and `scripts/manifest_replay_harness.rs` (Rust binary).
+- **Workflow**:
+  1. Capture transport air-gapped runs with `python scripts/offline_queue_recorder.py --profile air-gapped --output tests/fixtures/transport/offline-retry/air-gapped-run.yaml` while disconnecting the network interface. Document retry budgets and checksum outputs inside `tests/fixtures/transport/offline-retry/README.md`.
+  2. Generate jittered outage corpora using `python scripts/offline_queue_recorder.py --profile jitter --output tests/golden/transport/offline-jitter.jsonl` to support fuzz/performance coverage.
+  3. Record buffered session transcripts through `python scripts/offline_queue_recorder.py replay --output tests/golden/transport/offline-retry-session.transcript` immediately after restoring connectivity so replay ordering remains deterministic.
+  4. Build manifest replay fixtures with `cargo run --bin manifest_replay_harness -- --scenario delayed-ledger --output tests/fixtures/ingestion/manifest-replay/delayed-ledger-window.yaml` and expanded corpora under `tests/fixtures/ingestion/manifest-replay/`.
+  5. Emit manifest replay golden logs via `cargo run --bin manifest_replay_harness -- --scenario cycle --output tests/golden/ingestion/manifest-replay-cycle.log` and throughput data with `--scenario throughput --output tests/golden/ingestion/manifest-replay-throughput.jsonl`.
+  6. Record SHA-256 hashes for YAML, log, and JSONL assets that exceed 1 MiB, storing manifests next to the generated files.
 
 ### Routing Scenarios
 
