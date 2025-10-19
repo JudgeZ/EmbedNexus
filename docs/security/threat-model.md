@@ -41,6 +41,16 @@ The platform runs entirely within a contributor-controlled environment. Data ing
 - **Change review discipline:** Enforce security sign-off in code reviews, referencing the checklists below.
 - **Incident readiness:** Maintain runbooks for revoking credentials, rotating keys, and isolating compromised hosts.
 
+## Mitigation Ownership and Review Cadence
+
+The following accountability tables document who maintains each critical mitigation and how frequently the safeguards are reviewed. Reference these owners during planning, implementation, and PR review whenever work touches the listed areas.
+
+| Mitigation Area | Primary Owner | Backup Owner | Review Cadence | Evidence Expectations |
+| --- | --- | --- | --- | --- |
+| Transport encryption controls (TLS configuration, certificate lifecycle) | Alex Smith (Security Officer) | Morgan Chen (Infrastructure Lead) | Monthly security sync and before any release that modifies network interfaces | TLS configuration diff, certificate rotation log, and automated transport-encryption checklist results |
+| Archive extraction hardening (sandboxing, allowed formats, decompression limits) | Priya Patel (Ingestion Lead) | Jordan Lee (Process Steward) | Bi-monthly ingestion review and whenever a new extractor or format handler is introduced | Latest sandbox validation report, extraction test suite results, and signed archive-handling checklist |
+| Multi-repository isolation (workspace segmentation, credential scoping) | Jane Doe (Governance Lead) | Alex Smith (Security Officer) | Quarterly governance audit and pre-merge for cross-repo tooling changes | Access policy review notes, isolation test evidence, and approval from governance meeting minutes |
+
 ## Security Review Checklists
 
 Use these checklists during design discussions, implementation, and PR review whenever the associated features are touched.
