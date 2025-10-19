@@ -2,8 +2,10 @@
 
 This document describes the continuous integration (CI) coverage required before enabling
 the planned language clients for the Cursor Local Embedding MCP server. It complements
-the transport and envelope expectations in [`docs/integration/clients.md`](../integration/clients.md)
-and the IDE automation guidance in [`docs/integration/ide-overview.md`](../integration/ide-overview.md)
+the transport and envelope expectations in [`docs/integration/clients.md`](../integration/clients.md),
+the IDE automation guidance in [`docs/integration/ide-overview.md`](../integration/ide-overview.md),
+and the transcript catalog documented in
+[`docs/integration/transcripts/ide/README.md`](../integration/transcripts/ide/README.md)
 so that scripted clients, IDE bridges, and CI jobs remain synchronized.
 
 ## Matrix Overview
@@ -47,7 +49,8 @@ client plan and IDE overview documents to keep parity across toolchains.
 - Noise handshake traces stored under `tests/fixtures/noise/<language>/handshake.log`.
 - IDE-aligned transcripts (Cursor, Windsurf, VS Code) placed under
   `docs/integration/transcripts/ide/<ide>/stdio-noise.json` so IDE automation can
-  reuse the same expectations described in the IDE overview.
+  reuse the same expectations described in the IDE overview. These remain **TODO**
+  until the language client scripts gain transcript capture support.
 
 ### HTTP + TLS Fixtures
 
@@ -58,7 +61,8 @@ client plan and IDE overview documents to keep parity across toolchains.
   `tests/fixtures/tls/{rootCA.pem, server.pem, server-key.pem}` (private keys should
   remain encrypted at rest; use sealed secrets in CI).
 - IDE bridge transcripts for HTTPS and secure websocket transports stored alongside
-the stdio fixtures (`docs/integration/transcripts/ide/<ide>/http-tls.json`).
+  the stdio fixtures (`docs/integration/transcripts/ide/<ide>/http-tls.json`). These
+  entries remain **TODO** until the client automation can generate goldens.
 - TLS negotiation logs capturing ALPN selection and mutual TLS behavior where required.
 
 ### WSL Bridge Fixtures
