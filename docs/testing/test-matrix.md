@@ -38,40 +38,42 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 - **Security traceability** – Aligns with the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for protocol payload vetting.
 
 ### Filesystem Watch Service
-- **Planned feature focus**: Workspace filesystem watching with debounce and ignore rules.
+- **Planned feature focus**: Workspace filesystem watching latency with debounce and ignore rules.
 - **Required failing tests**:
-  - **Unit** – watcher debounce helpers using `tests/fixtures/filesystem/mock-events.yaml`.
-  - **Integration** – end-to-end change propagation through `tests/fixtures/filesystem/workspace-replay/` driving the ingest queue.
-  - **Fuzz** – event storm permutations generated from `tests/golden/filesystem/watch-fuzz.log` to validate ignore glob safety.
-  - **Performance** – sustained burst benchmark guarding CPU usage under 5k events/min replay.
-- **Security traceability** – Covers sandboxing and input-handling mitigations per the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) and [Input Validation Checklist](../security/threat-model.md#input-validation-checklist).
+  - **Unit** – latency window heuristics for debounce helpers using the future fixture `tests/fixtures/filesystem/latency-window.yaml`.
+  - **Integration** – propagation latency from watch events into ingestion queues replayed via `tests/fixtures/filesystem/workspace-replay/` with added clock skew controls.
+  - **Fuzz** – burst latency permutations sourced from the golden transcript `tests/golden/filesystem/watch-latency-burst.log` to validate ignore glob safety under stress.
+  - **Performance** – sustained burst benchmark asserting <200 ms median watch-to-queue latency using the upcoming dataset `tests/golden/filesystem/watch-latency-burst.log`.
+- **Traceability** – Aligns with the [Ingestion Pipeline Specification](../design/ingestion.md) for watcher orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Input Validation](../security/threat-model.md#input-validation-checklist) checklists governing event sources.
 
 ### Archive Extraction Quotas
-- **Planned feature focus**: Controlled archive ingestion with byte quotas and type filters.
+- **Planned feature focus**: Controlled archive ingestion with byte quotas, type filters, and extraction latency limits.
 - **Required failing tests**:
-  - **Unit** – quota calculators and MIME gatekeepers using `tests/fixtures/archives/quota-scenarios.toml`.
-  - **Integration** – staged tarball ingestion from `tests/fixtures/archives/overflow-case.tar.zst` asserting quota enforcement errors.
-  - **Fuzz** – randomized archive metadata from `tests/golden/archives/fuzzed-manifests.jsonl` stressing parser hardening.
-  - **Performance** – extraction throughput guard maintaining quota checks under 2% overhead on the `tests/fixtures/archives/bulk-sample/` corpus.
-- **Security traceability** – Maps to the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for size gating and the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) for extractor isolation requirements.
+  - **Unit** – quota calculators and MIME gatekeepers validated against `tests/fixtures/archives/quota-latency.toml`.
+  - **Integration** – staged overflow extraction from `tests/fixtures/archives/overflow-latency.tar.zst` asserting quota violations and latency logging.
+  - **Fuzz** – randomized archive metadata and clock skew injections driven by `tests/golden/archives/quota-throughput.jsonl` to stress parser hardening.
+  - **Performance** – throughput guard ensuring quota enforcement overhead stays within 2% using the bulk corpus `tests/fixtures/archives/bulk-sample/` and latency checkpoints emitted to `tests/golden/archives/quota-throughput.jsonl`.
+- **Traceability** – Anchored to the [Ingestion Pipeline Specification](../design/ingestion.md#cross-cutting-concerns) for resource controls and the [Input Validation](../security/threat-model.md#input-validation-checklist) and [Sandboxing](../security/threat-model.md#sandboxing-checklist) checklists.
 
 ### Encryption & TLS Controls
-- **Planned feature focus**: Toggleable encryption-at-rest and TLS-enforced sync endpoints.
+- **Planned feature focus**: Toggleable encryption-at-rest policies and deterministic TLS transport negotiation.
 - **Required failing tests**:
-  - **Unit** – key negotiation toggles and TLS configuration validators using `tests/fixtures/security/encryption-toggles.json`.
-  - **Integration** – encrypted sync round-trip employing `tests/golden/security/tls-handshake.trace` with toggled endpoints.
-  - **Fuzz** – randomized cipher-suite negotiation transcripts from `tests/golden/security/tls-fuzz.log` ensuring downgrade protection.
-  - **Performance** – encryption overhead guard measuring index rebuild latency with toggles flipped across `tests/fixtures/security/perf-window/` datasets.
-- **Security traceability** – Directly linked to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) for configuration validation and the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for handshake parameter vetting.
+  - **Encryption-at-rest unit** – key rotation toggle helpers verified with the fixture `tests/fixtures/security/encryption-latency.json`.
+  - **Encryption-at-rest integration** – encrypted store rebuild with toggle permutations replaying `tests/golden/security/encryption-toggle.trace`.
+  - **Encryption-at-rest fuzz/performance** – randomized toggle sequences with rebuild timing captured in `tests/golden/security/encryption-toggle.trace` to ensure <5% latency regression.
+  - **TLS unit** – cipher-suite negotiation validators referencing `tests/fixtures/security/tls-config-matrix.yaml` for coverage of mandatory/optional suites.
+  - **TLS integration** – end-to-end handshake negotiation using the golden transcript `tests/golden/security/tls-negotiation.trace` across downgraded clients.
+  - **TLS fuzz/performance** – fuzzed handshake transcripts and throughput guards sourced from `tests/golden/security/tls-performance.jsonl` ensuring downgrade protection and handshake latency targets.
+- **Traceability** – References the [Encryption Design](../design/encryption.md) for storage toggles, the [Transport Adapter Design](../design/transport.md) for negotiation sequencing, and the [Encryption](../security/threat-model.md#encryption-checklist) plus [Input Validation](../security/threat-model.md#input-validation-checklist) checklists.
 
 ### Multi-Repository Routing
 - **Planned feature focus**: Routing embeddings and retrieval across federated repository workspaces.
 - **Required failing tests**:
-  - **Unit** – routing table merge helpers referencing `tests/fixtures/routing/multi-repo-matrix.json`.
-  - **Integration** – cross-repo retrieval using the golden session `tests/golden/routing/mcp-federation.transcript` to confirm correct tenant isolation.
-  - **Fuzz** – randomized repository affinity hints derived from `tests/golden/routing/fuzz-affinity.jsonl`.
-  - **Performance** – routing throughput guard validating scheduler latency across the `tests/fixtures/routing/high-fanout/` scenario pack.
-- **Security traceability** – Upholds isolation controls aligned with the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) and [Encryption Checklist](../security/threat-model.md#encryption-checklist) for cross-tenant data flows.
+  - **Unit** – routing table merge helpers referencing the planned fixture `tests/fixtures/routing/latency-matrix.json`.
+  - **Integration** – cross-repo retrieval latency validated by `tests/golden/routing/multi-repo-latency.transcript` to confirm tenant isolation.
+  - **Fuzz** – randomized repository affinity hints derived from `tests/golden/routing/fuzz-affinity.jsonl` with jitter injection.
+  - **Performance** – routing throughput guard validating scheduler latency across the scenario pack `tests/golden/routing/fanout-throughput.jsonl` and fixture directory `tests/fixtures/routing/high-fanout/`.
+- **Traceability** – Tied to the [Architecture Overview](../design/overview.md#local-ingestion-pipeline) for multi-repo orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Encryption](../security/threat-model.md#encryption-checklist) checklists governing cross-tenant routing.
 
 ## Shared Testing Assets
 
