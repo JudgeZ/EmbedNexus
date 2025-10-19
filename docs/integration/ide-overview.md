@@ -1,6 +1,6 @@
 # IDE Integration Overview
 
-This guide summarizes the supported IDE clients for the Cursor Local Embedding MCP server. Each section outlines minimum requirements, supported transport layers, and sample configuration snippets for connecting to the server. Configuration guidance intentionally mirrors the transport flags and JSON-RPC envelopes described in [`docs/integration/clients.md`](./clients.md) and the implementation milestones captured in [`docs/integration/client-plan.md`](./client-plan.md) so that IDE setup remains aligned with the official client tooling.
+This guide summarizes the supported IDE clients for the Cursor Local Embedding MCP server. Each section outlines minimum requirements, supported transport layers, and sample configuration snippets for connecting to the server. Configuration guidance intentionally mirrors the transport flags and JSON-RPC envelopes described in [`docs/integration/clients.md`](./clients.md), the CI coverage documented in [`docs/testing/ci-coverage.md`](../testing/ci-coverage.md), and the implementation milestones captured in [`docs/integration/client-plan.md`](./client-plan.md) so that IDE setup remains aligned with the official client tooling.
 
 ## Cursor IDE
 
