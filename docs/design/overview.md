@@ -8,6 +8,8 @@
 ## Finalized Architecture Overview
 The finalized architecture prioritizes local execution, secure persistence, and resilient developer ergonomics across Linux, macOS, and Windows Subsystem for Linux (WSL). Local transports (HTTP, stdio, and Unix domain sockets) let clients pick the most reliable mechanism per environment while keeping data resident on the workstation. Workspace indexing honors ignore rules (gitignore, editorconfig, custom patterns) to avoid private or transient files, handles common archive formats (zip, tar, gzip) through deterministic, read-only expansion, and encrypted persistence preserves confidentiality when multiple repositories share the same runtime.
 
+> **C4 Source of Truth:** Detailed architecture narratives and level-specific diagrams for the Context, Containers, Components, and Code views live in [`docs/design/c4/`](./c4/README.md). Update those assets together with the Mermaid diagrams in this overview to keep textual and visual documentation synchronized.
+
 ```mermaid
 flowchart LR
     subgraph Workspace["Local Workspace (Single or Multi-Repository)"]

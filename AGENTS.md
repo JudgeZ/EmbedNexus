@@ -16,7 +16,8 @@ All contributors **must** review and follow this plan before beginning any codin
 
 ## Documentation Requirements (4C Framework)
 - Documentation must be **Clear, Concise, Complete, and Correct** (4C).
-- Include Mermaid diagrams when visualizing flows, data pipelines, or architectural relationships, and keep them synchronized with the latest design updates.
+- Maintain the full C4 architecture stack (Context, Containers, Components, Code) as living documentation alongside Mermaid diagrams. Each level must be versioned under `docs/design/` (see `docs/design/overview.md` for entry points and the `docs/design/c4/` directory for level-specific assets) and updated whenever implementations shift responsibilities or interfaces.
+- Include Mermaid diagrams when visualizing flows, data pipelines, or architectural relationships, and keep them synchronized with the latest design updates and the authoritative C4 narratives.
 - Reference or update client integration scripts and IDE compatibility work where relevant to the change, including delivery expectations for CLI packages, SDKs, and IDE extensions.
 
 ## Pull Request Expectations
