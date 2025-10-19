@@ -66,10 +66,10 @@ sequenceDiagram
 - **Platform Notes**: Specify how case sensitivity, filesystem notifications, and file-lock semantics differ across supported platforms so implementations remain portable.
 - **Security Alignment**: Integrate with encryption policies defined in [encryption.md](./encryption.md) and the [Encryption Checklist](../security/threat-model.md#encryption-checklist), and map query authorization flows to the [Access Control Checklist](../security/threat-model.md#access-control-checklist).
 
-## Required Failing Tests
-Following the [test matrix](../testing/test-matrix.md#secure-storage--retrieval), author failing tests covering:
-- Unit tests targeting shard rotation helpers, receipt generation, and compaction boundary logic.
-- Integration tests verifying encrypted round-trip search across sharded stores.
-- Fuzz tests introducing randomized key schedules and tampered ciphertext manifests.
-- Performance tests enforcing latency budgets for rotation-aware index rebuilds.
-- Each suite must follow the TDD expectation by landing failing tests first and referencing `docs/process/pr-release-checklist.md` in review summaries.
+## Test hooks
+Vector store hardening requires failing coverage from both the [Secure Storage & Retrieval matrix](../testing/test-matrix.md#secure-storage--retrieval) and the [Multi-Repository Routing matrix](../testing/test-matrix.md#multi-repository-routing). Capture their findings against the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist):
+- **Shard integrity hook** – Unit and fuzz tests validating key rotation helpers, tamper detection, and receipt generation with `tests/fixtures/security/encryption-latency.json` and `tests/golden/security/encryption-toggle.trace` to demonstrate encryption guarantees and sandbox isolation of compromised shards.
+- **Cross-repo routing hook** – Integration tests replaying `tests/golden/routing/multi-repo-latency.transcript` to confirm tenant isolation and routing-table merges remain within policy while enforcing encryption on every hop.
+- **Routing throughput guard hook** – Performance coverage executing `tests/golden/routing/fanout-throughput.jsonl` alongside `tests/fixtures/routing/high-fanout/` to ensure scheduling latency stays within guardrails without violating sandbox-imposed resource ceilings.
+- **Compaction resilience hook** – Performance and integration tests from the secure storage matrix verifying rotation-aware compaction against `tests/golden/security/encryption-toggle.trace` does not leak plaintext diagnostics and respects encryption attestations.
+- Register each hook as a failing test ahead of implementation and cross-reference `docs/process/pr-release-checklist.md` with the corresponding security checklist evidence.

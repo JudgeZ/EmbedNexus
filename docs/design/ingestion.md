@@ -72,10 +72,10 @@ flowchart TD
 - **Platform Notes**: Document how case sensitivity, path length, and newline normalization differ across Linux, macOS, and WSL so deterministic chunking works across host environments.
 - **Offline Expectations**: The pipeline must queue manifest emissions and audit updates when storage or ledger sinks are temporarily unavailable, replaying them once the offline constraint clears.
 
-## Required Failing Tests
-Per the [test matrix](../testing/test-matrix.md#embedding-engine-core), author the following failing tests before implementation:
-- Unit tests validating chunk planner boundary conditions and embedding dimensionality negotiation helpers.
-- Integration tests executing end-to-end ingestion with deterministic batching and manifest emission.
-- Fuzz tests supplying malformed document payloads across sanitizer and encoder surfaces.
-- Performance tests verifying throughput for 10k document batches without exceeding resource budgets.
-- Each suite must honor the TDD process by introducing failing tests prior to implementation and linking to `docs/process/pr-release-checklist.md` as evidence during reviews.
+## Test hooks
+The ingestion pipeline must land failing coverage from both the [Filesystem Watch Service matrix](../testing/test-matrix.md#filesystem-watch-service) and the [Archive Extraction Quotas matrix](../testing/test-matrix.md#archive-extraction-quotas) before implementation proceeds. Each hook must document the [Input Validation](../security/threat-model.md#input-validation-checklist) and [Sandboxing](../security/threat-model.md#sandboxing-checklist) checklist items it satisfies:
+- **Watcher latency propagation hook** – Unit, integration, and fuzz tests sourced from `tests/fixtures/filesystem/latency-window.yaml`, `tests/fixtures/filesystem/workspace-replay/`, and `tests/golden/filesystem/watch-latency-burst.log` to prove debounce heuristics and queue propagation honor latency budgets without accepting malformed events.
+- **Archive quota enforcement hook** – Unit and integration tests replaying `tests/fixtures/archives/quota-latency.toml` and `tests/fixtures/archives/overflow-latency.tar.zst` to guarantee byte ceilings, MIME filters, and latency logging behave deterministically across retries.
+- **Quota resilience performance hook** – Performance coverage executing `tests/fixtures/archives/bulk-sample/` while verifying `tests/golden/archives/quota-throughput.jsonl` outputs stay within 2% enforcement overhead and preserve sandbox isolation guarantees for extraction tooling.
+- **Chunk planner hygiene hook** – Fuzz and performance tests from the [Embedding Engine Core matrix](../testing/test-matrix.md#embedding-engine-core) ensuring malformed payloads are rejected and large batch workloads remain within resource ceilings, reinforcing both sandbox and validation controls.
+- Record each hook as a failing test per the TDD workflow and reference `docs/process/pr-release-checklist.md` when capturing the associated security checklist evidence.

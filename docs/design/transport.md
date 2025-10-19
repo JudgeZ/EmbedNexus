@@ -65,10 +65,9 @@ sequenceDiagram
 - **Offline Expectations**: All adapters must degrade gracefully when the host is offline, providing deterministic retries and telemetry buffering that satisfy the offline-first contract described in [overview.md](./overview.md).
 - **Platform Notes**: Document how WSL path translation, Windows named pipe proxies, and macOS sandbox entitlements are handled so contributors can validate cross-platform behavior during implementation.
 
-## Required Failing Tests
-The following tests must be authored (and initially fail) as part of the transport subsystem enablement, referencing the [test matrix](../testing/test-matrix.md#client-tooling-cli--sdk):
-- Unit tests covering HTTP session negotiation, STDIO framing edge cases, and UDS credential propagation.
-- Integration tests exercising CLI, IDE, and automation clients against loopback-only transports with audit verification.
-- Fuzz tests mutating request envelopes and session tokens to ensure adapters reject malformed inputs.
-- Performance tests measuring sustained throughput under connection churn while maintaining latency SLOs.
-- Each test suite must be authored following the repository-wide TDD mandate: land failing tests before implementing adapters, and link back to the relevant entries in `docs/process/pr-release-checklist.md` during review.
+## Test hooks
+Transport enablement depends on the failing coverage enumerated in the [Encryption & TLS Controls matrix entry](../testing/test-matrix.md#encryption--tls-controls). Establish these hooks before implementation and map their outcomes to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for auditability:
+- **TLS handshake negotiation hook** – Integration tests replaying `tests/golden/security/tls-negotiation.trace` to confirm deterministic cipher-suite downgrades are rejected across HTTP and UDS transports, capturing checklist evidence for both encryption enforcement and malformed payload handling.
+- **Session token hardening hook** – Unit and fuzz coverage over session issuance, STDIO framing, and credential propagation using `tests/golden/security/tls-negotiation.trace` variants and `tests/golden/security/tls-performance.jsonl` jitter profiles to demonstrate signature validation and payload sanitization guardrails prior to router dispatch.
+- **Toggle latency guard hook** – Performance tests exercising encryption-at-rest and TLS toggles with `tests/fixtures/security/encryption-latency.json` and `tests/golden/security/encryption-toggle.trace` under churn to measure connection setup latency against policy budgets while verifying log redaction requirements from the input validation checklist.
+- Each hook must be introduced as a failing test in accordance with the TDD mandate and cross-referenced in `docs/process/pr-release-checklist.md` alongside the security checklist items they satisfy.
