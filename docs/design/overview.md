@@ -10,19 +10,19 @@ The platform centers on a multi-service architecture that orchestrates content i
 
 ```mermaid
 flowchart TD
-    subgraph Client Integrations
+    subgraph ClientIntegrations["Client Integrations"]
         CLI[CLI Tooling]
         IDE[IDE Plugins]
         SDK[SDKs]
     end
 
-    subgraph Control Plane
+    subgraph ControlPlane["Control Plane"]
         CFG[Configuration Service]
         SEC[Security & Policy]
         OBS[Observability]
     end
 
-    subgraph Data Plane
+    subgraph DataPlane["Data Plane"]
         ING[Ingestion Orchestrator]
         ETL[Normalization & Chunking]
         EMB[Embedding Workers]
@@ -30,7 +30,7 @@ flowchart TD
         API[Retrieval API]
     end
 
-    Client Integrations -->|Submit jobs| ING
+    ClientIntegrations -->|Submit jobs| ING
     CFG -->|Connector presets| ING
     ING --> ETL --> EMB --> IDX --> API
     SEC -->|Policies| ING
@@ -38,7 +38,7 @@ flowchart TD
     OBS -->|Telemetry| ING
     OBS -->|Telemetry| EMB
     OBS -->|Telemetry| API
-    API -->|Responses| Client Integrations
+    API -->|Responses| ClientIntegrations
 ```
 
 ## Module Responsibilities
