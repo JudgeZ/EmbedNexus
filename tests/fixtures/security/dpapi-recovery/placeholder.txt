@@ -1,0 +1,1 @@
+Placeholder DPAPI recovery capture. Populate via collect_dpapi.ps1.

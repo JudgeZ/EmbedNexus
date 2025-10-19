@@ -4,6 +4,11 @@
 
 This plan governs the creation, maintenance, and review of test fixtures stored under `tests/fixtures/` and golden artifacts under `tests/golden/`. It standardizes directory layout, naming conventions, and update workflows so that teams can confidently extend the shared corpus while preserving deterministic test outcomes.
 
+> **Placeholder notice**: The initial repository population introduces empty shell files and checksum notes that document the
+> forthcoming generation commands. These placeholders satisfy the documented layout and allow the test matrix to reference stable
+> paths while TDD work is staged. Replace each placeholder with the captured asset and corresponding checksum once the generation
+> scripts have been executed.
+
 ## Directory Layout Overview
 
 ```

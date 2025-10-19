@@ -1,0 +1,2 @@
+# Placeholder TLS config matrix.
+# Replace via scripts/trace_capture.sh --profile tls-config.
