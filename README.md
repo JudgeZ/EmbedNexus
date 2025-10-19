@@ -48,6 +48,28 @@ flowchart LR
 - **Testing Strategy:** Platform and scenario coverage in [`docs/testing/test-matrix.md`](docs/testing/test-matrix.md).
 - **Security Guidance:** Threat modeling reference and controls in [`docs/security/threat-model.md`](docs/security/threat-model.md).
 - **Process & Governance:** Contribution governance, decision logs, and release workflow in [`docs/process/`](docs/process/).
+- **Fixture Tooling:** Multi-language script stubs, runtime requirements, and linting expectations in [`scripts/README.md`](scripts/README.md).
+
+## Fixture Generation Tooling
+
+The [`scripts/`](scripts/) directory now hosts descriptive stubs for the tooling
+referenced throughout [`docs/testing/fixtures-plan.md`](docs/testing/fixtures-plan.md)
+and [`docs/testing/ci-coverage.md`](docs/testing/ci-coverage.md). Each placeholder
+captures its intended responsibilities plus the runtimes and third-party
+dependencies required to regenerate fixtures across Windows, macOS, Linux, and
+WSL environments.
+
+When implementing these utilities:
+
+- Follow the linting and formatting expectations documented in
+  [`scripts/README.md`](scripts/README.md) (`ruff`/`black` for Python, `rustfmt`/
+  `clippy` for Rust, `shfmt`/`shellcheck` for shell, and `PSScriptAnalyzer` for
+  PowerShell).
+- Document new configuration switches or host prerequisites directly in the
+  script docstrings and associated fixture READMEs to keep regeneration guidance
+  complete.
+- Update CI workflows to invoke the appropriate linters once the scripts move
+  beyond placeholder status.
 
 ## Upcoming Client & IDE Resources
 - Client integration patterns and validated scripts will land in [`docs/integration/clients.md`](docs/integration/clients.md); watch for connector templates and signing guidance.
