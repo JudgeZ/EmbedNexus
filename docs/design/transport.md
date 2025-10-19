@@ -6,6 +6,7 @@ This module expands on the adapter responsibilities outlined in the [architectur
 - Provide authenticated, validated entry points for CLI, IDE, and automation clients.
 - Normalize requests into the runtime command router contract while preserving per-transport telemetry.
 - Enforce loopback-only exposure and enforceable session lifetimes to uphold offline-first guarantees.
+- Guarantee cross-platform compatibility (Linux, macOS, WSL) by insulating path translation and credential-handshake quirks for HTTP, STDIO, and UDS adapters.
 - Surface structured response envelopes with deterministic error codes so downstream automation remains resilient.
 
 ## Public Interfaces
@@ -60,7 +61,9 @@ sequenceDiagram
 - **Error Handling**: Normalize transport-specific errors into `TransportError` codes; surface remediation hints and ensure retries respect idempotency.
 - **Concurrency**: Use async executors per transport, isolating HTTP worker pools from STDIO single-flight handlers to prevent starvation.
 - **Resource Limits**: Enforce per-transport connection caps, request body limits, and back-pressure thresholds aligning with the offline-first resource profile.
-- **Security Alignment**: Enforce threat model mitigations by logging validation failures and mapping them to the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist).
+- **Security Alignment**: Enforce threat model mitigations by logging validation failures and mapping them to the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) and [Authentication Checklist](../security/threat-model.md#authentication-checklist); UDS peer credential checks must document assumptions about WSL interop sandboxes.
+- **Offline Expectations**: All adapters must degrade gracefully when the host is offline, providing deterministic retries and telemetry buffering that satisfy the offline-first contract described in [overview.md](./overview.md).
+- **Platform Notes**: Document how WSL path translation, Windows named pipe proxies, and macOS sandbox entitlements are handled so contributors can validate cross-platform behavior during implementation.
 
 ## Required Failing Tests
 The following tests must be authored (and initially fail) as part of the transport subsystem enablement, referencing the [test matrix](../testing/test-matrix.md#client-tooling-cli--sdk):
@@ -68,3 +71,4 @@ The following tests must be authored (and initially fail) as part of the transpo
 - Integration tests exercising CLI, IDE, and automation clients against loopback-only transports with audit verification.
 - Fuzz tests mutating request envelopes and session tokens to ensure adapters reject malformed inputs.
 - Performance tests measuring sustained throughput under connection churn while maintaining latency SLOs.
+- Each test suite must be authored following the repository-wide TDD mandate: land failing tests before implementing adapters, and link back to the relevant entries in `docs/process/pr-release-checklist.md` during review.

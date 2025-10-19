@@ -7,6 +7,7 @@ This specification complements the encrypted persistence path described in the [
 - Expose retrieval primitives supporting similarity search, filtering, and manifest-backed pagination.
 - Maintain compaction and rotation routines that respect resource budgets and preserve audit trails.
 - Provide transactional hooks for ingestion and transport layers to coordinate writes and reads.
+- Surface cross-platform storage guidance so Linux, macOS, and WSL deployments maintain consistent file permissions, case handling, and path normalization.
 
 ## Public Interfaces
 
@@ -60,8 +61,10 @@ sequenceDiagram
 ## Cross-Cutting Concerns
 - **Error Handling**: Differentiate between transient IO failures (retry) and shard corruption (quarantine + operator alert). Surface actionable diagnostics without exposing key material.
 - **Concurrency**: Support concurrent readers and writers through optimistic MVCC, ensuring ingestion commits do not block read paths beyond configured contention windows.
-- **Resource Limits**: Enforce shard size ceilings, compaction throttles, and buffer pool limits to maintain offline operation without exhausting local storage.
-- **Security Alignment**: Integrate with encryption policies defined in [encryption.md](./encryption.md) and the [Encryption Checklist](../security/threat-model.md#encryption-checklist).
+- **Resource Limits**: Enforce shard size ceilings, compaction throttles, and buffer pool limits to maintain offline operation without exhausting local storage, documenting WSL-specific disk passthrough considerations.
+- **Offline Expectations**: Buffer query analytics and rotation telemetry locally when disconnected from optional sync endpoints, replaying once connectivity is restored.
+- **Platform Notes**: Specify how case sensitivity, filesystem notifications, and file-lock semantics differ across supported platforms so implementations remain portable.
+- **Security Alignment**: Integrate with encryption policies defined in [encryption.md](./encryption.md) and the [Encryption Checklist](../security/threat-model.md#encryption-checklist), and map query authorization flows to the [Access Control Checklist](../security/threat-model.md#access-control-checklist).
 
 ## Required Failing Tests
 Following the [test matrix](../testing/test-matrix.md#secure-storage--retrieval), author failing tests covering:
@@ -69,3 +72,4 @@ Following the [test matrix](../testing/test-matrix.md#secure-storage--retrieval)
 - Integration tests verifying encrypted round-trip search across sharded stores.
 - Fuzz tests introducing randomized key schedules and tampered ciphertext manifests.
 - Performance tests enforcing latency budgets for rotation-aware index rebuilds.
+- Each suite must follow the TDD expectation by landing failing tests first and referencing `docs/process/pr-release-checklist.md` in review summaries.

@@ -7,6 +7,7 @@ This document extends the encrypted storage flows in the [architecture overview]
 - Provide streaming encryption/decryption primitives for ingestion writers and vector store readers.
 - Maintain policy enforcement for cipher suite selection, nonce management, and integrity tagging.
 - Expose attestation and compliance hooks for audit trails and external policy verification.
+- Support cross-platform secure enclave integration (Linux, macOS Keychain, Windows DPAPI/WSL interop) with explicit downgrade procedures when certain facilities are unavailable offline.
 
 ## Public Interfaces
 
@@ -59,8 +60,10 @@ sequenceDiagram
 ## Cross-Cutting Concerns
 - **Error Handling**: Differentiate between recoverable keystore timeouts and critical key compromise signals; escalate via incident hooks when compromise indicators surface.
 - **Concurrency**: Serialize key rotations while allowing parallel seal/open operations through read-only handles with reference counting.
-- **Resource Limits**: Monitor enclave session quotas, key cache sizes, and attestation storage growth to avoid exhausting offline workstations.
-- **Security Alignment**: Map all enforcement back to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and ensure policy exceptions are documented.
+- **Resource Limits**: Monitor enclave session quotas, key cache sizes, and attestation storage growth to avoid exhausting offline workstations, including guidance for WSL users where host disk quotas apply.
+- **Security Alignment**: Map all enforcement back to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) and [Key Management Checklist](../security/threat-model.md#key-management-checklist); ensure policy exceptions are documented with compensating controls.
+- **Offline Expectations**: Provide deterministic key caching and attestation batching for air-gapped sessions, replaying audit events once connectivity resumes.
+- **Platform Notes**: Document per-platform key derivation, secure storage prerequisites, and fallback behavior when native enclaves are unavailable.
 
 ## Required Failing Tests
 In alignment with the [test matrix](../testing/test-matrix.md#encryption--tls-controls), implement failing tests that cover:
@@ -68,3 +71,4 @@ In alignment with the [test matrix](../testing/test-matrix.md#encryption--tls-co
 - Integration tests for encrypted sync and local persistence demonstrating rotation-aware unlock flows.
 - Fuzz tests mutating handshake transcripts and ciphertext blobs for downgrade and tampering resilience.
 - Performance tests capturing encryption overhead during index rebuilds across representative datasets.
+- Each suite must respect the TDD process by landing failing tests prior to implementation and referencing `docs/process/pr-release-checklist.md` when summarizing coverage.
