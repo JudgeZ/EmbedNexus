@@ -35,6 +35,43 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Integration** – replay of golden MCP conversations against the extension bridge.
   - **Fuzz** – randomized suggestion payload ordering via golden transcript mutators.
   - **Performance** – response time guard for multi-file suggestion batches.
+- **Security traceability** – Aligns with the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for protocol payload vetting.
+
+### Filesystem Watch Service
+- **Planned feature focus**: Workspace filesystem watching with debounce and ignore rules.
+- **Required failing tests**:
+  - **Unit** – watcher debounce helpers using `tests/fixtures/filesystem/mock-events.yaml`.
+  - **Integration** – end-to-end change propagation through `tests/fixtures/filesystem/workspace-replay/` driving the ingest queue.
+  - **Fuzz** – event storm permutations generated from `tests/golden/filesystem/watch-fuzz.log` to validate ignore glob safety.
+  - **Performance** – sustained burst benchmark guarding CPU usage under 5k events/min replay.
+- **Security traceability** – Covers sandboxing and input-handling mitigations per the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) and [Input Validation Checklist](../security/threat-model.md#input-validation-checklist).
+
+### Archive Extraction Quotas
+- **Planned feature focus**: Controlled archive ingestion with byte quotas and type filters.
+- **Required failing tests**:
+  - **Unit** – quota calculators and MIME gatekeepers using `tests/fixtures/archives/quota-scenarios.toml`.
+  - **Integration** – staged tarball ingestion from `tests/fixtures/archives/overflow-case.tar.zst` asserting quota enforcement errors.
+  - **Fuzz** – randomized archive metadata from `tests/golden/archives/fuzzed-manifests.jsonl` stressing parser hardening.
+  - **Performance** – extraction throughput guard maintaining quota checks under 2% overhead on the `tests/fixtures/archives/bulk-sample/` corpus.
+- **Security traceability** – Maps to the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for size gating and the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) for extractor isolation requirements.
+
+### Encryption & TLS Controls
+- **Planned feature focus**: Toggleable encryption-at-rest and TLS-enforced sync endpoints.
+- **Required failing tests**:
+  - **Unit** – key negotiation toggles and TLS configuration validators using `tests/fixtures/security/encryption-toggles.json`.
+  - **Integration** – encrypted sync round-trip employing `tests/golden/security/tls-handshake.trace` with toggled endpoints.
+  - **Fuzz** – randomized cipher-suite negotiation transcripts from `tests/golden/security/tls-fuzz.log` ensuring downgrade protection.
+  - **Performance** – encryption overhead guard measuring index rebuild latency with toggles flipped across `tests/fixtures/security/perf-window/` datasets.
+- **Security traceability** – Directly linked to the [Encryption Checklist](../security/threat-model.md#encryption-checklist) for configuration validation and the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for handshake parameter vetting.
+
+### Multi-Repository Routing
+- **Planned feature focus**: Routing embeddings and retrieval across federated repository workspaces.
+- **Required failing tests**:
+  - **Unit** – routing table merge helpers referencing `tests/fixtures/routing/multi-repo-matrix.json`.
+  - **Integration** – cross-repo retrieval using the golden session `tests/golden/routing/mcp-federation.transcript` to confirm correct tenant isolation.
+  - **Fuzz** – randomized repository affinity hints derived from `tests/golden/routing/fuzz-affinity.jsonl`.
+  - **Performance** – routing throughput guard validating scheduler latency across the `tests/fixtures/routing/high-fanout/` scenario pack.
+- **Security traceability** – Upholds isolation controls aligned with the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) and [Encryption Checklist](../security/threat-model.md#encryption-checklist) for cross-tenant data flows.
 
 ## Shared Testing Assets
 
