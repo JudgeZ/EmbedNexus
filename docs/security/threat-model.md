@@ -6,7 +6,7 @@ This document captures anticipated threats, guiding assumptions, and mitigation 
 
 ```mermaid
 graph TD
-  Client["Client Tools(IDE, CLI, Extensions)"] -->|Requests / Embedding Jobs| API[Local MCP API]
+  Client["Client Tools (IDE, CLI, Extensions)"] -->|Requests / Embedding Jobs| API[Local MCP API]
   API -->|Model Prompts + Corpora| Engine[Embedding Engine]
   Engine -->|Vector Outputs| Store[(Local Vector Store)]
   Store -->|Results| Client
