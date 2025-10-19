@@ -20,6 +20,7 @@ Use this checklist before opening or merging any pull request that will advance 
 ## 4. Security Review
 - [ ] Threat model consulted per `docs/security/threat-model.md` and relevant scenarios documented, including any new encryption, authentication, or IDE/CLI exposure paths.
 - [ ] Security checklist completed (input validation, encryption, sandboxing as applicable) with findings noted and residual risks explained.
+- [ ] For changes impacting transport encryption, archive extraction, or multi-repository isolation, link to the corresponding responsibility tables in `docs/security/threat-model.md`.
 - [ ] New or modified dependencies assessed for vulnerabilities and licensing compatibility.
 
 ## 5. Release Tagging and Governance
