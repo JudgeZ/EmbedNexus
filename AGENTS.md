@@ -18,7 +18,7 @@ All contributors **must** review and follow this plan before beginning any codin
 
 ## Pull Request Expectations
 - Each PR must include:
-  - A checklist covering plan review, TDD adherence, `rustfmt`, `clippy`, security assessment, documentation updates, and confirmation that relevant items from `docs/security/threat-model.md` were evaluated.
+  - A completed [PR release checklist](docs/process/pr-release-checklist.md) covering plan review, TDD adherence, `rustfmt`, `clippy`, security assessment, documentation updates, and confirmation that relevant items from `docs/security/threat-model.md` were evaluated.
   - Evidence of peer review before merge; at least one reviewer must sign off on security considerations.
   - Release tagging notes when the change affects public interfaces or deployment artifacts.
 
