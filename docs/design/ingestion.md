@@ -72,6 +72,46 @@ flowchart TD
 - **Platform Notes**: Document how case sensitivity, path length, and newline normalization differ across Linux, macOS, and WSL so deterministic chunking works across host environments.
 - **Offline Expectations**: The pipeline must queue manifest emissions and audit updates when storage or ledger sinks are temporarily unavailable, replaying them once the offline constraint clears.
 
+## Archive Extraction Quota Enforcement
+- **Quota Computation**: Archive extraction is constrained by a per-workspace byte ceiling (`quota.bytes_max`), file entry count ceiling (`quota.entries_max`), and a nested archive depth ceiling (`quota.nesting_max`). Each ceiling is calculated from the workspace profile selected by the scheduler and recorded alongside the registry manifest. Profiles apply deterministic multipliers for known large repositories and shrinkage factors for sandboxed clients. Before extraction begins, the orchestrator computes a cumulative budget (`quota.remaining_*`) and seeds the extractor with those counters so checks can be performed without round-trips.
+- **Latency Budgets**: Archive handlers must complete quota evaluation, extraction, and sanitation within a rolling `latency_budget_ms` window. Budgets are enforced via a monotonic timer: `start_time` is captured prior to the first entry inspection, interim checkpoints log elapsed milliseconds per stage, and exhaustion of the budget triggers a `QuotaLatencyExceeded` error that includes both elapsed time and residual quota state. The latency window is sized according to the [Archive Extraction Quotas tests](../testing/test-matrix.md#archive-extraction-quotas) to ensure deterministic behavior during regression runs.
+- **Exhaustion Handling**: When any quota counter reaches zero or the latency budget is exhausted, the extractor halts further entry reads, emits a structured diagnostic bundle, and tags the workspace as `ingestion.quota_exhausted`. The pipeline records the partial manifest, schedules a retry with exponential backoff, and attaches the bundle to the audit ledger. Exhaustion events additionally reference the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) to confirm that no temporary directories remain mounted, and the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) to ensure no unverified payloads leaked past the quarantine boundary.
+
+### Quota Evaluation Flow
+
+```mermaid
+flowchart TD
+    subgraph Extraction
+        Q0[Load workspace quota profile]
+        Q1[Initialize remaining bytes/entries/nesting counters]
+        Q2[Inspect next archive entry]
+        Q3{Quota or latency budget breached?}
+        Q4[Extract entry to sandbox]
+        Q5[Update counters and latency log]
+        Q6{Nested archive detected?}
+        Q7[Push nested archive to evaluation stack]
+        Q8[Emit structured diagnostics and halt]
+    end
+
+    subgraph Testing
+        T1[[Archive Extraction Quotas matrix]]
+    end
+
+    Q0 --> Q1 --> Q2 --> Q3
+    Q3 -- No --> Q4 --> Q5 --> Q6
+    Q6 -- Yes --> Q7 --> Q2
+    Q6 -- No --> Q2
+    Q3 -- Yes --> Q8
+    T1 -. provides fixtures .-> Q2
+    T1 -. validates budgets .-> Q3
+    T1 -. asserts diagnostics .-> Q8
+```
+
+### Edge Case Handling & Security Alignment
+- **Nested Archives**: Each detected archive within an archive increments the `nesting_depth` counter. Extraction continues only if the resulting depth is below `quota.nesting_max`; otherwise the entry is skipped, logged, and tied to the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist) requirement that sandbox mounts are ephemeral and bounded. Nested archives that pass the limit are evaluated recursively with inherited quotas to prevent resource amplification.
+- **Partial Failures**: If extraction of an entry fails due to corruption or policy violations, the extractor marks the entry as quarantined, decrements the retry counter, and records the failure reason in the manifest. Subsequent entries resume evaluation while ensuring no unvalidated content escapes the sandbox, satisfying the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist). When repeated partial failures risk consuming the latency budget, the extractor also evaluates against the [File Handling Checklist](../security/threat-model.md#file-handling-checklist) to guarantee temporary files are cleaned and handles are closed.
+- **Quota Drift Corrections**: When retries occur after partial failures, quota counters are reconciled against the diagnostic bundle to prevent drift (e.g., entries counted twice). Drift resolution references the [File Handling Checklist](../security/threat-model.md#file-handling-checklist) requirement that manifest updates reflect the precise set of files actually written to scratch space.
+
 ## Test hooks
 The ingestion pipeline must land failing coverage from both the [Filesystem Watch Service matrix](../testing/test-matrix.md#filesystem-watch-service) and the [Archive Extraction Quotas matrix](../testing/test-matrix.md#archive-extraction-quotas) before implementation proceeds. Each hook must document the [Input Validation](../security/threat-model.md#input-validation-checklist) and [Sandboxing](../security/threat-model.md#sandboxing-checklist) checklist items it satisfies:
 - **Watcher latency propagation hook** – Unit, integration, and fuzz tests sourced from `tests/fixtures/filesystem/latency-window.yaml`, `tests/fixtures/filesystem/workspace-replay/`, and `tests/golden/filesystem/watch-latency-burst.log` to prove debounce heuristics and queue propagation honor latency budgets without accepting malformed events.
