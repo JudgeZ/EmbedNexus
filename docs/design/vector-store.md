@@ -5,7 +5,7 @@ This specification complements the encrypted persistence path described in the [
 ## Module Responsibilities
 - Persist embedding batches in encrypted shards keyed by repository and workspace lineage.
 - Expose retrieval primitives supporting similarity search, filtering, and manifest-backed pagination.
-- Maintain compaction and rotation routines that respect resource budgets and preserve audit trails.
+- Maintain compaction and rotation routines that respect resource budgets and preserve audit trails, including DPAPI-backed key recovery workflows for WSL-hosted shards.
 - Provide transactional hooks for ingestion and transport layers to coordinate writes and reads.
 - Surface cross-platform storage guidance so Linux, macOS, and WSL deployments maintain consistent file permissions, case handling, and path normalization.
 
@@ -64,6 +64,7 @@ sequenceDiagram
 - **Resource Limits**: Enforce shard size ceilings, compaction throttles, and buffer pool limits to maintain offline operation without exhausting local storage, documenting WSL-specific disk passthrough considerations.
 - **Offline Expectations**: Buffer query analytics and rotation telemetry locally when disconnected from optional sync endpoints, replaying once connectivity is restored.
 - **Platform Notes**: Specify how case sensitivity, filesystem notifications, and file-lock semantics differ across supported platforms so implementations remain portable.
+- **WSL Telemetry Expectations**: Capture DPAPI key recovery events, shard unlock timings, and encryption envelope integrity when the store runs under WSL; align telemetry schemas with the failing coverage introduced in the [Encryption & TLS Controls matrix](../testing/test-matrix.md#encryption--tls-controls).
 - **Security Alignment**: Integrate with encryption policies defined in [encryption.md](./encryption.md) and the [Encryption Checklist](../security/threat-model.md#encryption-checklist), and map query authorization flows to the [Access Control Checklist](../security/threat-model.md#access-control-checklist).
 
 ## Test hooks
@@ -72,4 +73,5 @@ Vector store hardening requires failing coverage from both the [Secure Storage &
 - **Cross-repo routing hook** – Integration tests replaying `tests/golden/routing/multi-repo-latency.transcript` to confirm tenant isolation and routing-table merges remain within policy while enforcing encryption on every hop.
 - **Routing throughput guard hook** – Performance coverage executing `tests/golden/routing/fanout-throughput.jsonl` alongside `tests/fixtures/routing/high-fanout/` to ensure scheduling latency stays within guardrails without violating sandbox-imposed resource ceilings.
 - **Compaction resilience hook** – Performance and integration tests from the secure storage matrix verifying rotation-aware compaction against `tests/golden/security/encryption-toggle.trace` does not leak plaintext diagnostics and respects encryption attestations.
+- **WSL DPAPI recovery hook** – Unit and integration tests targeting `tests/fixtures/security/dpapi-recovery/` with audit validation against `tests/golden/security/dpapi-recovery-audit.jsonl` to guarantee DPAPI-backed key handles are honored when shards migrate between Windows hosts and WSL distributions.
 - Register each hook as a failing test ahead of implementation and cross-reference `docs/process/pr-release-checklist.md` with the corresponding security checklist evidence.
