@@ -113,7 +113,7 @@ When Windsurf (Windows) tunnels into a WSL-hosted server, use `wsl.exe -e` to st
 servers:
   cursor-local-embedding:
     transport: websocket
-    url: ws://127.0.0.1:8882/mcp
+    url: wss://127.0.0.1:8882/mcp
     command: wsl.exe
     args:
       - "-d"
