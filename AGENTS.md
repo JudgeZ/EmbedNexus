@@ -9,6 +9,7 @@ All contributors **must** review and follow this plan before beginning any codin
 ## Rust Engineering Standards
 - Conform to idiomatic Rust style; run `rustfmt` and `cargo clippy --all-targets --all-features` before submitting changes.
 - Treat security as a first-class concern. Perform threat modeling and document mitigation notes in PR discussions for any change that could affect data handling, encryption, authentication, or platform integration.
+- Consult `docs/security/threat-model.md` before and during implementation. Complete the applicable security review checklists (input validation, encryption, sandboxing) and link the checklist outcomes in the PR description.
 
 ## Documentation Requirements (4C Framework)
 - Documentation must be **Clear, Concise, Complete, and Correct** (4C).
@@ -17,7 +18,7 @@ All contributors **must** review and follow this plan before beginning any codin
 
 ## Pull Request Expectations
 - Each PR must include:
-  - A checklist covering plan review, TDD adherence, `rustfmt`, `clippy`, security assessment, and documentation updates.
+  - A checklist covering plan review, TDD adherence, `rustfmt`, `clippy`, security assessment, documentation updates, and confirmation that relevant items from `docs/security/threat-model.md` were evaluated.
   - Evidence of peer review before merge; at least one reviewer must sign off on security considerations.
   - Release tagging notes when the change affects public interfaces or deployment artifacts.
 
