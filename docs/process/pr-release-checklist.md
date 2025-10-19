@@ -7,6 +7,7 @@ Use this checklist before opening or merging any pull request that will advance 
 - [ ] Stakeholder sign-off recorded (include meeting notes or approval comment links).
 - [ ] Scope confirms release impact, identifies required release artifacts, and enumerates design/test documentation updates (Mermaid diagrams, test-matrix entries).
 - [ ] Documentation review completed per `docs/process/doc-review.md`, with approvals logged and outstanding actions tracked in the governance log.
+- [ ] Relevant C4 narratives and diagrams reviewed or updated per [`AGENTS.md`](../../AGENTS.md) to confirm Context/Container/Component/Code accuracy.
 
 ## 2. Test-Driven Development Evidence
 - [ ] Tests were authored or updated before implementation to capture desired behavior, referencing `docs/testing/test-matrix.md`.
