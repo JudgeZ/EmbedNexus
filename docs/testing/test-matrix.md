@@ -94,6 +94,25 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 - **Fixture Library**: Reuse the shared fixture bundle under `tests/fixtures/shared/` for cross-subsystem consistency. Extend fixtures instead of duplicating data and document each addition inside the fixture README files.
 - **Golden MCP Messages**: Client scripts and IDE validation must rely on the curated golden message transcripts in `tests/golden/mcp/`. Update transcripts when protocol changes occur and ensure replay harnesses remain deterministic.
 
+## Automation & Regeneration Workflows
+
+The GitHub Actions workflows under `.github/workflows/` codify the regeneration
+sequences captured in the fixture plan. Reference their outputs when updating the
+matrix entries above and attach run URLs in PR descriptions.
+
+| Workflow | Toolchain Baseline | Coverage | Notes |
+| --- | --- | --- | --- |
+| `Regenerate Fixture Corpus` | Ubuntu runner, Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), Rust stable, `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd` | Filesystem, archives, routing, transport, ingestion, and shared fixture directories. Produces `fixture-regeneration-output` artifact with refreshed `tests/fixtures/` content plus adjacent goldens. | Placeholder detection keeps steps in no-op mode until scripts are implemented. `scripts/checksums.sh --verify` automatically activates once the checksum helper stops emitting the placeholder message. Windows job surfaces manual DPAPI/WSL capture instructions; upload resulting assets to the workflow run for reviewer access. |
+| `Regenerate Golden Artifacts` | Same as above | Regenerates transcripts and logs under `tests/golden/`, uploading the `golden-regeneration-output` artifact. | Mirrors placeholder detection and checksum gating. Includes Windows guidance for TLS downgrade, DPAPI recovery, and WSL handshake traces to be captured on a domain-joined workstation. |
+
+**Verification tracking**
+
+- Capture checksum results by downloading the workflow artifacts and running
+  `scripts/checksums.sh --verify` locally once the helper is implemented.
+- Record the workflow run URL, Actions artifact name, and checksum verification
+  outcome in subsystem-specific fixture README updates to maintain traceability
+  between automation and documentation.
+
 ## Execution Notes
 
 1. Add each failing test to the appropriate suite before feature implementation begins. Reference the planned feature label in the test description to maintain traceability.
