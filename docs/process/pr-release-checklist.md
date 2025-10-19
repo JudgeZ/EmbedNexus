@@ -6,6 +6,7 @@ Use this checklist before opening or merging any pull request that will advance 
 - [ ] Implementation plan documented and reviewed prior to coding.
 - [ ] Stakeholder sign-off recorded (include meeting notes or approval comment links).
 - [ ] Scope confirms release impact, identifies required release artifacts, and enumerates design/test documentation updates (Mermaid diagrams, test-matrix entries).
+- [ ] Documentation review completed per `docs/process/doc-review.md`, with approvals logged and outstanding actions tracked in the governance log.
 
 ## 2. Test-Driven Development Evidence
 - [ ] Tests were authored or updated before implementation to capture desired behavior, referencing `docs/testing/test-matrix.md`.
@@ -27,6 +28,7 @@ Use this checklist before opening or merging any pull request that will advance 
 - [ ] Tagging strategy decided (e.g., `vX.Y.Z`) and noted in PR description.
 - [ ] Changelog entries drafted or updated to reflect the change, including client tooling deliverables (CLI packages, SDK updates, IDE builds).
 - [ ] Release notes outline rollback strategy, validation steps, and updated delivery instructions for affected clients.
+- [ ] Governance log updated with documentation review outcomes and cross-references to relevant pull requests or issues.
 
 ## 6. Release Artifact Expectations
 Produce and attach the following artifacts for each release build:
