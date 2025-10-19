@@ -16,6 +16,8 @@ tests/
 │   ├── filesystem/
 │   │   ├── mock-events.yaml
 │   │   └── workspace-replay/
+│   ├── ingestion/
+│   │   └── delayed-ledger/
 │   ├── routing/
 │   │   ├── high-fanout/
 │   │   └── multi-repo-matrix.json
@@ -23,6 +25,8 @@ tests/
 │   │   ├── dpapi-recovery/
 │   │   ├── encryption-toggles.json
 │   │   └── perf-window/
+│   ├── transport/
+│   │   └── offline-queue/
 │   └── shared/
 │       └── README.md
 └── golden/
@@ -38,8 +42,11 @@ tests/
     │   ├── dpapi-recovery-audit.jsonl
     │   ├── tls-fuzz.log
     │   └── tls-handshake.trace
-    └── transport/
-        └── wsl-handshake-negotiation.trace
+    ├── transport/
+    │   ├── offline-buffer-replay.transcript
+    │   └── wsl-handshake-negotiation.trace
+    └── ingestion/
+        └── manifest-replay.log
 ```
 
 The tree captures current references in the [test matrix](./test-matrix.md). Subdirectories remain dedicated to subsystem domains so that fixtures scale without cross-contamination.
@@ -106,8 +113,19 @@ Every fixture directory must contain a short `README.md` when multiple files coe
   3. Generate encryption toggle fixtures by running the configuration synthesizer: `python scripts/generate_encryption_toggles.py --output tests/fixtures/security/encryption-toggles.json` (requires `python -m pip install click cryptography`).
   4. Materialize performance datasets through `scripts/trace_capture.sh --profile perf-window --output-dir tests/fixtures/security/perf-window/` and confirm dataset size thresholds in the README.
   5. Capture DPAPI recovery telemetry from a Windows host joined to the designated test domain: `powershell -File scripts/collect_dpapi.ps1 -OutputDir tests/fixtures/security/dpapi-recovery/` (requires Windows 11 22H2+, domain trust, and the DPAPI recovery agent certificate installed). Export the aggregated audit log to `tests/golden/security/dpapi-recovery-audit.jsonl` via `scripts/trace_capture.sh --profile dpapi-audit` while still on the Windows host.
-  6. Replay the WSL transport handshake while attached to the Windows event log forwarder: from WSL, run `TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173` with the Windows-side relay active. Confirm the DPAPI audit correlates with the handshake timestamp before committing the trace.
-  7. Document any host-specific configuration (DPAPI recovery agent thumbprint, WSL distribution name, Windows build number) inside the fixture-level README to satisfy the platform guidance requirements in the test matrix.
+ 6. Replay the WSL transport handshake while attached to the Windows event log forwarder: from WSL, run `TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173` with the Windows-side relay active. Confirm the DPAPI audit correlates with the handshake timestamp before committing the trace.
+ 7. Document any host-specific configuration (DPAPI recovery agent thumbprint, WSL distribution name, Windows build number) inside the fixture-level README to satisfy the platform guidance requirements in the test matrix.
+
+### Offline Queue & Replay Harnesses
+
+- **Tooling**: `scripts/offline_transport_buffer.py` (Python 3.11 + `typer`, `rich`) and `scripts/manifest_replay_harness.rs` (Rust integration harness).
+- **Workflow**:
+  1. Capture air-gapped transport sessions by running `python scripts/offline_transport_buffer.py capture --output-dir tests/fixtures/transport/offline-queue/ --profile air-gapped`. This produces deterministic queue snapshots (`air-gapped-session.yaml`, `burst-drain.jsonl`) that model retry buffer saturation without remote connectivity.
+  2. Validate bounded growth with `python scripts/offline_transport_buffer.py verify tests/fixtures/transport/offline-queue/ --max-buffer 512` to ensure replay scenarios respect the transport backpressure thresholds documented in [Transport Adapter Specification](../design/transport.md#offline-backpressure).
+  3. Generate golden replays by invoking `python scripts/offline_transport_buffer.py replay --input tests/fixtures/transport/offline-queue/burst-drain.jsonl --transcript tests/golden/transport/offline-buffer-replay.transcript`, capturing deterministic dequeue ordering for the failing integration test.
+  4. Simulate delayed storage availability with `cargo run --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000`. The harness should emit manifest diff batches (`retry-window-*.jsonl`) and ledger checkpoints replicating the recovery workflow.
+  5. Record checksum manifests for large queue snapshots and replay logs using `scripts/checksums.sh tests/fixtures/transport/offline-queue/ tests/fixtures/ingestion/delayed-ledger/ tests/golden/transport/offline-buffer-replay.transcript tests/golden/ingestion/manifest-replay.log`.
+  6. Update the fixture-level README files with air-gapped host prerequisites (e.g., firewall rules, telemetry capture sinks) and storage reconnection choreography so reviewers can reproduce the capture sessions.
 
 ### Routing Scenarios
 

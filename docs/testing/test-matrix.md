@@ -80,6 +80,15 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Performance** – routing throughput guard validating scheduler latency across the scenario pack `tests/golden/routing/fanout-throughput.jsonl` and fixture directory `tests/fixtures/routing/high-fanout/`.
 - **Traceability** – Tied to the [Architecture Overview](../design/overview.md#local-ingestion-pipeline) for multi-repo orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Encryption](../security/threat-model.md#encryption-checklist) checklists governing cross-tenant routing.
 
+### Offline Resilience & Replay
+- **Planned feature focus**: Transport retry buffering during network isolation and deterministic ingestion manifest replays after storage recovery.
+- **Required failing tests**:
+  - **Transport retry buffer integration** – Exercise adapter-level retry queue persistence with air-gapped transport harnesses referenced in [Transport Adapter Specification](../design/transport.md#offline-backpressure).
+  - **Retry buffer fuzz** – Burst enqueue/dequeue permutations sourced from `tests/fixtures/transport/offline-queue/` and `tests/golden/transport/offline-buffer-replay.transcript` to validate bounded growth and telemetry integrity.
+  - **Manifest replay integration** – Simulate delayed storage availability by applying the ingestion replay harness in [Ingestion Pipeline Specification](../design/ingestion.md#offline-replay-hooks) with datasets `tests/fixtures/ingestion/delayed-ledger/` and transcripts `tests/golden/ingestion/manifest-replay.log`.
+  - **Performance** – Measure replay catch-up latency across the delayed-storage fixtures while asserting audit log ordering guarantees.
+- **Security traceability** – Aligns with the [Sandboxing](../security/threat-model.md#sandboxing-checklist), [Access Control](../security/threat-model.md#access-control-checklist), and [Encryption](../security/threat-model.md#encryption-checklist) checklists to ensure buffered data remains protected during offline windows.
+
 ## Shared Testing Assets
 
 - **Fixture Library**: Reuse the shared fixture bundle under `tests/fixtures/shared/` for cross-subsystem consistency. Extend fixtures instead of duplicating data and document each addition inside the fixture README files.
