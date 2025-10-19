@@ -4,7 +4,9 @@ This catalog tracks the golden interaction transcripts that back the integration
 documentation, client scripts, and CI coverage described in the rest of the
 repository. Every subdirectory corresponds to a supported IDE integration and
 contains the canonical exchanges captured while replaying the client fixtures
-against the Cursor Local Embedding MCP server.
+against the Cursor Local Embedding MCP server. Transcripts are normalized with
+[`scripts/transcripts/normalize.py`](../../../scripts/transcripts/normalize.py)
+so the envelopes remain deterministic across platforms.
 
 ## Directory Layout
 
@@ -57,17 +59,38 @@ lowercase and hyphenate multiword IDE names (e.g., `jetbrains-gateway`).
 
 ## Regeneration Workflow (Pending Client Automation)
 
-Once the language client scripts land, regenerate transcripts by running the
-planned `clients` tooling for each transport scenario. Until those scripts are in
-place, treat every transcript as **TODO** and leave placeholder notes in the IDE
-subdirectories. When the tooling arrives:
+Regenerate transcripts by replaying the client automation for each supported
+transport and then normalizing the capture with the transcript tooling:
 
-1. Run the client script with the transport and prompt specified in the
-   integration guides.
-2. Capture the request/response envelopes into a temporary directory.
-3. Normalize the envelopes (key ordering, timestamps, deterministic IDs).
-4. Replace the corresponding `<scenario>.json` and update `CHECKSUMS.sha256`.
-5. Commit both the JSON and compressed artifacts alongside any updated docs.
+1. Run the language client helper with the desired IDE + transport pairing. For
+   example:
+
+   ```bash
+   python clients/python/client.py \
+     --ide cursor \
+     --transport stdio-noise \
+     --prompt "Summarize transcript capture." \
+     --record-transcript tmp/cursor-stdio-noise.raw.json
+   ```
+
+2. Canonicalize the capture:
+
+   ```bash
+   python scripts/transcripts/normalize.py \
+     tmp/cursor-stdio-noise.raw.json \
+     --output docs/integration/transcripts/ide/cursor/stdio-noise.json
+   ```
+
+3. Regenerate checksums from the IDE directory:
+
+   ```bash
+   (cd docs/integration/transcripts/ide/cursor && sha256sum *.json > CHECKSUMS.sha256)
+   ```
+
+4. Commit both the normalized JSON files and refreshed checksum manifest. Add a
+   `.json.zst` copy if the transcript exceeds 256 KiB (see compression policy).
 
 Document any deviations or tooling flags in the subdirectory README so that
-future contributors can reproduce the captures precisely.
+future contributors can reproduce the captures precisely. CI workflows consume
+these normalized artifacts directly, so rerun the normalization script whenever
+the raw captures change.

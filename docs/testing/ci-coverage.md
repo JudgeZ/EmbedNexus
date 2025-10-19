@@ -12,7 +12,10 @@ so that scripted clients, IDE bridges, and CI jobs remain synchronized.
 
 The `clients` workflow will fan out into a matrix that exercises each language client
 across the supported transport modes. All jobs run on Ubuntu, macOS, Windows, and WSL
-runners unless otherwise noted.
+runners unless otherwise noted. Golden transcripts captured under
+`docs/integration/transcripts/ide/` (normalized via
+[`scripts/transcripts/normalize.py`](../integration/transcripts/ide/README.md#regeneration-workflow))
+anchor the replay expectations referenced below.
 
 | Job Key | Client Runtime | Transport Scenario | Runners | Notes |
 | --- | --- | --- | --- | --- |
@@ -49,8 +52,9 @@ client plan and IDE overview documents to keep parity across toolchains.
 - Noise handshake traces stored under `tests/fixtures/noise/<language>/handshake.log`.
 - IDE-aligned transcripts (Cursor, Windsurf, VS Code) placed under
   `docs/integration/transcripts/ide/<ide>/stdio-noise.json` so IDE automation can
-  reuse the same expectations described in the IDE overview. These remain **TODO**
-  until the language client scripts gain transcript capture support.
+  reuse the same expectations described in the IDE overview. These are normalized
+  with `python scripts/transcripts/normalize.py --in-place <file>.json` to keep CI
+  comparisons deterministic.
 
 ### HTTP + TLS Fixtures
 
@@ -61,8 +65,8 @@ client plan and IDE overview documents to keep parity across toolchains.
   `tests/fixtures/tls/{rootCA.pem, server.pem, server-key.pem}` (private keys should
   remain encrypted at rest; use sealed secrets in CI).
 - IDE bridge transcripts for HTTPS and secure websocket transports stored alongside
-  the stdio fixtures (`docs/integration/transcripts/ide/<ide>/http-tls.json`). These
-  entries remain **TODO** until the client automation can generate goldens.
+  the stdio fixtures (`docs/integration/transcripts/ide/<ide>/http-tls.json`). Normalize
+  them with the shared script before committing updates so CI diffs remain stable.
 - TLS negotiation logs capturing ALPN selection and mutual TLS behavior where required.
 
 ### WSL Bridge Fixtures

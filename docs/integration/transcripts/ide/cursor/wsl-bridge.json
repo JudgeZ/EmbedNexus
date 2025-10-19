@@ -1,0 +1,84 @@
+[
+  {
+    "direction": "send",
+    "timestamp": "2024-06-03T09:10:05.512Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "method": "initialize",
+      "params": {
+        "bridge": {
+          "launcher": "wsl.exe",
+          "pathTranslation": "windows-to-wsl"
+        },
+        "capabilities": {
+          "transports": [
+            "stdio"
+          ]
+        },
+        "client": "cursor",
+        "protocolVersion": "2024-05-31"
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-03T09:10:05.703Z",
+    "envelope": {
+      "id": "1",
+      "jsonrpc": "2.0",
+      "result": {
+        "capabilities": {
+          "tools": [
+            "create-embedding"
+          ]
+        },
+        "serverInfo": {
+          "name": "cursor-local-embedding",
+          "version": "0.1.0"
+        }
+      }
+    }
+  },
+  {
+    "direction": "send",
+    "timestamp": "2024-06-03T09:10:06.044Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "method": "embeddings/create",
+      "params": {
+        "input": [
+          "WSL bridge request"
+        ],
+        "model": "cursor-local",
+        "transport": "stdio",
+        "wsl": {
+          "distribution": "Ubuntu-22.04",
+          "path": "/mnt/c/workspace/project"
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "timestamp": "2024-06-03T09:10:06.268Z",
+    "envelope": {
+      "id": "2",
+      "jsonrpc": "2.0",
+      "result": {
+        "data": [
+          {
+            "index": 0,
+            "vector": [
+              0.19,
+              -0.02,
+              0.67
+            ]
+          }
+        ],
+        "model": "cursor-local"
+      }
+    }
+  }
+]
