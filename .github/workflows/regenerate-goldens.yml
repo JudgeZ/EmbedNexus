@@ -56,7 +56,7 @@ jobs:
       - name: Prime Cargo dependencies
         if: inputs.dry_run != 'true'
         run: |
-          cargo fetch
+          cargo fetch --manifest-path scripts/Cargo.toml
 
       - name: Generate archive-based goldens
         if: inputs.dry_run != 'true'
@@ -65,7 +65,7 @@ jobs:
           if grep -q 'Placeholder' scripts/archive_builder.rs; then
             echo 'archive_builder.rs is a placeholder – skipping archive golden regeneration.'
           else
-            cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
+            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
           fi
 
       - name: Generate routing goldens
@@ -96,7 +96,7 @@ jobs:
           if grep -q 'Placeholder' scripts/manifest_replay_harness.rs; then
             echo 'manifest_replay_harness.rs is a placeholder – skipping manifest replay regeneration.'
           else
-            cargo run --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000
+            cargo run --manifest-path scripts/Cargo.toml --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000
           fi
 
       - name: Capture TLS and DPAPI goldens (manual placeholder)
