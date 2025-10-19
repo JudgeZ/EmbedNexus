@@ -31,6 +31,20 @@ Use this log to capture the outcomes of each monthly governance review.
 
 ---
 
+## 2024-08-22
+- **Participants:** Jane Doe (Governance Lead), Alex Smith (Security Officer), Priya Patel (Process Steward), Jordan Lee (Documentation Scribe)
+- **Scope Summary:**
+  - `AGENTS.md` updates: Reaffirmed mandate to maintain full C4 architecture coverage and reference it within release workflows.
+  - Security documentation updates: None.
+  - Process documentation updates: Added explicit C4 review requirement to `docs/process/pr-release-checklist.md` with linkage back to `AGENTS.md`.
+- **Decisions:**
+  1. Require PR authors to confirm C4 assets were reviewed when completing the release checklist — Process Steward — Immediate.
+- **Action Items:**
+  1. Audit upcoming release candidates to ensure C4 confirmations are present in checklists — Documentation Scribe — 2024-09-05.
+- **Change Tracking Notes:** Updated `docs/process/pr-release-checklist.md` to reference `AGENTS.md` for C4 obligations and logged this update here.
+
+---
+
 ## 2024-06-14
 - **Participants:** TBD (Governance Lead), TBD (Security Officer), TBD (Process Steward), TBD (Documentation Scribe)
 - **Scope Summary:**
