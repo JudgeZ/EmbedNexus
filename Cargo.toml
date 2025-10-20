@@ -1,11 +1,96 @@
 [workspace]
 members = [
     "scripts",
+    "crates/runtime-transport-http",
+    "crates/runtime-transport-stdio",
+    "crates/runtime-transport-uds",
+    "crates/runtime-router",
+    "crates/runtime-policy",
+    "crates/ingestion-workspace",
+    "crates/ingestion-planning",
+    "crates/ingestion-sanitization",
+    "crates/ingestion-embedding",
+    "crates/ingestion-manifest",
+    "crates/storage-vector",
+    "crates/storage-ledger",
+    "crates/governance-audit",
+    "crates/governance-traceability",
 ]
 resolver = "2"
 
 [workspace.package]
 edition = "2021"
+rust-version = "1.76"
 
 [workspace.metadata]
 description = "Workspace placeholder for fixture tooling"
+
+[workspace.metadata.planned-crates]
+"runtime-transport-http" = "HTTP adapter implementing TLS negotiation and streaming envelopes"
+"runtime-transport-stdio" = "STDIO adapter for local CLI integrations"
+"runtime-transport-uds" = "Unix domain socket adapter for secure local IPC"
+"runtime-router" = "Command routing surface that coordinates transport dispatch"
+"runtime-policy" = "Runtime policy evaluation engine"
+"ingestion-workspace" = "Workspace enumeration services"
+"ingestion-planning" = "Chunk planning and batching utilities"
+"ingestion-sanitization" = "Content sanitization and validation filters"
+"ingestion-embedding" = "Embedding generation orchestration"
+"ingestion-manifest" = "Manifest emission and replay helpers"
+"storage-vector" = "Vector store abstraction"
+"storage-ledger" = "Audit ledger persistence layer"
+"governance-audit" = "Audit logging, retention, and reporting"
+"governance-traceability" = "Traceability synchronization"
+
+[workspace.metadata.feature-flags.transport-http]
+summary = "Compile HTTP transport adapters and enable TLS enforcement paths"
+checklist = "docs/security/threat-model.md#encryption-checklist"
+
+[workspace.metadata.feature-flags.transport-stdio]
+summary = "Expose STDIO transport bindings for local CLI execution"
+checklist = "docs/security/threat-model.md#input-validation-checklist"
+
+[workspace.metadata.feature-flags.transport-uds]
+summary = "Enable Unix domain socket transports for sandboxed IPC"
+checklist = "docs/security/threat-model.md#sandboxing-checklist"
+
+[workspace.metadata.feature-flags.ingestion-planning]
+summary = "Turn on ingestion planning heuristics and rate limiters"
+checklist = "docs/security/threat-model.md#file-handling-checklist"
+
+[workspace.metadata.feature-flags.ingestion-sanitization]
+summary = "Activate ingestion sanitization filters and policy gates"
+checklist = "docs/security/threat-model.md#input-validation-checklist"
+
+[workspace.metadata.feature-flags.ingestion-embedding]
+summary = "Build embedding pipeline hooks for model execution"
+checklist = "docs/security/threat-model.md#sandboxing-checklist"
+
+[workspace.metadata.feature-flags.ingestion-manifest]
+summary = "Emit and replay ingestion manifests for deterministic recovery"
+checklist = "docs/security/threat-model.md#file-handling-checklist"
+
+[workspace.metadata.feature-flags.storage-encrypted]
+summary = "Require encryption at rest for storage backends"
+checklist = "docs/security/threat-model.md#encryption-checklist"
+
+[workspace.metadata.feature-flags.storage-ledger-audit]
+summary = "Persist audit ledger events with integrity controls"
+checklist = "docs/security/threat-model.md#access-control-checklist"
+
+[workspace.metadata.feature-flags.governance-audit]
+summary = "Compile governance audit trail integrations"
+checklist = "docs/security/threat-model.md#access-control-checklist"
+
+[workspace.metadata.feature-flags.governance-traceability]
+summary = "Enable traceability sync and reporting surfaces"
+checklist = "docs/security/threat-model.md#authentication-checklist"
+
+[workspace.dependencies]
+anyhow = "1.0"
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+tokio = { version = "1.36", features = ["rt-multi-thread", "macros", "sync", "time"] }
+tracing = "0.1"
+uuid = { version = "1.7", features = ["v4"] }
