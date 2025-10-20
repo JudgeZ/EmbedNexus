@@ -78,6 +78,8 @@ jobs:
           else
             cargo run --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml
             cargo run --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst
+            cargo run --bin archive_builder -- --scenario quota-latency --output tests/fixtures/archives/quota-latency.toml
+            cargo run --bin archive_builder -- --scenario overflow-latency --output tests/fixtures/archives/overflow-latency.tar.zst
             cargo run --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/
             cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
           fi

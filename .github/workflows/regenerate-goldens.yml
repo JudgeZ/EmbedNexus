@@ -66,6 +66,7 @@ jobs:
             echo 'archive_builder.rs is a placeholder – skipping archive golden regeneration.'
           else
             cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
+            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario quota-throughput | python scripts/sanitize_jsonl.py > tests/golden/archives/quota-throughput.jsonl
           fi
 
       - name: Generate routing goldens
