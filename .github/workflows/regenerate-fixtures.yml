@@ -114,16 +114,12 @@ jobs:
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/archive_builder.rs; then
-            echo 'archive_builder.rs is a placeholder – skipping archive generation.'
-          else
-            cargo run --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml
-            cargo run --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst
-            cargo run --bin archive_builder -- --scenario quota-latency --output tests/fixtures/archives/quota-latency.toml
-            cargo run --bin archive_builder -- --scenario overflow-latency --output tests/fixtures/archives/overflow-latency.tar.zst
-            cargo run --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/
-            cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
-          fi
+          cargo run --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml
+          cargo run --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst
+          cargo run --bin archive_builder -- --scenario quota-latency --output tests/fixtures/archives/quota-latency.toml
+          cargo run --bin archive_builder -- --scenario overflow-latency --output tests/fixtures/archives/overflow-latency.tar.zst
+          cargo run --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/
+          cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
 
       - name: Generate encryption toggle fixtures
         if: inputs.dry_run != 'true'
@@ -197,11 +193,7 @@ jobs:
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/checksums.sh; then
-            echo 'checksums.sh is a placeholder – skipping checksum verification.'
-          else
-            bash scripts/checksums.sh --verify tests/fixtures/ tests/fixtures/security/ tests/golden/ tests/golden/security/
-          fi
+          bash scripts/checksums.sh --verify tests/fixtures/ tests/fixtures/security/ tests/golden/ tests/golden/security/
 
       - name: Upload fixture artifacts
         if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
