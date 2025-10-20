@@ -122,6 +122,36 @@ Maintain deterministic checksum tracking for every regenerated artifact. The fol
 2. Remove associated checksum manifests and README entries.
 3. Note the removal rationale in the pull request description, including downstream cleanup tasks.
 
+### GitHub Actions regeneration
+
+Two manual GitHub Actions workflows keep long-running fixture and golden captures reproducible: [`regenerate-fixtures.yml`](../../.github/workflows/regenerate-fixtures.yml) and [`regenerate-goldens.yml`](../../.github/workflows/regenerate-goldens.yml). Each workflow fans out into a Windows capture job that uploads raw security material followed by a Linux consolidation job that recreates cross-platform assets.
+
+| Workflow | Job | Runner | Required tooling | Consumed artifacts | Published artifacts | Dependency flow |
+| --- | --- | --- | --- | --- | --- | --- |
+| Regenerate Fixture Corpus | `fixtures-windows` | `windows-latest` | PowerShell 7, repository scripts (`collect_dpapi.ps1`, `trace_capture.sh`) | – | `windows-security-fixtures` (DPAPI recovery trees, TLS configs, perf-window captures) | Entry point |
+| Regenerate Fixture Corpus | `fixtures-linux` | `ubuntu-latest` | Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd`, Rust toolchain | Downloads `windows-security-fixtures` via `actions/download-artifact` | `fixture-regeneration-output` (full `tests/fixtures/**`, refreshed goldens referenced by fixtures) | `needs: fixtures-windows` |
+| Regenerate Golden Artifacts | `goldens-windows` | `windows-latest` | PowerShell 7, repository scripts (`collect_dpapi.ps1`, `trace_capture.sh`, `wsl_transport_proxy.ps1`) | – | `windows-security-goldens` (TLS traces, DPAPI audit, WSL bridge bundle) | Entry point |
+| Regenerate Golden Artifacts | `goldens-linux` | `ubuntu-latest` | Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd`, Rust toolchain | Downloads `windows-security-goldens` | `golden-regeneration-output` (complete `tests/golden/**` refresh) | `needs: goldens-windows` |
+
+The Windows stage always runs first to collect platform-specific traces and upload the `windows-security-*` artifact. The Linux stage is blocked until the Windows artifact is present, then expands the corpus with the toolchains that are only available on Ubuntu runners.
+
+#### Workflow toggles
+
+Both workflows expose two manual inputs when dispatched from the Actions UI:
+
+- `dry_run=true` – Executes the job pre-checks (checkout, dependency installation) and skips every generation, capture, and upload step guarded by `if: inputs.dry_run != 'true'`. Use this when verifying tooling availability or runner permissions before spending time on long captures.
+- `skip_artifact_upload=true` – Runs generation tasks but omits the `actions/upload-artifact` steps. Enable this while iterating locally on scripts to avoid consuming artifact storage quotas. Always rerun without this flag before finalizing fixtures so reviewers can download evidence.
+
+If the Windows job succeeds but the Linux job fails (for example, waiting on a manual fix), use the **Re-run failed jobs** button once the issue is corrected. This reuses the existing `windows-security-*` artifact so the dependent Linux job can resume without regenerating the Windows captures.
+
+#### Promotion checklist
+
+After the Linux job uploads its consolidated artifact:
+
+1. Download the relevant artifact (`fixture-regeneration-output` or `golden-regeneration-output`) from the workflow run page.
+2. Extract the bundle locally and run `bash scripts/checksums.sh --verify <extracted paths>` to confirm every `.sha256` manifest matches the regenerated payloads.
+3. Record the workflow run URL and the artifact name in the updated fixture README(s) so future reviewers can trace provenance back to the GitHub Actions evidence.
+
 ## Fixture Generation
 
 ### Filesystem Events Corpus
