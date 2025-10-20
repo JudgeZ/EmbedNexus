@@ -81,10 +81,10 @@ jobs:
           if grep -q 'Placeholder' scripts/archive_builder.rs; then
             echo 'archive_builder.rs is a placeholder – skipping archive generation.'
           else
-            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml
-            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst
-            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/
-            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
+            cargo run --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml
+            cargo run --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst
+            cargo run --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/
+            cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
           fi
 
       - name: Generate encryption toggle fixtures
@@ -128,7 +128,7 @@ jobs:
           if grep -q 'Placeholder' scripts/manifest_replay_harness.rs; then
             echo 'manifest_replay_harness.rs is a placeholder – skipping ingestion manifest replay.'
           else
-            cargo run --manifest-path scripts/Cargo.toml --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000
+            cargo run --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000
           fi
 
       - name: Generate routing fixtures
