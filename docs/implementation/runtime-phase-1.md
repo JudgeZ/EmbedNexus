@@ -65,3 +65,11 @@ Each work item must begin by introducing the failing tests described below. Cont
 - **Governance logging**: Record the planning approval in the governance log per [governance-log.md](../process/governance-log.md) once reviewers sign off on Phase 1 scaffolding.
 
 Following this milestone provides an executable plan that upholds the repository’s plan-before-code and TDD mandates while keeping design and security documentation synchronized.
+
+### Security Defaults
+
+To keep transport, storage, and governance scaffolding aligned with the threat model from the outset, the workspace enforces the following defaults:
+
+- **TLS 1.3 cipher matrix** — HTTP and UDS transports must negotiate strictly within `TLS_AES_256_GCM_SHA384`, `TLS_CHACHA20_POLY1305_SHA256`, or `TLS_AES_128_GCM_SHA256`, matching the hardening controls captured in the [encryption checklist](../security/threat-model.md#encryption-checklist).
+- **DPAPI recovery toggle** — Storage crates default to DPAPI-backed key recovery being disabled until explicitly approved, ensuring escrow flows satisfy the [key management checklist](../security/threat-model.md#key-management-checklist).
+- **Sandbox guard rails** — Transports, ingestion sanitizers, and embedding adapters ship with process sandboxing enabled by default, in line with the [sandboxing checklist](../security/threat-model.md#sandboxing-checklist).
