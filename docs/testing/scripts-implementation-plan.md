@@ -49,9 +49,20 @@ handoff for the corresponding script.
   tests.【F:scripts/README.md†L10-L13】【F:docs/testing/fixtures-plan.md†L93-L101】【F:docs/testing/test-matrix.md†L40-L48】
 - **Dependencies**: Python 3.11, `watchdog`, `pyyaml`; supports Linux, macOS,
   and Windows adapters via watchdog backends.【F:scripts/record_fs_events.py†L1-L22】
-- **Acceptance criteria**:
-  - Inputs: `--config <yaml>` describing watch targets, optional
-    `--replay-dir` for per-scenario exports.
+- **Current stub behavior**:
+  - CLI exposes `--scenario {fuzz, latency-burst}` and `--output <path>` to emit
+    embedded transcripts without touching the filesystem watcher stack.
+  - Deterministic log content mirrors the golden captures in
+    `tests/golden/filesystem/` and documents the expected schema for future
+    real recordings.【F:scripts/record_fs_events.py†L60-L78】【F:tests/golden/filesystem/watch-fuzz.log†L1-L18】【F:tests/golden/filesystem/watch-latency-burst.log†L1-L17】
+  - Placeholder configs live in `tests/fixtures/filesystem/`, including
+    `mock-events.yaml`, `latency-window.yaml`, and the
+    `workspace-replay/` directory that will eventually house replay exports once
+    configuration-driven capture lands.【F:tests/fixtures/filesystem/mock-events.yaml†L1-L2】【F:tests/fixtures/filesystem/latency-window.yaml†L1-L3】【F:tests/fixtures/filesystem/workspace-replay/README.md†L1-L12】
+- **Acceptance criteria (target implementation)**:
+  - Inputs: Accept configuration files that describe watch targets, latency
+    metrics, and optional replay destinations so fixture captures can be
+    regenerated without editing code.
   - Outputs: Deterministic YAML files under `tests/fixtures/filesystem/` and
     structured logs for CI; exit 0 when capture completes, non-zero on config or
     runtime errors.
@@ -68,7 +79,10 @@ handoff for the corresponding script.
 - **Purpose & scope**: Validate ordering and integrity of captured filesystem
   events before promoting fixtures.【F:scripts/README.md†L10-L14】【F:docs/testing/fixtures-plan.md†L95-L101】
 - **Dependencies**: Python 3.11, `pyyaml`; cross-platform.
-- **Acceptance criteria**:
+- **Current stub behavior**: Module only raises `NotImplementedError` while
+  documenting the intended `python scripts/verify_event_order.py <path>` CLI and
+  importable API surface for future pytest integration.【F:scripts/verify_event_order.py†L1-L26】
+- **Acceptance criteria (target implementation)**:
   - Inputs: Path to a replay directory or YAML file; optional flags for
     normalization and strictness.
   - Outputs: Exit 0 when ordering matches expectations, emit diff summaries on
