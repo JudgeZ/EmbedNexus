@@ -55,9 +55,8 @@ jobs:
 
       - name: Prime Cargo dependencies
         if: inputs.dry_run != 'true'
-        working-directory: scripts
         run: |
-          cargo fetch
+          cargo fetch --manifest-path scripts/Cargo.toml
 
       - name: Generate filesystem event fixtures
         if: inputs.dry_run != 'true'
