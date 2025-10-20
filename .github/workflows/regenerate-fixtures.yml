@@ -56,7 +56,17 @@ jobs:
       - name: Prime Cargo dependencies
         if: inputs.dry_run != 'true'
         run: |
-          cargo fetch
+          set -euo pipefail
+          MANIFEST="scripts/Cargo.toml"
+          # Only run cargo fetch if the manifest exists and defines at least one dependency
+          if [ -f "$MANIFEST" ] && grep -q "\[dependencies\]" "$MANIFEST" && \
+             awk '/\[dependencies\]/ {flag=1; next} /^\[/ {flag=0} flag && NF' "$MANIFEST"; then
+            echo "Fetching Rust dependencies defined in $MANIFEST..."
+            # time‑limit the fetch to avoid hangs; continue even if it times out
+            timeout 300 cargo fetch --manifest-path "$MANIFEST" || echo "cargo fetch timed out; continuing without priming"
+          else
+            echo "No external dependencies detected in $MANIFEST; skipping cargo fetch."
+          fi
 
       - name: Generate filesystem event fixtures
         if: inputs.dry_run != 'true'
