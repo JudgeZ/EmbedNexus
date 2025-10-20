@@ -211,7 +211,7 @@ jobs:
           TRACE_OUT=tests/golden/security/tls-negotiation.trace scripts/trace_capture.sh --profile tls-negotiation
           scripts/trace_capture.sh --profile perf-baseline --output tests/golden/security/tls-performance.jsonl
           scripts/trace_capture.sh --profile dpapi-audit --output tests/golden/security/dpapi-recovery-audit.jsonl
-          scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173 --output tests/golden/transport/wsl-handshake-negotiation.trace
+          scripts/trace_capture.sh --profile wsl-transport --proxy-host 127.0.0.1 --proxy-port 5173 --output tests/golden/transport/wsl-handshake-negotiation.trace
 
       - name: Run checksum verification
         if: inputs.dry_run != 'true'
