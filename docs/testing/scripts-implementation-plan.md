@@ -47,11 +47,27 @@ handoff for the corresponding script.
 - **Purpose & scope**: Capture filesystem event traces using watchdog observers
   and emit deterministic YAML fixtures referenced by Filesystem Watch Service
   tests.【F:scripts/README.md†L10-L13】【F:docs/testing/fixtures-plan.md†L93-L101】【F:docs/testing/test-matrix.md†L40-L48】
-- **Dependencies**: Python 3.11, `watchdog`, `pyyaml`; supports Linux, macOS,
-  and Windows adapters via watchdog backends.【F:scripts/record_fs_events.py†L1-L22】
-- **Acceptance criteria**:
-  - Inputs: `--config <yaml>` describing watch targets, optional
-    `--replay-dir` for per-scenario exports.
+- **Dependencies**:
+  - **Stub**: Python 3.11 standard library only (`argparse`, `pathlib`,
+    `textwrap`, typing helpers) because the placeholder emits embedded
+    transcripts without touching live watchers.【F:scripts/record_fs_events.py†L1-L59】
+  - **Target implementation**: Python 3.11 with `watchdog` and `pyyaml` so the
+    real harness can stream filesystem events across Linux, macOS, and Windows
+    observers as described in the scripting overview.【F:scripts/README.md†L10-L21】
+- **Current stub behavior**:
+  - CLI exposes `--scenario {fuzz, latency-burst}` and `--output <path>` to emit
+    embedded transcripts without touching the filesystem watcher stack.
+  - Deterministic log content mirrors the golden captures in
+    `tests/golden/filesystem/` and documents the expected schema for future
+    real recordings.【F:scripts/record_fs_events.py†L60-L78】【F:tests/golden/filesystem/watch-fuzz.log†L1-L18】【F:tests/golden/filesystem/watch-latency-burst.log†L1-L17】
+  - Placeholder configs live in `tests/fixtures/filesystem/`, including
+    `mock-events.yaml`, `latency-window.yaml`, and the
+    `workspace-replay/` directory that will eventually house replay exports once
+    configuration-driven capture lands.【F:tests/fixtures/filesystem/mock-events.yaml†L1-L2】【F:tests/fixtures/filesystem/latency-window.yaml†L1-L3】【F:tests/fixtures/filesystem/workspace-replay/README.md†L1-L12】
+- **Acceptance criteria (target implementation)**:
+  - Inputs: Accept configuration files that describe watch targets, latency
+    metrics, and optional replay destinations so fixture captures can be
+    regenerated without editing code.
   - Outputs: Deterministic YAML files under `tests/fixtures/filesystem/` and
     structured logs for CI; exit 0 when capture completes, non-zero on config or
     runtime errors.
@@ -67,8 +83,15 @@ handoff for the corresponding script.
 ### `verify_event_order.py`
 - **Purpose & scope**: Validate ordering and integrity of captured filesystem
   events before promoting fixtures.【F:scripts/README.md†L10-L14】【F:docs/testing/fixtures-plan.md†L95-L101】
-- **Dependencies**: Python 3.11, `pyyaml`; cross-platform.
-- **Acceptance criteria**:
+- **Dependencies**:
+  - **Stub**: Python 3.11 standard library only; the placeholder does not import
+    `pyyaml` yet because it raises `NotImplementedError` immediately.【F:scripts/verify_event_order.py†L1-L26】
+  - **Target implementation**: Python 3.11 plus `pyyaml` to parse capture YAML on
+    every platform covered by the fixture workflows.【F:scripts/README.md†L10-L16】
+- **Current stub behavior**: Module only raises `NotImplementedError` while
+  documenting the intended `python scripts/verify_event_order.py <path>` CLI and
+  importable API surface for future pytest integration.【F:scripts/verify_event_order.py†L1-L26】
+- **Acceptance criteria (target implementation)**:
   - Inputs: Path to a replay directory or YAML file; optional flags for
     normalization and strictness.
   - Outputs: Exit 0 when ordering matches expectations, emit diff summaries on
