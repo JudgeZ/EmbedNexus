@@ -112,14 +112,39 @@ Every fixture directory must contain a short `README.md` when multiple files coe
 ### Security Traces (Encryption & TLS)
 
 - **Tooling**: `scripts/trace_capture.sh` (depends on `openssl`, `tshark`, and `jq`).
-- **Workflow**:
-  1. Start the capture harness: `TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake`.
-  2. Replay negative scenarios with `--profile tls-fuzz` to build `tests/golden/security/tls-fuzz.log`.
-  3. Generate encryption toggle fixtures by running the configuration synthesizer: `python scripts/generate_encryption_toggles.py --output tests/fixtures/security/encryption-toggles.json` (requires `python -m pip install click cryptography`).
-  4. Materialize performance datasets through `scripts/trace_capture.sh --profile perf-window --output-dir tests/fixtures/security/perf-window/` and confirm dataset size thresholds in the README.
-  5. Capture DPAPI recovery telemetry from a Windows host joined to the designated test domain: `powershell -File scripts/collect_dpapi.ps1 -OutputDir tests/fixtures/security/dpapi-recovery/` (requires Windows 11 22H2+, domain trust, and the DPAPI recovery agent certificate installed). Export the aggregated audit log to `tests/golden/security/dpapi-recovery-audit.jsonl` via `scripts/trace_capture.sh --profile dpapi-audit` while still on the Windows host.
- 6. Replay the WSL transport handshake while attached to the Windows event log forwarder: from WSL, run `TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173` with the Windows-side relay active. Confirm the DPAPI audit correlates with the handshake timestamp before committing the trace.
- 7. Document any host-specific configuration (DPAPI recovery agent thumbprint, WSL distribution name, Windows build number) inside the fixture-level README to satisfy the platform guidance requirements in the test matrix.
+
+#### Profile matrix
+
+| Profile | Command stub | Artifact(s) | Destination | Notes |
+| --- | --- | --- | --- | --- |
+| `tls-handshake` | `TRACE_OUT=<file> --profile tls-handshake` | `tls-handshake.trace` | `tests/golden/security/` | Deterministic TLS 1.3 handshake transcript. |
+| `tls-negotiation` | `TRACE_OUT=<file> --profile tls-negotiation` | `tls-negotiation.trace` | `tests/golden/security/` | Captures negotiated cipher/ALPN against proxy endpoint. |
+| `tls-fuzz` | `TRACE_OUT=<file> --profile tls-fuzz` | `tls-fuzz.log` | `tests/golden/security/` | Logs downgrade rejection and GREASE validation. |
+| `tls-config-matrix` | `TRACE_OUT=<file> --profile tls-config-matrix` | `tls-config-matrix.yaml` | `tests/fixtures/security/` | Enumerates supported TLS versions and ciphers. |
+| `encryption-toggle` | `TRACE_OUT=<file> --profile encryption-toggle` | `encryption-toggle.trace` | `tests/golden/security/` | Mirrors toggle state machine emitted during capture. |
+| `encryption-latency` | `--profile encryption-latency --output <file>` | `encryption-latency.json` | `tests/fixtures/security/` | Structured latency samples plus summary stats. |
+| `perf-window` | `--profile perf-window --output-dir <dir>` | `rolling-window.json`, `notes.txt` | `tests/fixtures/security/perf-window/` | Directory payload with throughput observations. |
+| `perf-baseline` | `TRACE_OUT=<file> --profile perf-baseline` | `tls-performance.jsonl` | `tests/golden/security/` | Baseline TLS stage durations. |
+| `dpapi-audit` | `TRACE_OUT=<file> --profile dpapi-audit` | `dpapi-recovery-audit.jsonl` | `tests/golden/security/` | Copies audit export seeded by `collect_dpapi.ps1`. |
+| `wsl-transport` | `TRACE_OUT=<file> --profile wsl-transport --proxy-host <host> --proxy-port <port>` | `wsl-handshake-negotiation.trace`, `wsl-bridge.json` | `tests/golden/transport/`, `tests/golden/security/` | Aligns with metadata from `wsl_transport_proxy.ps1`. |
+
+#### Non-interactive prerequisites
+
+- **Runtime dependencies**: Ensure `openssl`, `tshark`, and `jq` are installed for Bash captures. PowerShell helpers (`collect_dpapi.ps1`, `wsl_transport_proxy.ps1`) require PowerShell 7.3+, DPAPI tooling/EventLog access, and `wsl.exe` on Windows 11 22H2+ hosts.
+- **Output targeting**: Provide `--output`, `--output-dir`, or `TRACE_OUT` so the script writes deterministically without prompts. Profiles emitting directories (`perf-window`) must point at an existing writable directory.
+- **DPAPI capture chain**: Run `pwsh -File scripts/collect_dpapi.ps1 -OutputDir tests/fixtures/security/dpapi-recovery/ -EmitChecksums` before invoking `--profile dpapi-audit`. The host must be domain-joined with the recovery-agent certificate installed; keep the generated audit export local for the Bash script to promote into goldens.
+- **WSL relay workflow**: Start `wsl_transport_proxy.ps1` with administrative privileges on Windows and disable VPN clients to avoid skewing timestamps. From WSL, invoke the `wsl-transport` profile with matching proxy host/port and set `TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace`. Preserve the paired `wsl-bridge.json` metadata in `tests/golden/security/`.
+- **Integrity artifacts**: Pass `-EmitChecksums` when available so CI can validate emitted traces. Record host metadata (certificate thumbprints, Windows build, WSL distribution) inside fixture-level READMEs to meet matrix reproducibility requirements.
+
+#### Capture workflow
+
+1. Establish output paths (`TRACE_OUT`, `--output`, or `--output-dir`) per the profile matrix and verify prerequisite tooling is installed.
+2. Collect TLS transcripts: run the `tls-handshake`, `tls-negotiation`, and `tls-fuzz` profiles to refresh golden traces, then execute `tls-config-matrix` for the supporting YAML fixture.
+3. Generate encryption datasets: capture `encryption-toggle` and `encryption-latency` artifacts, and refresh synthesized toggles via `python scripts/generate_encryption_toggles.py --output tests/fixtures/security/encryption-toggles.json` (requires `click` and `cryptography`).
+4. Produce performance corpora: run `--profile perf-window --output-dir tests/fixtures/security/perf-window/` and `TRACE_OUT=tests/golden/security/tls-performance.jsonl scripts/trace_capture.sh --profile perf-baseline`, updating README size thresholds as needed.
+5. Execute the DPAPI workflow on a Windows host: capture recovery materials with `collect_dpapi.ps1`, emit checksums, then promote the audit export through `--profile dpapi-audit` so `tests/golden/security/dpapi-recovery-audit.jsonl` aligns with `tests/fixtures/security/dpapi-recovery/`.
+6. Coordinate the WSL transport replay: keep the Windows relay active, then from WSL run `TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173` to emit the handshake transcript and bridge metadata.
+7. Update fixture-level READMEs with environment notes (certificate thumbprints, proxy ports, VPN status) and confirm DPAPI audits correlate with transport timestamps before committing refreshed assets.
 
 ### Offline Queue & Replay Harnesses
 
