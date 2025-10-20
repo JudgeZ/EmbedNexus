@@ -190,13 +190,14 @@ Follow this runbook every time fixture or golden artifacts are regenerated so re
 
 ### Archive Scenarios
 
-- **Tooling**: `scripts/archive_builder.rs` (Rust binary) and `scripts/checksums.sh`.
+- **Tooling**: `scripts/archive_builder.rs` (Rust binary), `scripts/sanitize_jsonl.py`, and `scripts/checksums.sh`.
 - **Workflow**:
-  1. Run `cargo run --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml`.
-  2. Generate overflow bundles: `cargo run --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst`.
-  3. Populate the bulk sample corpus using `cargo run --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/`.
-  4. Update fuzzed manifests by piping the builder output through the sanitizer: `cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl`.
-  5. Record SHA-256 hashes with `scripts/checksums.sh tests/fixtures/archives/ tests/golden/archives/`.
+  1. Run `cargo run --bin archive_builder -- --scenario quota --output tests/fixtures/archives/quota-scenarios.toml` to refresh the quota ledger snapshot (deterministic timestamps and bucket ordering ensure diff stability).
+  2. Generate overflow bundles with deterministic tar.zst archives via `cargo run --bin archive_builder -- --scenario overflow --output tests/fixtures/archives/overflow-case.tar.zst` and `cargo run --bin archive_builder -- --scenario overflow-latency --output tests/fixtures/archives/overflow-latency.tar.zst`.
+  3. Populate the bulk sample corpus using `cargo run --bin archive_builder -- --scenario bulk --output-dir tests/fixtures/archives/bulk-sample/` to emit the index and per-session manifests.
+  4. Produce fuzzed manifests by piping the builder output through the sanitizer: `cargo run --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl`. The sanitizer redacts tenant identifiers into deterministic aliases while validating request and byte quotas.
+  5. Generate throughput goldens with `cargo run --bin archive_builder -- --scenario quota-throughput | python scripts/sanitize_jsonl.py > tests/golden/archives/quota-throughput.jsonl`; the sanitizer enforces latency/request bounds before emitting sanitized aliases.
+  6. Record SHA-256 hashes with `scripts/checksums.sh --update tests/fixtures/archives/ tests/golden/archives/` and verify as part of CI using `scripts/checksums.sh --verify tests/fixtures/archives/ tests/golden/archives/`.
 
 ### Security Traces (Encryption & TLS)
 

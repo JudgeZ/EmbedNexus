@@ -150,12 +150,8 @@ jobs:
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/archive_builder.rs; then
-            echo 'archive_builder.rs is a placeholder – skipping archive golden regeneration.'
-          else
-            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
-            cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario quota-throughput | python scripts/sanitize_jsonl.py > tests/golden/archives/quota-throughput.jsonl
-          fi
+          cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario fuzz | python scripts/sanitize_jsonl.py > tests/golden/archives/fuzzed-manifests.jsonl
+          cargo run --manifest-path scripts/Cargo.toml --bin archive_builder -- --scenario quota-throughput | python scripts/sanitize_jsonl.py > tests/golden/archives/quota-throughput.jsonl
 
       - name: Generate routing goldens
         if: inputs.dry_run != 'true'
@@ -217,11 +213,7 @@ jobs:
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/checksums.sh; then
-            echo 'checksums.sh is a placeholder – skipping checksum verification.'
-          else
-            bash scripts/checksums.sh --verify tests/golden/ tests/golden/security/
-          fi
+          bash scripts/checksums.sh --verify tests/golden/ tests/golden/security/
 
       - name: Upload golden artifacts
         if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
