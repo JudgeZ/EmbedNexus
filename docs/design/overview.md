@@ -142,7 +142,7 @@ sequenceDiagram
 - Keep observability local by default—structured logs and metrics ship to file or socket endpoints that administrators can forward using their preferred tooling; WSL deployments document how to persist logs across the Linux/Windows boundary.
 
 ## Next Steps
-- Finalize cross-platform packaging that bundles the transport adapters, runtime services, and client-script validation policies.
-- Expand regression suites that simulate multi-repository indexing under WSL, verifying ignore rules, archive handling, and encrypted persistence across NTFS and ext4 volumes while honoring the TDD mandate to land failing tests first.
-- Update integration guides for IDEs and CI agents so developers can adopt the HTTP, stdio, or UDS transports with clear security expectations and traceable links to completed security checklists.
+- Execute the cross-platform distribution workflow captured in the [Runtime Packaging & Distribution Plan](../implementation/runtime-packaging-plan.md), ensuring transport adapters, runtime services, and validation policies ship together with GitHub Actions–generated fixtures and goldens.
+- Land the WSL multi-repository regression coverage described in the updated [Test Matrix](../testing/test-matrix.md#wsl-multi-repository-regressions), keeping failing tests and automation hooked to the regeneration workflows that refresh fixtures and goldens in CI.
+- Synchronize the client and CI integration guides with the transport security checklist updates documented in [`docs/integration/clients.md`](../integration/clients.md) and [`docs/testing/ci-coverage.md`](../testing/ci-coverage.md) so developers can adopt HTTP, stdio, and UDS transports with auditable security references.
 

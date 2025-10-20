@@ -17,6 +17,12 @@ runners unless otherwise noted. Golden transcripts captured under
 [`scripts/transcripts/normalize.py`](../integration/transcripts/ide/README.md#regeneration-workflow))
 anchor the replay expectations referenced below.
 
+## Packaging Artifact Dependencies (Planned)
+
+- Matrix jobs consume runtime bundles published by the `package-runtime.yml` GitHub Actions workflow outlined in the [Runtime Packaging & Distribution Plan](../implementation/runtime-packaging-plan.md).
+- The packaging workflow must depend on `Regenerate Fixture Corpus` and `Regenerate Golden Artifacts` so that the CI matrix always downloads the latest GitHub Actions–generated fixtures and transcripts.
+- For each matrix run, record the packaging artifact URL and checksum inside the job summary; PR authors must attach the same link when completing the [PR release checklist](../process/pr-release-checklist.md).
+
 | Job Key | Client Runtime | Transport Scenario | Runners | Notes |
 | --- | --- | --- | --- | --- |
 | `python-stdio-noise` | Python 3.11 | `stdio` wrapped with Noise framing | Ubuntu, macOS, Windows, WSL | Validates Noise handshake traces and transcript replay. |

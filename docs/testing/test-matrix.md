@@ -80,6 +80,16 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Performance** – routing throughput guard validating scheduler latency across the scenario pack `tests/golden/routing/fanout-throughput.jsonl` and fixture directory `tests/fixtures/routing/high-fanout/`.
 - **Traceability** – Tied to the [Architecture Overview](../design/overview.md#local-ingestion-pipeline) for multi-repo orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Encryption](../security/threat-model.md#encryption-checklist) checklists governing cross-tenant routing.
 
+### WSL Multi-Repository Regressions
+- **Planned feature focus**: Windows-to-WSL indexing parity, encrypted persistence, and ignore rule reconciliation across NTFS/ext4 mounts.
+- **Required failing tests**:
+  - **Unit** – WSL path normalization and ignore precedence helpers validated against the upcoming fixture `tests/fixtures/wsl/multi-repo-ignore.yaml`.
+  - **Integration** – dual-repository ingestion replay driven by the golden event log `tests/golden/wsl/multi-repo-ingestion.log`, asserting deterministic manifest stitching and encrypted store segregation.
+  - **Fuzz** – randomized mount remapping and clock skew payloads sourced from `tests/golden/wsl/wsl-remap-permutations.jsonl`.
+  - **Performance** – throughput guard referencing `tests/golden/wsl/multi-repo-throughput.jsonl` that enforces budgeted latency for cross-filesystem diffing.
+- **Traceability** – Aligns with the [Runtime Packaging & Distribution Plan](../implementation/runtime-packaging-plan.md) for consuming packaged artifacts during WSL validation, the [Encryption](../security/threat-model.md#encryption-checklist) checklist for DPAPI parity, and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) checklist for bridge execution.
+- **Automation mandate** – All fixtures and goldens listed above are regenerated exclusively by the `Regenerate Fixture Corpus` and `Regenerate Golden Artifacts` GitHub Actions workflows; developers must not hand-edit the assets locally.
+
 ### Offline Resilience & Replay
 - **Planned feature focus**: Transport retry buffering during network isolation and deterministic ingestion manifest replays after storage recovery.
 - **Required failing tests**:
@@ -102,8 +112,8 @@ matrix entries above and attach run URLs in PR descriptions.
 
 | Workflow | Toolchain Baseline | Coverage | Notes |
 | --- | --- | --- | --- |
-| `Regenerate Fixture Corpus` | Ubuntu runner, Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), Rust stable, `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd` | Filesystem, archives, routing, transport, ingestion, and shared fixture directories. Produces `fixture-regeneration-output` artifact with refreshed `tests/fixtures/` content plus adjacent goldens. | Includes a Windows job that runs `scripts/collect_dpapi.ps1` and `scripts/trace_capture.sh` to stage DPAPI recovery fixtures, TLS latency samples, and WSL bridge metadata before the Linux job downloads the `windows-security-fixtures` artifact and completes the remaining regeneration steps. |
-| `Regenerate Golden Artifacts` | Same as above | Regenerates transcripts and logs under `tests/golden/`, uploading the `golden-regeneration-output` artifact. | Windows automation executes `collect_dpapi.ps1`, `trace_capture.sh`, and `wsl_transport_proxy.ps1` to refresh TLS handshakes, negotiation traces, DPAPI audits, and WSL bridge captures. The Linux job consumes the `windows-security-goldens` artifact and then rebuilds the remaining goldens plus checksum manifests. |
+| `Regenerate Fixture Corpus` | Ubuntu runner, Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), Rust stable, `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd` | Filesystem, archives, routing, transport, ingestion, and shared fixture directories. Produces `fixture-regeneration-output` artifact with refreshed `tests/fixtures/` content plus adjacent goldens. | Includes a Windows job that runs `scripts/collect_dpapi.ps1` and `scripts/trace_capture.sh` to stage DPAPI recovery fixtures, TLS latency samples, WSL bridge metadata, and the multi-repo datasets (`wsl-multi-repo-ignore.yaml`, etc.) before the Linux job downloads the `windows-security-fixtures` artifact and completes the remaining regeneration steps. |
+| `Regenerate Golden Artifacts` | Same as above | Regenerates transcripts and logs under `tests/golden/`, uploading the `golden-regeneration-output` artifact. | Windows automation executes `collect_dpapi.ps1`, `trace_capture.sh`, and `wsl_transport_proxy.ps1` to refresh TLS handshakes, negotiation traces, DPAPI audits, WSL bridge captures, and the new multi-repo ingestion/throughput transcripts. The Linux job consumes the `windows-security-goldens` artifact and then rebuilds the remaining goldens plus checksum manifests. |
 
 **Verification tracking**
 

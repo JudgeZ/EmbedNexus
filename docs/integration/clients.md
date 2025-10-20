@@ -12,6 +12,18 @@
 For the full implementation roadmap, transcript expectations, and CI test plan, see
 [`docs/integration/client-plan.md`](./client-plan.md).
 
+## Transport Security Alignment (Planned)
+
+- Each language client must reference the security controls captured in the [Authentication Checklist](../security/threat-model.md#authentication-checklist), [Access Control Checklist](../security/threat-model.md#access-control-checklist), and [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) when negotiating HTTP, stdio, or UDS transports.
+- Runtime packaging inherits these requirements through the [Runtime Packaging & Distribution Plan](../implementation/runtime-packaging-plan.md), so client integration PRs must link to the packaging workflow artifacts that include the regenerated policy caches.
+- IDE integration samples must annotate which checklist items were validated for each transport permutation and provide links back to the CI matrix documented in [`docs/testing/ci-coverage.md`](../testing/ci-coverage.md).
+
+## Transcript & Fixture Automation
+
+- Golden transcripts referenced throughout this guide are regenerated exclusively by the `Regenerate Golden Artifacts` GitHub Actions workflow; contributors must never update them manually.
+- Client fixtures (`tests/fixtures/{python,node,go}/...`) originate from the `Regenerate Fixture Corpus` workflow so that the same assets power IDE documentation, CI jobs, and runtime packaging validation.
+- When new transports or security permutations are added, update the transcript catalog under [`docs/integration/transcripts/ide/`](./transcripts/ide/README.md) with the workflow run URL and attach it to the PR checklist.
+
 ## Common Options (Planned)
 
 All client scripts will accept the following arguments once the tooling is merged:
