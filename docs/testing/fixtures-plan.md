@@ -160,6 +160,14 @@ Every fixture directory must contain a short `README.md` when multiple files coe
 ### Routing Scenarios
 
 - **Tooling**: `python scripts/routing_matrix.py` (depends on `networkx`) and `scripts/checksums.sh`.
+
+| Subcommand | Required flags | Outputs | Dependencies / config |
+| --- | --- | --- | --- |
+| `matrix` | `--output tests/fixtures/routing/multi-repo-matrix.json`<br>`--latency-output tests/fixtures/routing/latency-matrix.json` (planned) | Routing adjacency matrix plus latency budget lookup for unit coverage.【F:tests/fixtures/routing/multi-repo-matrix.json†L1-L3】【F:tests/fixtures/routing/latency-matrix.json†L1-L4】 | Python 3.11 + `networkx`; execute before other subcommands so graph topology stays consistent.【F:scripts/README.md†L19-L24】 |
+| `fanout` | `--output-dir tests/fixtures/routing/high-fanout/`<br>`--metrics-out tests/golden/routing/fanout-throughput.jsonl` (planned) | High fan-out corpora and throughput guard metrics consumed by performance tests.【F:tests/fixtures/routing/high-fanout/README.md†L1-L5】【F:tests/golden/routing/fanout-throughput.jsonl†L1-L1】 | Reuses the matrix topology; ensure output directory exists so scenario IDs map cleanly to throughput data.【F:docs/testing/test-blueprints.md†L140-L142】 |
+| `transcript` | `--output tests/golden/routing/mcp-federation.transcript`<br>`--latency-output tests/golden/routing/multi-repo-latency.transcript` (planned) | Golden transcripts for MCP federation and cross-repo latency validation.【F:tests/golden/routing/mcp-federation.transcript†L1-L1】【F:docs/testing/test-matrix.md†L77-L80】 | Depends on regenerated matrices and fan-out corpora to align hop timing and tenant affinity.【F:docs/testing/test-blueprints.md†L139-L142】 |
+| `fuzz` | `--output tests/golden/routing/fuzz-affinity.jsonl` | Repository affinity datasets backing fuzz scenarios.【F:tests/golden/routing/fuzz-affinity.jsonl†L1-L1】【F:docs/testing/test-blueprints.md†L139-L142】 | Provide deterministic seed handling to keep CI results reproducible across reruns.【F:docs/testing/scripts-implementation-plan.md†L214-L220】 |
+
 - **Workflow**:
   1. Produce multi-repo matrices: `python scripts/routing_matrix.py matrix --output tests/fixtures/routing/multi-repo-matrix.json`.
   2. Emit high-fanout corpora: `python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/`.
