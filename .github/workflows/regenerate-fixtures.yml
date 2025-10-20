@@ -103,6 +103,8 @@ jobs:
           else
             TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake
             scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
+            scripts/trace_capture.sh --profile encryption-latency --output tests/fixtures/security/encryption-latency.json
+            scripts/trace_capture.sh --profile tls-config-matrix --output tests/fixtures/security/tls-config-matrix.yaml
             scripts/trace_capture.sh --profile perf-window --output-dir tests/fixtures/security/perf-window/
           fi
 
@@ -158,7 +160,7 @@ jobs:
           if grep -q 'Placeholder' scripts/checksums.sh; then
             echo 'checksums.sh is a placeholder – skipping checksum verification.'
           else
-            bash scripts/checksums.sh --verify tests/fixtures/ tests/golden/
+            bash scripts/checksums.sh --verify tests/fixtures/ tests/fixtures/security/ tests/golden/ tests/golden/security/
           fi
 
       - name: Upload fixture artifacts
@@ -170,6 +172,8 @@ jobs:
           retention-days: 14
           path: |
             tests/fixtures/**
+            tests/fixtures/security/encryption-latency.json
+            tests/fixtures/security/tls-config-matrix.yaml
             tests/golden/archives/fuzzed-manifests.jsonl
             tests/golden/transport/offline-buffer-replay.transcript
             tests/golden/ingestion/manifest-replay.log
