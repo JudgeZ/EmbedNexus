@@ -90,25 +90,26 @@ where
 
     pub fn flush_offline(&mut self) -> Result<(), ManifestError> {
         let mut drained: VecDeque<_> = self.buffer.drain_ready().into();
-        while let Some(mut entry) = drained.pop_front() {
-            entry.status = "emitted".into();
-            if let Err(err) = self.queue.send(entry.clone()) {
+        while let Some(mut ready) = drained.pop_front() {
+            let sequence = ready.entry.sequence;
+            ready.entry.status = "emitted".into();
+            if let Err(err) = self.queue.send(ready.entry.clone()) {
                 // push back into buffer to retry later and preserve ordering
-                entry.status = "buffered".into();
+                ready.entry.status = "buffered".into();
                 self.buffer
-                    .push(entry)
+                    .requeue(ready)
                     .map_err(|error| ManifestError::Buffer(error.to_string()))?;
 
                 while let Some(mut remaining) = drained.pop_front() {
-                    remaining.status = "buffered".into();
+                    remaining.entry.status = "buffered".into();
                     self.buffer
-                        .push(remaining)
+                        .requeue(remaining)
                         .map_err(|error| ManifestError::Buffer(error.to_string()))?;
                 }
 
                 return Err(ManifestError::QueueOffline(err.to_string()));
             }
-            self.next_sequence = self.next_sequence.max(entry.sequence + 1);
+            self.next_sequence = self.next_sequence.max(sequence + 1);
         }
         Ok(())
     }

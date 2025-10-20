@@ -24,6 +24,12 @@ struct ReplayEnvelope {
 }
 
 #[derive(Debug, Clone)]
+pub struct ReadyReplayEntry {
+    pub entry: ReplayEntry,
+    pub inserted_at: SystemTime,
+}
+
+#[derive(Debug, Clone)]
 pub struct OfflineReplayBuffer {
     max_entries: usize,
     max_age: Duration,
@@ -40,29 +46,25 @@ impl OfflineReplayBuffer {
     }
 
     pub fn push(&self, entry: ReplayEntry) -> Result<(), ReplayError> {
-        if self.max_entries == 0 {
-            return Err(ReplayError::Misconfigured(
-                "max_entries cannot be zero".into(),
-            ));
-        }
-        let mut guard = self.inner.lock().expect("buffer mutex poisoned");
         let now = SystemTime::now();
-        guard.push_back(ReplayEnvelope {
-            entry,
-            inserted_at: now,
-        });
-        self.purge_locked(&mut guard, now);
-        while guard.len() > self.max_entries {
-            guard.pop_front();
-        }
-        Ok(())
+        self.push_envelope(entry, now)
     }
 
-    pub fn drain_ready(&self) -> Vec<ReplayEntry> {
+    pub fn requeue(&self, ready: ReadyReplayEntry) -> Result<(), ReplayError> {
+        self.push_envelope(ready.entry, ready.inserted_at)
+    }
+
+    pub fn drain_ready(&self) -> Vec<ReadyReplayEntry> {
         let mut guard = self.inner.lock().expect("buffer mutex poisoned");
         let now = SystemTime::now();
         self.purge_locked(&mut guard, now);
-        guard.drain(..).map(|env| env.entry).collect()
+        guard
+            .drain(..)
+            .map(|env| ReadyReplayEntry {
+                entry: env.entry,
+                inserted_at: env.inserted_at,
+            })
+            .collect()
     }
 
     pub fn is_empty(&self) -> bool {
@@ -85,10 +87,64 @@ impl OfflineReplayBuffer {
             Err(_) => true,
         });
     }
+
+    fn push_envelope(
+        &self,
+        entry: ReplayEntry,
+        inserted_at: SystemTime,
+    ) -> Result<(), ReplayError> {
+        if self.max_entries == 0 {
+            return Err(ReplayError::Misconfigured(
+                "max_entries cannot be zero".into(),
+            ));
+        }
+        let mut guard = self.inner.lock().expect("buffer mutex poisoned");
+        let now = SystemTime::now();
+        guard.push_back(ReplayEnvelope { entry, inserted_at });
+        self.purge_locked(&mut guard, now);
+        while guard.len() > self.max_entries {
+            guard.pop_front();
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Error)]
 pub enum ReplayError {
     #[error("offline replay buffer misconfigured: {0}")]
     Misconfigured(String),
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::thread;
+
+    #[test]
+    fn requeue_preserves_original_age_for_expiration() {
+        let buffer = OfflineReplayBuffer::new(16, Duration::from_millis(100));
+        let entry = ReplayEntry {
+            sequence: 1,
+            repo_id: "repo-alpha".into(),
+            delayed_ms: 0,
+            payload_checksum_before: "before".into(),
+            payload_checksum_after: "after".into(),
+            status: "buffered".into(),
+        };
+
+        buffer.push(entry).unwrap();
+        thread::sleep(Duration::from_millis(40));
+
+        let mut ready = buffer.drain_ready();
+        assert_eq!(ready.len(), 1);
+        let ready_entry = ready.pop().unwrap();
+
+        buffer.requeue(ready_entry).unwrap();
+        assert!(!buffer.is_empty());
+
+        thread::sleep(Duration::from_millis(80));
+        let drained_after_wait = buffer.drain_ready();
+        assert!(drained_after_wait.is_empty());
+        assert!(buffer.is_empty());
+    }
 }
