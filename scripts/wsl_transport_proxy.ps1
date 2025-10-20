@@ -92,7 +92,7 @@ Ensure-ParentDirectory -Path $resolvedMetadataPath
 
 $traceContent = @"
 # WSL Transport Bridge Trace
-proxy_endpoint: $ProxyHost:$ProxyPort
+proxy_endpoint: ${ProxyHost}:${ProxyPort}
 bridge:
   version: 1
   mode: passthrough
