@@ -122,9 +122,9 @@ jobs:
           else
             TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake
             scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
-            scripts/trace_capture.sh --profile encryption-toggle --output tests/golden/security/encryption-toggle.log
+            TRACE_OUT=tests/golden/security/encryption-toggle.trace scripts/trace_capture.sh --profile encryption-toggle
             TRACE_OUT=tests/golden/security/tls-negotiation.trace scripts/trace_capture.sh --profile tls-negotiation
-            scripts/trace_capture.sh --profile perf-baseline --output tests/golden/security/performance-metrics.json
+            scripts/trace_capture.sh --profile perf-baseline --output tests/golden/security/tls-performance.jsonl
             scripts/trace_capture.sh --profile dpapi-audit --output tests/golden/security/dpapi-recovery-audit.jsonl
             TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173
           fi
