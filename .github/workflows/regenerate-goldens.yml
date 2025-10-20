@@ -78,6 +78,8 @@ jobs:
           else
             python scripts/routing_matrix.py transcript --output tests/golden/routing/mcp-federation.transcript
             python scripts/routing_matrix.py fuzz --output tests/golden/routing/fuzz-affinity.jsonl
+            python scripts/routing_matrix.py fanout-throughput --output tests/golden/routing/fanout-throughput.jsonl
+            python scripts/routing_matrix.py latency-transcript --output tests/golden/routing/multi-repo-latency.transcript
           fi
 
       - name: Rebuild transport replays
@@ -143,6 +145,8 @@ jobs:
           retention-days: 14
           path: |
             tests/golden/**
+            tests/golden/routing/fanout-throughput.jsonl.sha256
+            tests/golden/routing/multi-repo-latency.transcript.sha256
 
   windows-notes:
     name: Windows-only capture guidance

@@ -136,6 +136,7 @@ jobs:
             echo 'routing_matrix.py is a placeholder – skipping routing fixture generation.'
           else
             python scripts/routing_matrix.py matrix --output tests/fixtures/routing/multi-repo-matrix.json
+            python scripts/routing_matrix.py latency --output tests/fixtures/routing/latency-matrix.json
             python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/
           fi
 
