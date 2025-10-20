@@ -1,1 +1,9 @@
-Placeholder manifest replay log produced via manifest_replay_harness.
+# Manifest replay harness output (deterministic fixture)
+sequence: 3
+repo: repo-beta
+status: drained
+checksum_before: 111aaa
+checksum_after: 333ccc
+notes:
+  - buffered entries flushed after offline window of 9.6s
+  - retention ceiling satisfied (max_age_ms = 120000, max_entries = 128)

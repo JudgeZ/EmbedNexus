@@ -8,9 +8,14 @@ publish = false
 [dependencies]
 anyhow.workspace = true
 async-trait.workspace = true
+ingestion-planning = { path = "../ingestion-planning" }
+regex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 uuid.workspace = true
+
+[dev-dependencies]
+serde_yaml.workspace = true

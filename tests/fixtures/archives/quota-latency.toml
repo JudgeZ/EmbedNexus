@@ -1,2 +1,14 @@
-# Placeholder for quota latency calibration.
-# Generated via cargo archive_builder --scenario quota-latency.
+[profile.default]
+bytes_max = 4096
+entries_max = 16
+nesting_max = 2
+latency_budget_ms = 120
+
+[[archives]]
+name = "overflow-latency.tar.zst"
+bytes = 5632
+entries = 22
+nesting_depth = 3
+expected_status = "QuotaLatencyExceeded"
+max_latency_ms = 184
+scenario = "quota-latency"

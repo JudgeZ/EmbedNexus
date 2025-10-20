@@ -9,6 +9,32 @@ This document elaborates on the ingestion pipeline highlighted in the [architect
 - Coordinate concurrent ingestion jobs with deterministic batching and retry semantics.
 - Emit manifest updates and telemetry required by downstream encrypted storage writers and audit ledgers.
 
+## Implementation Plan (2024-05)
+
+1. **Red-Green Harness** – Extend the `crates/ingestion-*` crates with failing
+   tests sourced from `tests/fixtures/filesystem/latency-window.yaml`,
+   `tests/fixtures/archives/*.toml`, the delayed-ledger harness, and the
+   manifest replay golden. The initial red stage will assert watcher latency
+   propagation, archive quota exhaustion, replay diagnostics, and ledger delay
+   handling before any production code lands.
+2. **Module Implementations** – Replace the existing stubs with concrete
+   implementations for `WorkspaceEnumerator`, `ChunkPlanner`, `Sanitizer`,
+   `EmbeddingGenerator`, and `ManifestEmitter` per the interfaces in this
+   document. Focus areas include deterministic ignore-stack merging, chunk plan
+   hashing, sanitization redaction logs, encoder coordination, and encrypted
+   manifest emission.
+3. **Offline & Quota Plumbing** – Introduce offline replay buffers and quota
+   trackers that respect retention ceilings. Wire the new data structures into
+  `storage-ledger` and `storage-vector` so delayed-ledger fixtures replay
+   deterministically, and so archive quota diagnostics surface in the planner
+   tests.
+4. **Documentation & Fixture Upkeep** – Refresh subsystem READMEs and the
+   fixture plan with regeneration steps for any new captures, noting the related
+   security checklist mappings that reviewers must verify.
+
+This plan is executed before modifying the source modules and will be updated if
+review uncovers new constraints or sequencing requirements.
+
 ## Public Interfaces
 
 | Interface | Description | Inputs | Outputs |

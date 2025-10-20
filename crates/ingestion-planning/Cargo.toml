@@ -8,9 +8,18 @@ publish = false
 [dependencies]
 anyhow.workspace = true
 async-trait.workspace = true
+blake3.workspace = true
+ingestion-workspace = { path = "../ingestion-workspace" }
+storage-vector = { path = "../storage-vector" }
 serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 uuid.workspace = true
+
+[dev-dependencies]
+serde_yaml.workspace = true
+toml.workspace = true
+zstd.workspace = true
+tar.workspace = true
