@@ -17,26 +17,35 @@ from typing import Dict
 _SCENARIO_LOGS: Dict[str, str] = {
     "fuzz": """
         # Filesystem Watch Harness Transcript
+        mode: replay
         scenario: fuzz
         source: scripts/record_fs_events.py
         notes:
           - deterministic stub output until watcher harness is implemented
         events:
-          - ts_ms: 0
+          - event_id: evt-1
+            ts_ms: 0
             action: created
             path: repo/docs/README.md
-          - ts_ms: 12
+          - event_id: evt-2
+            ts_ms: 12
             action: modified
             path: repo/docs/README.md
-          - ts_ms: 24
+            depends_on:
+              - evt-1
+          - event_id: evt-3
+            ts_ms: 24
             action: removed
             path: repo/docs/tmp.out
         summary:
           envelopes_emitted: 3
+          event_count: 3
+          duration_ms: 24
           anomalies_detected: false
     """,
     "latency-burst": """
         # Filesystem Watch Harness Latency Burst Metrics
+        mode: metrics
         scenario: latency-burst
         source: scripts/record_fs_events.py
         notes:
