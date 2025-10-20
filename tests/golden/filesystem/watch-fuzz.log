@@ -1,1 +1,18 @@
-Placeholder watch fuzz log. Replace with watcher harness output.
+# Filesystem Watch Harness Transcript
+scenario: fuzz
+source: scripts/record_fs_events.py
+notes:
+  - deterministic stub output until watcher harness is implemented
+events:
+  - ts_ms: 0
+    action: created
+    path: repo/docs/README.md
+  - ts_ms: 12
+    action: modified
+    path: repo/docs/README.md
+  - ts_ms: 24
+    action: removed
+    path: repo/docs/tmp.out
+summary:
+  envelopes_emitted: 3
+  anomalies_detected: false
