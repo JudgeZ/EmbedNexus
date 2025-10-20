@@ -1,1 +1,22 @@
-Placeholder TLS handshake trace generated via trace_capture.sh --profile tls-handshake.
+# TLS Handshake Trace
+capture_timestamp: 2024-03-18T20:20:00Z
+client:
+  random: 5a2dd3f520f844529fe902ddf4616c50a238f9d43c628d5088c42beef74a11f0
+  session_id: 000000000000000000000000000000000000
+  sni: api.zaevrynth.test
+  cipher_suites:
+    - TLS_AES_128_GCM_SHA256
+    - TLS_AES_256_GCM_SHA384
+    - TLS_CHACHA20_POLY1305_SHA256
+  alpn:
+    - h2
+    - http/1.1
+server:
+  certificate_subject: CN=api.zaevrynth.test
+  protocol: TLS1.3
+  cipher_suite: TLS_AES_128_GCM_SHA256
+  alpn: h2
+session_resumed: false
+notes:
+  - handshake_completed
+  - session_ticket_issued

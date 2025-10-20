@@ -92,24 +92,28 @@ Both workflows expose a manual `workflow_dispatch` trigger with two optional
 inputs:
 
 1. `dry_run=true` validates that the required toolchains install cleanly without
-   executing the placeholder scripts.
+   executing the capture scripts.
 2. `skip_artifact_upload=true` is available when local testing already captured
    the artifacts and the Actions run should avoid storing duplicates.
 
-Because the scripts remain placeholders, each step detects the "Placeholder"
-markers and converts the generation command into a logged no-op. Once the CLI
-tools are implemented the guards fall away automatically, enabling full
-regeneration without editing the workflows. The checksum verification step
-similarly skips execution while `scripts/checksums.sh` is unimplemented; removing
-the placeholder will automatically turn on the `--verify` calls for both
-fixtures and goldens.
+The Linux jobs continue to build the cross-platform fixtures, while dedicated
+Windows jobs now execute the PowerShell helpers:
 
-Each workflow also includes a Windows runner job that emits manual instructions
-for DPAPI recovery and WSL handshake captures. Contributors must follow
-[`docs/testing/fixtures-plan.md`](docs/testing/fixtures-plan.md) to produce those
-artifacts on a domain-joined host and upload them to the corresponding workflow
-run before completion. Reference the Actions artifacts when updating fixture
-README files or the test matrix to maintain traceability.
+- `scripts/collect_dpapi.ps1` emits deterministic DPAPI recovery fixtures and
+  the matching audit log, placing outputs directly under
+  `tests/fixtures/security/dpapi-recovery/` and
+  `tests/golden/security/dpapi-recovery-audit.jsonl`.
+- `scripts/trace_capture.sh` generates TLS handshakes, downgrade fuzz logs,
+  negotiation transcripts, and latency profiles without human input.
+- `scripts/wsl_transport_proxy.ps1` records the Windows-to-WSL bridge metadata
+  and negotiation trace consumed by transport regression tests.
+
+The Windows jobs upload their results as the `windows-security-fixtures` and
+`windows-security-goldens` artifacts. The corresponding Linux jobs declare a
+dependency on these captures, download them into the workspace, and then run the
+remaining regeneration steps (checksum validation, archive synthesis, etc.). The
+checksum verification step (`scripts/checksums.sh --verify`) now runs by default
+so regressions are surfaced immediately during fixture or golden refreshes.
 
 ## Upcoming Client & IDE Resources
 - Client integration patterns and validated scripts will land in [`docs/integration/clients.md`](docs/integration/clients.md); watch for connector templates and signing guidance.

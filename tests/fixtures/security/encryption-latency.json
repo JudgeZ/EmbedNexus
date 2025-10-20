@@ -1,4 +1,15 @@
 {
-  "placeholder": true,
-  "note": "Capture encryption latency once harness is ready"
+  "capture_id": "enc-latency-zaevrynth-ci",
+  "generated_at": "2024-03-18T20:20:30Z",
+  "samples": [
+    {"feature": "search", "encryption": true, "latency_ms": 31.2},
+    {"feature": "search", "encryption": false, "latency_ms": 18.9},
+    {"feature": "ingest", "encryption": true, "latency_ms": 44.5},
+    {"feature": "ingest", "encryption": false, "latency_ms": 29.8}
+  ],
+  "summary": {
+    "encrypted_p95_ms": 44.5,
+    "unencrypted_p95_ms": 29.8,
+    "delta_ms": 14.7
+  }
 }

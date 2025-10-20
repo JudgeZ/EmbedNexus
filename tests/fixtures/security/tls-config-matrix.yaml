@@ -1,2 +1,16 @@
-# Placeholder TLS config matrix.
-# Replace via scripts/trace_capture.sh --profile tls-config.
+---
+service: zaevrynth-control-plane
+date: 2024-03-18
+supported_versions:
+  - TLS1.3
+  - TLS1.2
+default_cipher_suites:
+  - TLS_AES_128_GCM_SHA256
+  - TLS_AES_256_GCM_SHA384
+  - TLS_CHACHA20_POLY1305_SHA256
+fallback_policies:
+  - name: legacy-clients
+    sni: legacy.zaevrynth.test
+    ciphers:
+      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256

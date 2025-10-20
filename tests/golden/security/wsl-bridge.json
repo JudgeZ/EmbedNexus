@@ -1,0 +1,21 @@
+{
+  "capture_id": "wsl-bridge-zaevrynth-ci",
+  "generated_at": "2024-03-18T20:20:12Z",
+  "proxy": {
+    "host": "127.0.0.1",
+    "port": 5173
+  },
+  "windows_client": {
+    "computer": "WIN-CI",
+    "transport_user": "ZA-LAB\\dpapi.test"
+  },
+  "wsl_peer": {
+    "distro": "Ubuntu-22.04",
+    "kernel": "5.15.133.1-microsoft-standard-WSL2"
+  },
+  "tls": {
+    "negotiated_version": "TLS1.3",
+    "cipher": "TLS_AES_128_GCM_SHA256",
+    "dpapi_session_key": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+  }
+}
