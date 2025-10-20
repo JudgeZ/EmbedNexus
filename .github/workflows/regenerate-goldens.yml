@@ -100,6 +100,17 @@ jobs:
             cargo run --manifest-path scripts/Cargo.toml --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000
           fi
 
+      - name: Generate filesystem watcher goldens
+        if: inputs.dry_run != 'true'
+        run: |
+          set -euo pipefail
+          if grep -q 'NotImplementedError' scripts/record_fs_events.py; then
+            echo 'record_fs_events.py is a placeholder – skipping filesystem watcher golden regeneration.'
+          else
+            python scripts/record_fs_events.py --scenario fuzz --output tests/golden/filesystem/watch-fuzz.log
+            python scripts/record_fs_events.py --scenario latency-burst --output tests/golden/filesystem/watch-latency-burst.log
+          fi
+
       - name: Capture TLS and DPAPI goldens (manual placeholder)
         if: inputs.dry_run != 'true'
         run: |

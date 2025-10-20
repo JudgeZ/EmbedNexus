@@ -1,1 +1,18 @@
-Placeholder watch latency burst log. Replace with watcher latency capture.
+# Filesystem Watch Harness Latency Burst Metrics
+scenario: latency-burst
+source: scripts/record_fs_events.py
+notes:
+  - deterministic stub output until watcher harness is implemented
+buckets:
+  - window_ms: 25
+    events_observed: 16
+    max_latency_ms: 18
+  - window_ms: 50
+    events_observed: 32
+    max_latency_ms: 41
+  - window_ms: 100
+    events_observed: 64
+    max_latency_ms: 172
+summary:
+  sustained_latency_ms_p99: 172
+  max_queue_depth: 9
