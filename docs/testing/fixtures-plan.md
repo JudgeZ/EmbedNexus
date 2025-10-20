@@ -152,6 +152,16 @@ After the Linux job uploads its consolidated artifact:
 2. Extract the bundle locally and run `bash scripts/checksums.sh --verify <extracted paths>` to confirm every `.sha256` manifest matches the regenerated payloads.
 3. Record the workflow run URL and the artifact name in the updated fixture README(s) so future reviewers can trace provenance back to the GitHub Actions evidence.
 
+### Automation runbook
+
+Follow this runbook every time fixture or golden artifacts are regenerated so reviewers receive complete, reproducible evidence:
+
+1. **Identify the workflow run** – Copy the canonical GitHub Actions run URL immediately after the job finishes. Capture the dispatch parameters (`dry_run`, `skip_artifact_upload`, etc.) if non-default values were supplied.
+2. **Enumerate artifacts** – Note every artifact name uploaded by the workflow (`fixture-regeneration-output`, `golden-regeneration-output`, `windows-security-fixtures`, `windows-security-goldens`, and any future additions). Include download timestamps or SHA-256 hashes emitted by the Actions interface when available.
+3. **Verify checksums locally** – Download the published artifacts, extract them, and execute `scripts/checksums.sh --verify <paths>` against all touched directories. Save the terminal transcript that shows the verification output.
+4. **Document provenance** – Attach the workflow run URL, enumerated artifact names, and checksum verification transcript to the relevant subsystem README updates alongside regeneration commands and environment notes.
+5. **PR evidence** – Paste the same metadata bundle into the pull request description (or linked PR template fields) so maintainers can confirm automation provenance without hunting across comments. Link directly to any stored transcripts or diffoscope reports referenced elsewhere in this plan.
+
 ## Fixture Generation
 
 ### Filesystem Events Corpus

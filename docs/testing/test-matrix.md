@@ -108,7 +108,8 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 
 The GitHub Actions workflows under `.github/workflows/` codify the regeneration
 sequences captured in the fixture plan. Reference their outputs when updating the
-matrix entries above and attach run URLs in PR descriptions.
+matrix entries above, and follow the [automation runbook](./fixtures-plan.md#automation-runbook)
+for evidence collection and documentation.
 
 | Workflow | Toolchain Baseline | Coverage | Notes |
 | --- | --- | --- | --- |
@@ -117,11 +118,14 @@ matrix entries above and attach run URLs in PR descriptions.
 
 **Verification tracking**
 
-- Capture checksum results by downloading the workflow artifacts and running
-  `scripts/checksums.sh --verify` locally once the helper is implemented.
-- Record the workflow run URL, Actions artifact name, and checksum verification
-  outcome in subsystem-specific fixture README updates to maintain traceability
-  between automation and documentation.
+- Download the workflow artifacts and run `scripts/checksums.sh --verify` locally
+  once the helper is implemented, recording the verification transcript referenced
+  in the runbook above.
+- Matrix updates must capture, in both subsystem README updates and the associated
+  pull request description/template, the workflow run URL, every published artifact
+  name, and the checksum verification output. Attach this metadata bundle as part
+  of the documentation changes so reviewers can trace automation evidence without
+  leaving the change set.
 
 ## Execution Notes
 
