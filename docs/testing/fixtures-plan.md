@@ -82,6 +82,40 @@ Every fixture directory must contain a short `README.md` when multiple files coe
 5. **Golden refresh** – When updating golden outputs, run the relevant deterministic test harness (`cargo test --test <suite> -- --update-golden`) to ensure code-generated outputs remain synchronized. Capture the command in commit messages.
 6. **Documentation** – Update this plan or subsystem-specific docs if workflows evolve.
 
+### Checksum Manifest Coverage
+
+Maintain deterministic checksum tracking for every regenerated artifact. The following manifests must be updated together with their paired assets:
+
+- **Archive artifacts** – Refresh both golden and fixture manifests after rebuilding bundles:
+  - `tests/golden/archives/fuzzed-manifests.jsonl.sha256`
+  - `tests/golden/archives/quota-throughput.jsonl.sha256`
+  - `tests/fixtures/archives/overflow-case.tar.zst.sha256`
+  - `tests/fixtures/archives/overflow-latency.tar.zst.sha256`
+- **Routing artifacts** – Regenerate manifests whenever transcripts or throughput captures change:
+  - `tests/golden/routing/fanout-throughput.jsonl.sha256`
+  - `tests/golden/routing/fuzz-affinity.jsonl.sha256`
+  - `tests/golden/routing/mcp-federation.transcript.sha256`
+  - `tests/golden/routing/multi-repo-latency.transcript.sha256`
+- **Filesystem artifacts** – Add and maintain checksum companions for watcher outputs and configuration drops when they become deterministic:
+  - `tests/golden/filesystem/watch-fuzz.log.sha256`
+  - `tests/golden/filesystem/watch-latency-burst.log.sha256`
+  - Future watcher configuration exports under `tests/fixtures/filesystem/` should follow the same `.sha256` pattern once populated.
+- **Security artifacts** – Update both golden and fixture manifests after rerunning TLS, DPAPI, or WSL capture workflows:
+  - `tests/golden/security/dpapi-recovery-audit.jsonl.sha256`
+  - `tests/golden/security/encryption-toggle.trace.sha256`
+  - `tests/golden/security/tls-fuzz.log.sha256`
+  - `tests/golden/security/tls-handshake.trace.sha256`
+  - `tests/golden/security/tls-negotiation.trace.sha256`
+  - `tests/golden/security/tls-performance.jsonl.sha256`
+  - `tests/golden/security/wsl-bridge.json.sha256`
+  - `tests/fixtures/security/dpapi-recovery/recovery-events.jsonl.sha256`
+
+**Synchronization workflow**:
+
+1. Regenerate artifacts via the documented capture harnesses (see subsystem READMEs) so assets and manifests remain aligned.
+2. Run `scripts/checksums.sh --update <paths>` once the helper is implemented; until then, invoke `sha256sum <artifact> > <artifact>.sha256` manually, keeping manifests co-located with their assets.
+3. Verify the results with `scripts/checksums.sh --verify <paths>` (or `sha256sum --check`) before committing. Update fixture and golden trees in the same change set to avoid checksum drift between paired corpora.
+
 ### Deleting Fixtures
 
 1. Verify no active tests reference the asset via `rg <fixture-name> tests/ src/`.
