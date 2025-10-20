@@ -81,6 +81,20 @@ Every fixture directory must contain a short `README.md` when multiple files coe
 4. **Checksum capture** – Produce SHA-256 hashes for binary or large artifacts using `scripts/checksums.sh` (see [Review Process](#review-process)). Commit checksum manifests next to the assets (e.g., `overflow-case.tar.zst.sha256`).
 5. **Golden refresh** – When updating golden outputs, run the relevant deterministic test harness (`cargo test --test <suite> -- --update-golden`) to ensure code-generated outputs remain synchronized. Capture the command in commit messages.
 6. **Documentation** – Update this plan or subsystem-specific docs if workflows evolve.
+7. **Ordering verification** – Run `python scripts/verify_event_order.py <fixture-path>` for any filesystem watcher transcripts. Address failures before committing so GitHub Actions can rely on machine-readable exit codes.
+
+### Event order verification
+
+`scripts/verify_event_order.py` validates the metadata emitted by filesystem replay captures. The command accepts individual YAML files or directories and produces structured console output (`OK ✓` on success, `ERROR (code)` when validation fails). Exit codes are reserved for automation:
+
+| Exit code | Meaning |
+| --- | --- |
+| `0` | All transcripts satisfied ordering constraints. |
+| `1` | Input could not be read or parsed as YAML. |
+| `2` | Schema violation (missing metadata, malformed `depends_on` values). |
+| `3` | Ordering violation (timestamps regress or dependencies reference future events). |
+
+The verifier skips configuration manifests (`mode: config`) and metrics exports (`mode: metrics`). Replay files must declare `mode: replay`, a `scenario` identifier, `source` attribution, and per-event metadata (`event_id`, `ts_ms`, `action`, `path`, optional `depends_on`).
 
 ### Checksum Manifest Coverage
 

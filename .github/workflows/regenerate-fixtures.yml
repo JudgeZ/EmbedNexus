@@ -106,17 +106,9 @@ jobs:
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/record_fs_events.py; then
-            echo 'record_fs_events.py is a placeholder – skipping filesystem fixture regeneration.'
-          else
-            python scripts/record_fs_events.py --config tests/fixtures/filesystem/mock-events.yaml \
-              --replay-dir tests/fixtures/filesystem/workspace-replay/
-            if grep -q 'Placeholder' scripts/verify_event_order.py; then
-              echo 'verify_event_order.py is a placeholder – skipping ordering verification.'
-            else
-              python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/
-            fi
-          fi
+          python scripts/record_fs_events.py --config tests/fixtures/filesystem/mock-events.yaml \
+            --replay-dir tests/fixtures/filesystem/workspace-replay/
+          python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/
 
       - name: Generate archive scenarios
         if: inputs.dry_run != 'true'

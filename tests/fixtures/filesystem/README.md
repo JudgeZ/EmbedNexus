@@ -7,39 +7,34 @@ golden metrics consumed by `watcher_latency.rs`.
 
 ## Regeneration workflow
 
-1. Ensure Python 3.11 with `watchdog`, `pyyaml`, and `typer` is available
-   (`python -m pip install -r scripts/requirements-watchers.txt`).
-2. Record raw events into the scenario manifest:
+1. Ensure Python 3.11 with `pyyaml` is available (`python -m pip install pyyaml`).
+2. Populate the replay workspace and scenario manifests:
 
    ```bash
    python scripts/record_fs_events.py \
-     --scenario latency-burst \
-     --output tests/fixtures/filesystem/mock-events.yaml \
+     --config tests/fixtures/filesystem/mock-events.yaml \
      --replay-dir tests/fixtures/filesystem/workspace-replay/
    ```
 
-3. Emit the aggregated latency windows used by the ingestion enumerator:
+   The stub emits deterministic outputs: configuration metadata (`mode: config`),
+   filesystem replay transcripts (`mode: replay`), and latency metrics
+   (`mode: metrics`).
+
+3. Refresh the fuzz golden transcript consumed by regression tests:
 
    ```bash
-   python scripts/record_fs_events.py metrics \
-     --scenario latency-burst \
-     --latency-window-out tests/fixtures/filesystem/latency-window.yaml
+   python scripts/record_fs_events.py \
+     --scenario fuzz \
+     --output tests/golden/filesystem/watch-fuzz.log
    ```
 
-   The metrics subcommand populates the `observed` and `max_latency_ms` fields so
-   the tests can assert watcher throughput against
-   `tests/golden/filesystem/watch-latency-burst.log`.
+   Repeat the command with `--scenario latency-burst` to refresh the latency
+   golden.
 
-4. Rebuild the golden latency transcript to keep CI assertions deterministic:
-
-   ```bash
-   python scripts/record_fs_events.py transcript \
-     --scenario latency-burst \
-     --output tests/golden/filesystem/watch-latency-burst.log
-   ```
-
-5. Run `python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/`
-   to confirm event ordering before committing.
+4. Run `python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/`
+   to confirm replay ordering before committing. The verifier prints `OK ✓` lines
+   for each valid transcript and exits with one of four codes (`0` success, `1`
+   load/parsing failure, `2` schema violation, `3` ordering/dependency failure).
 
 These steps satisfy the Input Validation and Sandboxing checklist items called
 out in `docs/security/threat-model.md`, ensuring watcher filters do not leak
