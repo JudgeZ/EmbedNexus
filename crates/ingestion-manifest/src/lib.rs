@@ -1,5 +1,6 @@
 //! Manifest emitter and replay scaffolding.
 
+use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::SystemTime;
 
@@ -88,14 +89,23 @@ where
     }
 
     pub fn flush_offline(&mut self) -> Result<(), ManifestError> {
-        let drained = self.buffer.drain_ready();
-        for mut entry in drained {
+        let mut drained: VecDeque<_> = self.buffer.drain_ready().into();
+        while let Some(mut entry) = drained.pop_front() {
             entry.status = "emitted".into();
             if let Err(err) = self.queue.send(entry.clone()) {
-                // push back into buffer to retry later
+                // push back into buffer to retry later and preserve ordering
+                entry.status = "buffered".into();
                 self.buffer
                     .push(entry)
                     .map_err(|error| ManifestError::Buffer(error.to_string()))?;
+
+                while let Some(mut remaining) = drained.pop_front() {
+                    remaining.status = "buffered".into();
+                    self.buffer
+                        .push(remaining)
+                        .map_err(|error| ManifestError::Buffer(error.to_string()))?;
+                }
+
                 return Err(ManifestError::QueueOffline(err.to_string()));
             }
             self.next_sequence = self.next_sequence.max(entry.sequence + 1);
