@@ -122,6 +122,9 @@ jobs:
           else
             TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake
             scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
+            scripts/trace_capture.sh --profile encryption-toggle --output tests/golden/security/encryption-toggle.log
+            TRACE_OUT=tests/golden/security/tls-negotiation.trace scripts/trace_capture.sh --profile tls-negotiation
+            scripts/trace_capture.sh --profile perf-baseline --output tests/golden/security/performance-metrics.json
             scripts/trace_capture.sh --profile dpapi-audit --output tests/golden/security/dpapi-recovery-audit.jsonl
             TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173
           fi
@@ -133,7 +136,7 @@ jobs:
           if grep -q 'Placeholder' scripts/checksums.sh; then
             echo 'checksums.sh is a placeholder – skipping checksum verification.'
           else
-            bash scripts/checksums.sh --verify tests/golden/
+            bash scripts/checksums.sh --verify tests/golden/ tests/golden/security/
           fi
 
       - name: Upload golden artifacts
@@ -145,6 +148,7 @@ jobs:
           retention-days: 14
           path: |
             tests/golden/**
+            tests/golden/security/**
             tests/golden/routing/fanout-throughput.jsonl.sha256
             tests/golden/routing/multi-repo-latency.transcript.sha256
 
