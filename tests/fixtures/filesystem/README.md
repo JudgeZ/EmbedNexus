@@ -1,17 +1,46 @@
-# Filesystem Fixture Placeholders
+# Filesystem Watcher Fixtures
 
-Placeholder YAML and directory structures live here until the filesystem watcher
-tests are authored. Real datasets will be captured via
-`scripts/record_fs_events.py` and related tooling referenced in
-`docs/testing/fixtures-plan.md`.
+The watcher fixtures exercise latency windows, debounce semantics, and replay
+coverage for the ingestion pipeline. Regenerate the corpus after capturing a new
+workload with the watcher harness so the observed counts stay aligned with the
+golden metrics consumed by `watcher_latency.rs`.
 
-The recorder stub supports two invocation paths:
+## Regeneration workflow
 
-- `python scripts/record_fs_events.py --scenario <name> --output <file>` writes a
-  deterministic golden based on the embedded `_SCENARIO_LOGS` entries.
-- `python scripts/record_fs_events.py --config tests/fixtures/filesystem/mock-events.yaml --replay-dir <dir>` populates this
-  directory with a deterministic `mock-events.yaml` manifest plus per-scenario
-  replay captures derived from the same embedded data.
+1. Ensure Python 3.11 with `watchdog`, `pyyaml`, and `typer` is available
+   (`python -m pip install -r scripts/requirements-watchers.txt`).
+2. Record raw events into the scenario manifest:
 
-Update the configuration and replay artifacts when recording new event traces so
-that regeneration workflows and CI jobs stay aligned with the documented schema.
+   ```bash
+   python scripts/record_fs_events.py \
+     --scenario latency-burst \
+     --output tests/fixtures/filesystem/mock-events.yaml \
+     --replay-dir tests/fixtures/filesystem/workspace-replay/
+   ```
+
+3. Emit the aggregated latency windows used by the ingestion enumerator:
+
+   ```bash
+   python scripts/record_fs_events.py metrics \
+     --scenario latency-burst \
+     --latency-window-out tests/fixtures/filesystem/latency-window.yaml
+   ```
+
+   The metrics subcommand populates the `observed` and `max_latency_ms` fields so
+   the tests can assert watcher throughput against
+   `tests/golden/filesystem/watch-latency-burst.log`.
+
+4. Rebuild the golden latency transcript to keep CI assertions deterministic:
+
+   ```bash
+   python scripts/record_fs_events.py transcript \
+     --scenario latency-burst \
+     --output tests/golden/filesystem/watch-latency-burst.log
+   ```
+
+5. Run `python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/`
+   to confirm event ordering before committing.
+
+These steps satisfy the Input Validation and Sandboxing checklist items called
+out in `docs/security/threat-model.md`, ensuring watcher filters do not leak
+restricted paths while replaying recorded events.

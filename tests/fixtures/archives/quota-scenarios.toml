@@ -1,2 +1,13 @@
-# Placeholder TOML for quota scenarios.
-# Replace via cargo archive_builder --scenario quota.
+[[scenarios]]
+name = "baseline"
+bytes = 2048
+entries = 8
+nesting_depth = 1
+latency_budget_ms = 80
+
+[[scenarios]]
+name = "overflow"
+bytes = 6144
+entries = 24
+nesting_depth = 4
+latency_budget_ms = 180

@@ -1,2 +1,39 @@
-# Placeholder latency window dataset.
-# Replace with capture from scripts/record_fs_events.py --metrics.
+scenario: latency-burst
+workspace: repo-alpha
+latency_windows:
+  - window_ms: 25
+    debounce_ms: 10
+    queue_depth: 4
+    observed: 16
+    max_latency_ms: 18
+    events:
+      - path: "src/lib.rs"
+        action: "Modify"
+        latency_ms: 12
+      - path: "src/lib.rs"
+        action: "Modify"
+        latency_ms: 18
+  - window_ms: 50
+    debounce_ms: 10
+    queue_depth: 6
+    observed: 32
+    max_latency_ms: 41
+    events:
+      - path: "src/main.rs"
+        action: "Create"
+        latency_ms: 33
+      - path: "README.md"
+        action: "Modify"
+        latency_ms: 41
+  - window_ms: 100
+    debounce_ms: 20
+    queue_depth: 9
+    observed: 64
+    max_latency_ms: 172
+    events:
+      - path: "docs/plan.md"
+        action: "Modify"
+        latency_ms: 98
+      - path: "docs/plan.md"
+        action: "Modify"
+        latency_ms: 172

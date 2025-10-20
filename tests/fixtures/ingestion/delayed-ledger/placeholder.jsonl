@@ -1,2 +1,3 @@
-// Placeholder manifest replay batch.
-// Replace via cargo manifest_replay_harness outputs.
+{"sequence":1,"repo_id":"repo-alpha","delayed_ms":4200,"payload_checksum_before":"000000","payload_checksum_after":"111aaa","status":"buffered"}
+{"sequence":2,"repo_id":"repo-alpha","delayed_ms":3800,"payload_checksum_before":"111aaa","payload_checksum_after":"222bbb","status":"buffered"}
+{"sequence":3,"repo_id":"repo-beta","delayed_ms":9600,"payload_checksum_before":"111aaa","payload_checksum_after":"333ccc","status":"buffered"}

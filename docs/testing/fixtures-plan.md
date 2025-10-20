@@ -161,7 +161,8 @@ After the Linux job uploads its consolidated artifact:
   1. Start the recorder in a clean workspace snapshot: `python scripts/record_fs_events.py --config tests/fixtures/filesystem/mock-events.yaml`.
   2. Reproduce the target actions (create/edit/delete) to populate `tests/fixtures/filesystem/mock-events.yaml`.
   3. Export bulk sequences via `--replay-dir tests/fixtures/filesystem/workspace-replay/` to keep per-scenario YAML files deterministic.
-  4. Validate ordering with `python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/` before committing.
+  4. Generate latency aggregates with `python scripts/record_fs_events.py metrics --scenario latency-burst --latency-window-out tests/fixtures/filesystem/latency-window.yaml` so the `observed` and `max_latency_ms` fields mirror the golden metrics.
+  5. Validate ordering with `python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/` before committing.
 
 ### Archive Scenarios
 
@@ -218,8 +219,9 @@ After the Linux job uploads its consolidated artifact:
   2. Validate bounded growth with `python scripts/offline_transport_buffer.py verify tests/fixtures/transport/offline-queue/ --max-buffer 512` to ensure replay scenarios respect the transport backpressure thresholds documented in [Transport Adapter Specification](../design/transport.md#offline-backpressure).
   3. Generate golden replays by invoking `python scripts/offline_transport_buffer.py replay --input tests/fixtures/transport/offline-queue/burst-drain.jsonl --transcript tests/golden/transport/offline-buffer-replay.transcript`, capturing deterministic dequeue ordering for the failing integration test.
   4. Simulate delayed storage availability with `cargo run --bin manifest_replay_harness -- --input-dir tests/fixtures/ingestion/delayed-ledger/ --golden-out tests/golden/ingestion/manifest-replay.log --delay-ms 45000`. The harness should emit manifest diff batches (`retry-window-*.jsonl`) and ledger checkpoints replicating the recovery workflow.
-  5. Record checksum manifests for large queue snapshots and replay logs using `scripts/checksums.sh tests/fixtures/transport/offline-queue/ tests/fixtures/ingestion/delayed-ledger/ tests/golden/transport/offline-buffer-replay.transcript tests/golden/ingestion/manifest-replay.log`.
-  6. Update the fixture-level README files with air-gapped host prerequisites (e.g., firewall rules, telemetry capture sinks) and storage reconnection choreography so reviewers can reproduce the capture sessions.
+  5. Ensure `tests/fixtures/ingestion/delayed-ledger/placeholder.jsonl` contains `sequence`, `repo_id`, `delayed_ms`, and checksum fields for each buffered manifest prior to running the harness. The JSONL format must remain stable so replay diagnostics can be compared against golden expectations.
+  6. Record checksum manifests for large queue snapshots and replay logs using `scripts/checksums.sh tests/fixtures/transport/offline-queue/ tests/fixtures/ingestion/delayed-ledger/ tests/golden/transport/offline-buffer-replay.transcript tests/golden/ingestion/manifest-replay.log`.
+  7. Update the fixture-level README files with air-gapped host prerequisites (e.g., firewall rules, telemetry capture sinks) and storage reconnection choreography so reviewers can reproduce the capture sessions.
 
 ### Routing Scenarios
 
