@@ -94,8 +94,8 @@ Every fixture directory must contain a short `README.md` when multiple files coe
 
 - **Tooling**: `scripts/record_fs_events.py` (requires Python 3.11, `watchdog`, and `pyyaml`).
 - **Workflow**:
-  1. Start the recorder in a clean workspace snapshot: `python scripts/record_fs_events.py --config configs/filesystem/mock-events.yaml`.
-  2. Reproduce the target actions (create/edit/delete) to populate `mock-events.yaml`.
+  1. Start the recorder in a clean workspace snapshot: `python scripts/record_fs_events.py --config tests/fixtures/filesystem/mock-events.yaml`.
+  2. Reproduce the target actions (create/edit/delete) to populate `tests/fixtures/filesystem/mock-events.yaml`.
   3. Export bulk sequences via `--replay-dir tests/fixtures/filesystem/workspace-replay/` to keep per-scenario YAML files deterministic.
   4. Validate ordering with `python scripts/verify_event_order.py tests/fixtures/filesystem/workspace-replay/` before committing.
 
