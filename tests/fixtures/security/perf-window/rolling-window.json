@@ -1,0 +1,12 @@
+{
+  "window_ms": 60000,
+  "samples": [
+    {"timestamp": "2024-03-18T20:19:00Z", "handshakes": 42, "failures": 0},
+    {"timestamp": "2024-03-18T20:19:30Z", "handshakes": 47, "failures": 1},
+    {"timestamp": "2024-03-18T20:20:00Z", "handshakes": 53, "failures": 0}
+  ],
+  "summary": {
+    "max_handshakes": 53,
+    "failure_rate": 0.006
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "machine_sid": "S-1-5-21-523489101-2145879035-1792157894",
+  "keys": [
+    {
+      "guid": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+      "status": "recovered",
+      "sha1": "6b9a1bafcc2a0eb0b3f0ab8dbe3c7b9f1f9f2f34",
+      "last_rotation": "2024-03-01T14:03:12Z",
+      "recovery_reason": "WSL transport handshake"
+    },
+    {
+      "guid": "e02fd0e4-00fd-090A-ca30-0d00a0038ba0",
+      "status": "staged",
+      "sha1": "2c9dc8341f03ed2a928c0889680c91f89c1e9e5d",
+      "last_rotation": "2023-12-15T09:41:27Z",
+      "recovery_reason": "scheduled rotation"
+    }
+  ]
+}

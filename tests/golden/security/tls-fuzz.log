@@ -1,1 +1,4 @@
-Placeholder TLS fuzz log captured via trace_capture.sh --profile tls-fuzz.
+[2024-03-18T20:20:01Z] INFO Starting TLS fuzzing session id=zaevrynth-ci
+[2024-03-18T20:20:02Z] WARN Downgrade attempt rejected: unsupported_record_version=TLS1.0
+[2024-03-18T20:20:02Z] INFO Verified GREASE extension propagation
+[2024-03-18T20:20:03Z] INFO Completed 256 handshake mutations without server failure

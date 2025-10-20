@@ -1,1 +1,8 @@
-Placeholder TLS negotiation trace pending downgrade replay harness.
+# TLS Negotiation Transcript
+client_hello: api.zaevrynth.test
+proxy: localhost:5173
+negotiated_version: TLS1.3
+selected_cipher: TLS_AES_256_GCM_SHA384
+alpn_result: h2
+resumption_ticket: issued
+ocsp_stapling: true

@@ -1,0 +1,18 @@
+{
+  "authority": "ZA-LAB Key Recovery",
+  "issued_at": "2023-05-12T08:00:00Z",
+  "certificates": [
+    {
+      "thumbprint": "92B5C4F3C6E81BD2A2393E311410C67F6A589F79",
+      "not_before": "2023-05-12T00:00:00Z",
+      "not_after": "2025-06-01T00:00:00Z",
+      "subject": "CN=Zaevrynth Recovery,OU=Key Recovery,DC=za,DC=lab"
+    },
+    {
+      "thumbprint": "7F0AE98E21C6E1387E8B0D719B6F8C47E2923A1B",
+      "not_before": "2022-03-10T00:00:00Z",
+      "not_after": "2024-03-10T00:00:00Z",
+      "subject": "CN=Zaevrynth Recovery Legacy,OU=Key Recovery,DC=za,DC=lab"
+    }
+  ]
+}

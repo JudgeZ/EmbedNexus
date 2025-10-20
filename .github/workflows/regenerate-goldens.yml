@@ -13,9 +13,90 @@ on:
         default: 'false'
 
 jobs:
+  goldens-windows:
+    name: Generate Windows security goldens
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate DPAPI audit export
+        if: inputs.dry_run != 'true'
+        shell: pwsh
+        run: |
+          & (Resolve-Path './scripts/collect_dpapi.ps1') -OutputDir 'tests/fixtures/security/dpapi-recovery' `
+            -AuditLogPath 'tests/golden/security/dpapi-recovery-audit.jsonl' `
+            -EmitChecksums
+
+      - name: Generate TLS negotiation goldens
+        if: inputs.dry_run != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          TRACE_OUT=tests/golden/security/tls-handshake.trace ./scripts/trace_capture.sh --profile tls-handshake
+          ./scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
+          TRACE_OUT=tests/golden/security/encryption-toggle.trace ./scripts/trace_capture.sh --profile encryption-toggle
+          TRACE_OUT=tests/golden/security/tls-negotiation.trace ./scripts/trace_capture.sh --profile tls-negotiation
+          ./scripts/trace_capture.sh --profile perf-baseline --output tests/golden/security/tls-performance.jsonl
+          ./scripts/trace_capture.sh --profile dpapi-audit --output tests/golden/security/dpapi-recovery-audit.jsonl
+
+      - name: Capture WSL bridge trace
+        if: inputs.dry_run != 'true'
+        shell: pwsh
+        run: |
+          & (Resolve-Path './scripts/wsl_transport_proxy.ps1') -OutputPath 'tests/golden/transport/wsl-handshake-negotiation.trace' `
+            -BridgeMetadataPath 'tests/golden/security/wsl-bridge.json' `
+            -ProxyHost '127.0.0.1' -ProxyPort 5173 -EmitChecksums
+
+      - name: Refresh TLS checksum manifests
+        if: inputs.dry_run != 'true'
+        shell: pwsh
+        run: |
+          $targets = @(
+            'tests/golden/security/tls-handshake.trace',
+            'tests/golden/security/tls-fuzz.log',
+            'tests/golden/security/encryption-toggle.trace',
+            'tests/golden/security/tls-negotiation.trace',
+            'tests/golden/security/tls-performance.jsonl'
+          )
+          foreach ($path in $targets) {
+            $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+            $leaf = Split-Path -Leaf $path
+            $checksumPath = "$path.sha256"
+            Set-Content -LiteralPath $checksumPath -Value "$hash  $leaf" -Encoding UTF8
+          }
+
+      - name: Upload Windows security goldens
+        if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-security-goldens
+          if-no-files-found: warn
+          retention-days: 14
+          path: |
+            tests/golden/security/tls-handshake.trace
+            tests/golden/security/tls-handshake.trace.sha256
+            tests/golden/security/tls-fuzz.log
+            tests/golden/security/tls-fuzz.log.sha256
+            tests/golden/security/encryption-toggle.trace
+            tests/golden/security/encryption-toggle.trace.sha256
+            tests/golden/security/tls-negotiation.trace
+            tests/golden/security/tls-negotiation.trace.sha256
+            tests/golden/security/tls-performance.jsonl
+            tests/golden/security/tls-performance.jsonl.sha256
+            tests/golden/security/dpapi-recovery-audit.jsonl
+            tests/golden/security/dpapi-recovery-audit.jsonl.sha256
+            tests/golden/security/wsl-bridge.json
+            tests/golden/security/wsl-bridge.json.sha256
+            tests/golden/transport/wsl-handshake-negotiation.trace
+            tests/golden/transport/wsl-handshake-negotiation.trace.sha256
+
   goldens-linux:
     name: Generate Linux-accessible goldens
     runs-on: ubuntu-latest
+    needs: goldens-windows
     env:
       PYTHONUNBUFFERED: '1'
     steps:
@@ -23,6 +104,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Download Windows security goldens
+        if: inputs.dry_run != 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-security-goldens
+          path: .
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -113,21 +201,17 @@ jobs:
             python scripts/record_fs_events.py --scenario latency-burst --output tests/golden/filesystem/watch-latency-burst.log
           fi
 
-      - name: Capture TLS and DPAPI goldens (manual placeholder)
+      - name: Capture TLS and DPAPI goldens
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/trace_capture.sh; then
-            echo 'trace_capture.sh is a placeholder – document manual TLS/DPAPI capture steps in README.'
-          else
-            TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake
-            scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
-            TRACE_OUT=tests/golden/security/encryption-toggle.trace scripts/trace_capture.sh --profile encryption-toggle
-            TRACE_OUT=tests/golden/security/tls-negotiation.trace scripts/trace_capture.sh --profile tls-negotiation
-            scripts/trace_capture.sh --profile perf-baseline --output tests/golden/security/tls-performance.jsonl
-            scripts/trace_capture.sh --profile dpapi-audit --output tests/golden/security/dpapi-recovery-audit.jsonl
-            TRACE_OUT=tests/golden/transport/wsl-handshake-negotiation.trace scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173
-          fi
+          TRACE_OUT=tests/golden/security/tls-handshake.trace scripts/trace_capture.sh --profile tls-handshake
+          scripts/trace_capture.sh --profile tls-fuzz --output tests/golden/security/tls-fuzz.log
+          TRACE_OUT=tests/golden/security/encryption-toggle.trace scripts/trace_capture.sh --profile encryption-toggle
+          TRACE_OUT=tests/golden/security/tls-negotiation.trace scripts/trace_capture.sh --profile tls-negotiation
+          scripts/trace_capture.sh --profile perf-baseline --output tests/golden/security/tls-performance.jsonl
+          scripts/trace_capture.sh --profile dpapi-audit --output tests/golden/security/dpapi-recovery-audit.jsonl
+          scripts/trace_capture.sh --profile wsl-transport --proxy-host localhost --proxy-port 5173 --output tests/golden/transport/wsl-handshake-negotiation.trace
 
       - name: Run checksum verification
         if: inputs.dry_run != 'true'
@@ -152,18 +236,3 @@ jobs:
             tests/golden/routing/fanout-throughput.jsonl.sha256
             tests/golden/routing/multi-repo-latency.transcript.sha256
 
-  windows-notes:
-    name: Windows-only capture guidance
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Provide manual capture guidance
-        shell: pwsh
-        run: |
-          Write-Output 'TLS downgrade, DPAPI recovery, and WSL handshake captures require a domain-joined Windows workstation.'
-          Write-Output 'Use scripts/collect_dpapi.ps1 and scripts/wsl_transport_proxy.ps1 as described in docs/testing/fixtures-plan.md.'
-          Write-Output 'Upload captured artifacts and checksum manifests to the workflow run before completion.'

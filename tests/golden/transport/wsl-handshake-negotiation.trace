@@ -1,1 +1,16 @@
-Placeholder WSL handshake negotiation trace captured via trace_capture.sh --profile wsl-transport.
+# WSL Transport Bridge Trace
+proxy_endpoint: 127.0.0.1:5173
+bridge:
+  version: 1
+  mode: passthrough
+windows_client:
+  computer: WIN-CI
+  session: wsl-trace
+wsl_peer:
+  distro: Ubuntu-22.04
+  kernel: 5.15.133.1-microsoft-standard-WSL2
+handshake:
+  tls_version: TLS1.3
+  cipher: TLS_AES_128_GCM_SHA256
+  negotiated_alpn: h2
+  dpapi_session_key: 7c9e6679-7425-40de-944b-e07fc1f90ae7

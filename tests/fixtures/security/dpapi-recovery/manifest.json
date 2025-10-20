@@ -1,0 +1,28 @@
+{
+  "capture_id": "ZA-DPAPI-20240318-01",
+  "collector": "scripts/collect_dpapi.ps1",
+  "collector_version": "1.0.0",
+  "host": "WIN-CI",
+  "domain": "ZA-LAB",
+  "recovery_agent": {
+    "distinguished_name": "CN=Zaevrynth Recovery,OU=Key Recovery,DC=za,DC=lab",
+    "thumbprint": "92B5C4F3C6E81BD2A2393E311410C67F6A589F79",
+    "certificate_serial": "6E4C97C42F8A9AB33BF2C1FEE9D7AD42"
+  },
+  "certificate_expiration": "2025-06-01T00:00:00Z",
+  "policy_revision": 42,
+  "artifacts": [
+    {
+      "path": "recovery-events.jsonl",
+      "description": "Security log export for DPAPI recovery events"
+    },
+    {
+      "path": "master-key-inventory.json",
+      "description": "Recovered master key metadata"
+    },
+    {
+      "path": "certificate-inventory.json",
+      "description": "Active recovery certificate inventory"
+    }
+  ]
+}
