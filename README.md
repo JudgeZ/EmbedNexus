@@ -1,4 +1,4 @@
-# EmbedNexus
+# Zævrynth
 
 ## Mission
 - Deliver a local-first embedding management platform that accelerates retrieval-augmented workflows without relying on external services.
