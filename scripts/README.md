@@ -18,8 +18,8 @@ with the guidance in `docs/testing/fixtures-plan.md` and the CI coverage plan.
 | `collect_dpapi.ps1` | PowerShell 7+ | Windows DPAPI tooling, EventLog APIs | Collect DPAPI recovery telemetry on domain-joined Windows hosts. |
 | `offline_transport_buffer.py` | Python 3.11 | `typer`, `rich`, `pyyaml` | Simulate offline transport buffers, verify queue boundaries, and replay sessions into transcripts. |
 | `manifest_replay_harness.rs` | Rust (binary crate) | `cargo` toolchain, async runtime (TBD) | Reproduce ingestion manifest replays with configurable delay profiles for deterministic regression testing. |
-| `routing_matrix.py` | Python 3.11 | `networkx`, `typer` | Generate routing matrices, fan-out scenarios, and transcript data for federation harnesses. |
-| `fixture_packager.py` | Python 3.11 | `typer`, `pyyaml`, `rich` | Assemble shared fixture bundles and validate schema compatibility across subsystems. |
+| `routing_matrix.py` | Python 3.11 | `typer`, `rich` | Generate deterministic routing matrices, fan-out corpora, transcripts, and fuzz-affinity hints. |
+| `fixture_packager.py` | Python 3.11 | `typer`, `rich` | Assemble shared routing fixture bundles and validate schema/version compatibility. |
 | `checksums.sh` | Bash | `coreutils` (`sha256sum`), `find`, `xargs` | Generate and verify SHA-256 manifest files for large artifacts. |
 | `generate_encryption_toggles.py` | Python 3.11 | `click`, `cryptography`, `pyyaml` | Produce encryption toggle datasets referenced by TLS and DPAPI fixture workflows. |
 | `wsl_transport_proxy.ps1` | PowerShell 7+ | Windows `wsl.exe`, networking cmdlets | Bridge Windows transports into WSL for handshake replay and transcript capture. |
@@ -44,10 +44,10 @@ checks into CI once the scripts move beyond placeholders.
 
 ## Implementation Status
 
-`transcripts/normalize.py` is the first fully implemented helper and can be used
-immediately to enforce deterministic transcript formatting. The remaining scripts
-exist as descriptive stubs. Populate their module docstrings or comment blocks
-with additional requirements as subsystem owners refine the fixture workflows.
-When promoting a stub to a real implementation, replace the placeholder main
-entry point with functional code and wire the script into the relevant
-`Makefile` or CI workflow to maintain traceability.
+`transcripts/normalize.py`, `routing_matrix.py`, and `fixture_packager.py` are
+fully implemented helpers that power the routing fixture and golden workflows.
+The remaining scripts exist as descriptive stubs. Populate their module
+docstrings or comment blocks with additional requirements as subsystem owners
+refine the fixture workflows. When promoting a stub to a real implementation,
+replace the placeholder main entry point with functional code and wire the
+script into the relevant `Makefile` or CI workflow to maintain traceability.

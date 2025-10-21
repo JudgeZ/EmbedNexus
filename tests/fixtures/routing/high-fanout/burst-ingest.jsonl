@@ -1,0 +1,2 @@
+{"expected_p99_latency_ms": 185, "requests": 128, "routes": ["routing-control", "artifact-store"], "scenario": "burst-ingest", "tenant": "tenant-alpha"}
+{"expected_p99_latency_ms": 212, "requests": 96, "routes": ["routing-control", "code-search", "artifact-store"], "scenario": "burst-ingest", "tenant": "tenant-beta"}

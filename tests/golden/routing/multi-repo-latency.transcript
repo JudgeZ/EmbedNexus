@@ -1,1 +1,7 @@
-Placeholder multi-repo latency transcript. Replace with routing harness replay.
+# Multi-repo latency transcript
+generated_at: 2024-01-01T00:00:00Z
+ingest-api -> routing-control p50=11ms p95=23ms p99=37ms
+routing-control -> artifact-store p50=15ms p95=32ms p99=48ms
+routing-control -> code-search p50=19ms p95=35ms p99=51ms
+code-search -> artifact-store p50=13ms p95=26ms p99=39ms
+artifact-store -> audit-log p50=8ms p95=14ms p99=20ms

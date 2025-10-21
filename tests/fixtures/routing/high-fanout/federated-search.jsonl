@@ -1,0 +1,2 @@
+{"queries_per_second": 42, "replica_spread": 3, "routes": ["routing-control", "code-search"], "scenario": "federated-search", "tenant": "tenant-gamma"}
+{"queries_per_second": 38, "replica_spread": 2, "routes": ["routing-control", "code-search", "artifact-store"], "scenario": "federated-search", "tenant": "tenant-delta"}

@@ -1,0 +1,42 @@
+{
+  "artifacts": [
+    {
+      "name": "routing-fanout-burst",
+      "path": "routing/high-fanout/burst-ingest.jsonl",
+      "sha256": "f5188be451661166350052811907148ff6058675811047578e8b5bce9c1b6f90"
+    },
+    {
+      "name": "routing-fanout-manifest",
+      "path": "routing/high-fanout/manifest.json",
+      "sha256": "547c4b2bdc67fb27b4e8faf101a748f048d83b27469f865a9b2d218d9d563bf5"
+    },
+    {
+      "name": "routing-fanout-metrics",
+      "path": "routing/fanout-metrics.json",
+      "sha256": "9dba13177be081048d11d7d9a47a1b858b0a7bfb34340deb03750f0f38600ba2"
+    },
+    {
+      "name": "routing-fanout-search",
+      "path": "routing/high-fanout/federated-search.jsonl",
+      "sha256": "cdde1142b1f81a539aaec7385090e9e905710ff80049a86b170e840e0edfd484"
+    },
+    {
+      "name": "routing-fuzz-affinity",
+      "path": "routing/fuzz-affinity.jsonl",
+      "sha256": "6d79cb2fbc4eed4a5ed4cb914c1e4ce6fbe708b4c597d7cd99ef419145d42cb3"
+    },
+    {
+      "name": "routing-latency",
+      "path": "routing/latency-matrix.json",
+      "sha256": "ca59e63e8c5ac9510dc7a2d3006a7fbfb264016b17ba0e22a207b7f4dc27c7f3"
+    },
+    {
+      "name": "routing-matrix",
+      "path": "routing/multi-repo-matrix.json",
+      "sha256": "07fc31880ea14a52ae41cd6840ab9659a7c74cc1ab21eab7e1c64b5d0d3c5b54"
+    }
+  ],
+  "generated_at": "2024-01-01T00:00:00Z",
+  "schema": "zaevrynth.fixtures.shared",
+  "version": "2024.01"
+}
