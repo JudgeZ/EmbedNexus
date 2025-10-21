@@ -210,14 +210,14 @@ impl StdioAdapter {
                 "principal {principal} is not permitted",
             )));
         }
-        let token = self
+        let IssuedToken { token, token_id } = self
             .signer
             .issue(principal, &["stdio".into()], Duration::from_secs(3600));
         self.telemetry.record(TelemetryEvent {
             kind: "stdio.session.issued".into(),
-            message: token.token.clone(),
+            message: token_id.to_string(),
         });
-        Ok(SessionToken { token: token.token })
+        Ok(SessionToken { token })
     }
 
     pub async fn dispatch_frame(&self, frame: StdioFrame) -> Result<StdioFrame, TransportError> {
@@ -227,6 +227,18 @@ impl StdioAdapter {
             .and_then(|v| v.as_str())
             .ok_or_else(|| TransportError::Framing("command missing".into()))?;
         let body = payload.get("payload").cloned().unwrap_or(Value::Null);
+
+        if !self
+            .config
+            .allowed_principals
+            .iter()
+            .any(|p| p == &envelope.principal)
+        {
+            return Err(TransportError::Unauthorized(format!(
+                "principal {} is not permitted",
+                envelope.principal
+            )));
+        }
 
         let context = SessionContext {
             principal: envelope.principal.clone(),
@@ -327,13 +339,14 @@ impl TokenSigner {
             capabilities: capabilities.to_vec(),
             expires_at: expires_unix,
         };
+        let token_id = envelope.token_id;
         let signature = self.sign(&envelope.canonical());
         let signed = SignedToken {
             envelope,
             signature,
         };
         let token = URL_SAFE_NO_PAD.encode(serde_json::to_vec(&signed).unwrap());
-        IssuedToken { token }
+        IssuedToken { token, token_id }
     }
 
     fn verify(&self, token: &str) -> Result<TokenEnvelope, TransportError> {
@@ -383,6 +396,7 @@ struct SignedToken {
 
 struct IssuedToken {
     token: String,
+    token_id: Uuid,
 }
 
 #[cfg(test)]
@@ -450,5 +464,28 @@ mod tests {
             .encode(&json!({ "command": "status" }), &forged)
             .expect_err("forged tokens should fail");
         assert!(matches!(frame, TransportError::Unauthorized(_)));
+    }
+
+    #[tokio::test]
+    async fn rejects_revoked_principal_on_dispatch() {
+        let router = Arc::new(RecordingRouter::default());
+        let mut adapter =
+            StdioAdapter::bind(config(), router.clone() as SharedRouter).unwrap();
+        let token = adapter
+            .issue_session_token("alice")
+            .expect("token issuance should succeed");
+
+        adapter.config.allowed_principals.clear();
+
+        let frame = adapter
+            .codec()
+            .encode(&json!({ "command": "status" }), &token)
+            .expect("encode should succeed");
+
+        let err = adapter
+            .dispatch_frame(frame)
+            .await
+            .expect_err("revoked principal should be rejected");
+        assert!(matches!(err, TransportError::Unauthorized(msg) if msg.contains("alice")));
     }
 }
