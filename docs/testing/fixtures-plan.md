@@ -2,12 +2,7 @@
 
 ## Scope and Goals
 
-This plan governs the creation, maintenance, and review of test fixtures stored under `tests/fixtures/` and golden artifacts under `tests/golden/`. It standardizes directory layout, naming conventions, and update workflows so that teams can confidently extend the shared corpus while preserving deterministic test outcomes.
-
-> **Placeholder notice**: The initial repository population introduces empty shell files and checksum notes that document the
-> forthcoming generation commands. These placeholders satisfy the documented layout and allow the test matrix to reference stable
-> paths while TDD work is staged. Replace each placeholder with the captured asset and corresponding checksum once the generation
-> scripts have been executed.
+This plan governs the creation, maintenance, and review of test fixtures stored under `tests/fixtures/` and golden artifacts under `tests/golden/`. It standardizes directory layout, naming conventions, and update workflows so that teams can confidently extend the shared corpus while preserving deterministic test outcomes. Routing assets are generated through deterministic Typer CLIs so refreshes remain reproducible across environments.【F:scripts/routing_matrix.py†L21-L280】【F:scripts/fixture_packager.py†L21-L142】
 
 ## Directory Layout Overview
 
@@ -77,10 +72,10 @@ Every fixture directory must contain a short `README.md` when multiple files coe
 
 1. **Plan alignment** – Confirm the change is referenced in `docs/testing/test-matrix.md` or file a matrix update alongside the fixture addition.
 2. **Local branch** – Create a dedicated branch named `fixtures/<subsystem>/<change>`. Avoid reusing branches between subsystems to preserve audit clarity.
-3. **Author fixtures** – Generate data following the processes in [Fixture Generation](#fixture-generation) and record regeneration steps in the fixture-level `README.md`.
+3. **Author fixtures** – Generate data following the processes in [Fixture Generation](#fixture-generation) and record regeneration steps in the fixture-level `README.md`. Routing updates must invoke the commands listed in [Routing fixture generation](#routing-fixture-generation).
 4. **Checksum capture** – Produce SHA-256 hashes for binary or large artifacts using `scripts/checksums.sh` (see [Review Process](#review-process)). Commit checksum manifests next to the assets (e.g., `overflow-case.tar.zst.sha256`).
 5. **Golden refresh** – When updating golden outputs, run the relevant deterministic test harness (`cargo test --test <suite> -- --update-golden`) to ensure code-generated outputs remain synchronized. Capture the command in commit messages.
-6. **Documentation** – Update this plan or subsystem-specific docs if workflows evolve.
+6. **Documentation** – Update this plan or subsystem-specific docs if workflows evolve. Keep the routing README files (`tests/fixtures/routing/README.md`, `tests/golden/routing/README.md`, and `tests/fixtures/shared/README.md`) aligned with any CLI flag changes.
 7. **Ordering verification** – Run `python scripts/verify_event_order.py <fixture-path>` for any filesystem watcher transcripts. Address failures before committing so GitHub Actions can rely on machine-readable exit codes.
 
 ### Event order verification
@@ -143,11 +138,25 @@ Two manual GitHub Actions workflows keep long-running fixture and golden capture
 | Workflow | Job | Runner | Required tooling | Consumed artifacts | Published artifacts | Dependency flow |
 | --- | --- | --- | --- | --- | --- | --- |
 | Regenerate Fixture Corpus | `fixtures-windows` | `windows-latest` | PowerShell 7, repository scripts (`collect_dpapi.ps1`, `trace_capture.sh`) | – | `windows-security-fixtures` (DPAPI recovery trees, TLS configs, perf-window captures) | Entry point |
-| Regenerate Fixture Corpus | `fixtures-linux` | `ubuntu-latest` | Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd`, Rust toolchain | Downloads `windows-security-fixtures` via `actions/download-artifact` | `fixture-regeneration-output` (full `tests/fixtures/**`, refreshed goldens referenced by fixtures) | `needs: fixtures-windows` |
+| Regenerate Fixture Corpus | `fixtures-linux` | `ubuntu-latest` | Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd`, Rust toolchain | Downloads `windows-security-fixtures` via `actions/download-artifact` | `fixture-regeneration-output` (full `tests/fixtures/**`, refreshed goldens referenced by fixtures). Invokes `python scripts/routing_matrix.py matrix`, `latency`, `fanout`, and `python scripts/fixture_packager.py build`/`validate` to keep routing bundles current. | `needs: fixtures-windows` |
 | Regenerate Golden Artifacts | `goldens-windows` | `windows-latest` | PowerShell 7, repository scripts (`collect_dpapi.ps1`, `trace_capture.sh`, `wsl_transport_proxy.ps1`) | – | `windows-security-goldens` (TLS traces, DPAPI audit, WSL bridge bundle) | Entry point |
-| Regenerate Golden Artifacts | `goldens-linux` | `ubuntu-latest` | Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd`, Rust toolchain | Downloads `windows-security-goldens` | `golden-regeneration-output` (complete `tests/golden/**` refresh) | `needs: goldens-windows` |
+| Regenerate Golden Artifacts | `goldens-linux` | `ubuntu-latest` | Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd`, Rust toolchain | Downloads `windows-security-goldens` | `golden-regeneration-output` (complete `tests/golden/**` refresh). Invokes `python scripts/routing_matrix.py transcript`, `fanout`, and `fuzz` to refresh deterministic routing goldens. | `needs: goldens-windows` |
 
 The Windows stage always runs first to collect platform-specific traces and upload the `windows-security-*` artifact. The Linux stage is blocked until the Windows artifact is present, then expands the corpus with the toolchains that are only available on Ubuntu runners.
+
+### Routing fixture generation
+
+The routing toolchain emits all deterministic matrices, transcripts, and affinity hints. Run the commands in the following table to refresh the corpus; each matches the arguments codified in CI workflows so local runs align with automation.
+
+| Command | Purpose | Output | Notes |
+| --- | --- | --- | --- |
+| `python scripts/routing_matrix.py matrix --output tests/fixtures/routing/multi-repo-matrix.json` | Refresh the routing adjacency matrix used by unit and integration tests. | `tests/fixtures/routing/multi-repo-matrix.json` | Produces nodes, edges, and adjacency map in a single JSON payload.【F:scripts/routing_matrix.py†L140-L163】 |
+| `python scripts/routing_matrix.py latency --output tests/fixtures/routing/latency-matrix.json` | Update hop latency expectations. | `tests/fixtures/routing/latency-matrix.json` | Includes per-link percentile metrics plus aggregate summaries.【F:scripts/routing_matrix.py†L166-L184】 |
+| `python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/ --metrics-output tests/fixtures/routing/fanout-metrics.json` | Regenerate high fan-out corpora and throughput metrics. | JSONL corpora in `tests/fixtures/routing/high-fanout/` and `tests/fixtures/routing/fanout-metrics.json` | Writes a manifest and aggregate totals validated by tests.【F:scripts/routing_matrix.py†L187-L233】 |
+| `python scripts/routing_matrix.py transcript --output tests/golden/routing/mcp-federation.transcript --latency-output tests/golden/routing/multi-repo-latency.transcript` | Capture deterministic federation transcripts. | Golden transcripts under `tests/golden/routing/` | Header contains `generated_at` stamp for reproducibility.【F:scripts/routing_matrix.py†L235-L266】 |
+| `python scripts/routing_matrix.py fuzz --output tests/golden/routing/fuzz-affinity.jsonl` | Refresh affinity hints for fuzz testing. | `tests/golden/routing/fuzz-affinity.jsonl` | RNG seeded with `71023` to preserve ordering.【F:scripts/routing_matrix.py†L268-L279】 |
+
+After refreshing routing assets, rebuild the shared bundle with `python scripts/fixture_packager.py build --output tests/fixtures/shared/` and validate it via `python scripts/fixture_packager.py validate tests/fixtures/shared/` before committing.【F:scripts/fixture_packager.py†L102-L142】
 
 #### Workflow toggles
 
