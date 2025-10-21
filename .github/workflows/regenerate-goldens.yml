@@ -157,14 +157,9 @@ jobs:
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/routing_matrix.py; then
-            echo 'routing_matrix.py is a placeholder – skipping routing golden regeneration.'
-          else
-            python scripts/routing_matrix.py transcript --output tests/golden/routing/mcp-federation.transcript
-            python scripts/routing_matrix.py fuzz --output tests/golden/routing/fuzz-affinity.jsonl
-            python scripts/routing_matrix.py fanout-throughput --output tests/golden/routing/fanout-throughput.jsonl
-            python scripts/routing_matrix.py latency-transcript --output tests/golden/routing/multi-repo-latency.transcript
-          fi
+          python scripts/routing_matrix.py transcript --output tests/golden/routing/mcp-federation.transcript --latency-output tests/golden/routing/multi-repo-latency.transcript
+          python scripts/routing_matrix.py fanout --metrics-output tests/golden/routing/fanout-throughput.jsonl
+          python scripts/routing_matrix.py fuzz --output tests/golden/routing/fuzz-affinity.jsonl
 
       - name: Rebuild transport replays
         if: inputs.dry_run != 'true'

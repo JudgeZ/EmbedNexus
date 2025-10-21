@@ -250,21 +250,23 @@ Follow this runbook every time fixture or golden artifacts are regenerated so re
 
 ### Routing Scenarios
 
-- **Tooling**: `python scripts/routing_matrix.py` (depends on `networkx`) and `scripts/checksums.sh`.
+- **Tooling**: `python scripts/routing_matrix.py` (Python 3.11 + `typer`, `rich`) and `scripts/checksums.sh`.
 
 | Subcommand | Required flags | Outputs | Dependencies / config |
 | --- | --- | --- | --- |
-| `matrix` | `--output tests/fixtures/routing/multi-repo-matrix.json`<br>`--latency-output tests/fixtures/routing/latency-matrix.json` (planned) | Routing adjacency matrix plus latency budget lookup for unit coverage.【F:tests/fixtures/routing/multi-repo-matrix.json†L1-L3】【F:tests/fixtures/routing/latency-matrix.json†L1-L4】 | Python 3.11 + `networkx`; execute before other subcommands so graph topology stays consistent.【F:scripts/README.md†L19-L24】 |
-| `fanout` | `--output-dir tests/fixtures/routing/high-fanout/`<br>`--metrics-out tests/golden/routing/fanout-throughput.jsonl` (planned) | High fan-out corpora and throughput guard metrics consumed by performance tests.【F:tests/fixtures/routing/high-fanout/README.md†L1-L5】【F:tests/golden/routing/fanout-throughput.jsonl†L1-L1】 | Reuses the matrix topology; ensure output directory exists so scenario IDs map cleanly to throughput data.【F:docs/testing/test-blueprints.md†L140-L142】 |
-| `transcript` | `--output tests/golden/routing/mcp-federation.transcript`<br>`--latency-output tests/golden/routing/multi-repo-latency.transcript` (planned) | Golden transcripts for MCP federation and cross-repo latency validation.【F:tests/golden/routing/mcp-federation.transcript†L1-L1】【F:docs/testing/test-matrix.md†L77-L80】 | Depends on regenerated matrices and fan-out corpora to align hop timing and tenant affinity.【F:docs/testing/test-blueprints.md†L139-L142】 |
-| `fuzz` | `--output tests/golden/routing/fuzz-affinity.jsonl` | Repository affinity datasets backing fuzz scenarios.【F:tests/golden/routing/fuzz-affinity.jsonl†L1-L1】【F:docs/testing/test-blueprints.md†L139-L142】 | Provide deterministic seed handling to keep CI results reproducible across reruns.【F:docs/testing/scripts-implementation-plan.md†L214-L220】 |
+| `matrix` | `--output tests/fixtures/routing/multi-repo-matrix.json` | Routing adjacency matrix consumed by routing unit tests.【F:tests/fixtures/routing/multi-repo-matrix.json†L1-L17】 | Execute before other subcommands so downstream assets reference the same topology.【F:tests/fixtures/routing/README.md†L9-L13】 |
+| `latency` | `--output tests/fixtures/routing/latency-matrix.json` | Hop-level latency expectations referenced by governance checks.【F:tests/fixtures/routing/latency-matrix.json†L1-L16】 | Shares the node and edge set with the adjacency matrix to keep derived metrics consistent.【F:scripts/routing_matrix.py†L166-L184】 |
+| `fanout` | `--output-dir tests/fixtures/routing/high-fanout/ --metrics-output tests/golden/routing/fanout-throughput.jsonl` | High fan-out corpora and throughput guard metrics consumed by performance suites.【F:tests/fixtures/routing/high-fanout/README.md†L9-L13】【F:tests/golden/routing/fanout-throughput.jsonl†L1-L15】 | Optional `--metrics-output` flag may also target `tests/fixtures/routing/fanout-metrics.json` for bundle assembly.【F:scripts/routing_matrix.py†L187-L233】 |
+| `transcript` | `--output tests/golden/routing/mcp-federation.transcript --latency-output tests/golden/routing/multi-repo-latency.transcript` | Golden transcripts for MCP federation and cross-repo latency validation.【F:tests/golden/routing/mcp-federation.transcript†L1-L7】【F:tests/golden/routing/multi-repo-latency.transcript†L1-L7】 | Depends on regenerated matrices and fan-out corpora to align hop timing and tenant affinity.【F:scripts/routing_matrix.py†L235-L266】 |
+| `fuzz` | `--output tests/golden/routing/fuzz-affinity.jsonl` | Repository affinity datasets backing fuzz scenarios.【F:tests/golden/routing/fuzz-affinity.jsonl†L1-L5】 | Uses a seeded RNG for deterministic permutations across reruns.【F:scripts/routing_matrix.py†L268-L279】 |
 
 - **Workflow**:
   1. Produce multi-repo matrices: `python scripts/routing_matrix.py matrix --output tests/fixtures/routing/multi-repo-matrix.json`.
-  2. Emit high-fanout corpora: `python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/`.
-  3. Generate golden transcripts via the federation harness: `python scripts/routing_matrix.py transcript --output tests/golden/routing/mcp-federation.transcript`.
-  4. Refresh fuzz-affinity hints: `python scripts/routing_matrix.py fuzz --output tests/golden/routing/fuzz-affinity.jsonl`.
-  5. Record checksums for binary payloads or large JSONL files to detect drift.
+  2. Emit latency budgets: `python scripts/routing_matrix.py latency --output tests/fixtures/routing/latency-matrix.json`.
+  3. Refresh high-fan-out corpora and throughput metrics: `python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/ --metrics-output tests/golden/routing/fanout-throughput.jsonl`.
+  4. Generate golden transcripts with hop latency notes: `python scripts/routing_matrix.py transcript --output tests/golden/routing/mcp-federation.transcript --latency-output tests/golden/routing/multi-repo-latency.transcript`.
+  5. Refresh fuzz-affinity hints: `python scripts/routing_matrix.py fuzz --output tests/golden/routing/fuzz-affinity.jsonl`.
+  6. Record checksums for binary payloads or large JSONL files to detect drift.
 
 ### Shared Fixture Library
 

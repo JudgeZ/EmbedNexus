@@ -1,0 +1,8 @@
+{
+  "files": [
+    "burst-ingest.jsonl",
+    "federated-search.jsonl"
+  ],
+  "schema": "zaevrynth.routing.fanout",
+  "version": "2024.01"
+}

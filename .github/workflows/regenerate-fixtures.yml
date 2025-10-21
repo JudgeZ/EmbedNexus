@@ -170,24 +170,16 @@ jobs:
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/routing_matrix.py; then
-            echo 'routing_matrix.py is a placeholder – skipping routing fixture generation.'
-          else
-            python scripts/routing_matrix.py matrix --output tests/fixtures/routing/multi-repo-matrix.json
-            python scripts/routing_matrix.py latency --output tests/fixtures/routing/latency-matrix.json
-            python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/
-          fi
+          python scripts/routing_matrix.py matrix --output tests/fixtures/routing/multi-repo-matrix.json
+          python scripts/routing_matrix.py latency --output tests/fixtures/routing/latency-matrix.json
+          python scripts/routing_matrix.py fanout --output-dir tests/fixtures/routing/high-fanout/ --metrics-output tests/fixtures/routing/fanout-metrics.json
 
       - name: Update shared fixture bundles
         if: inputs.dry_run != 'true'
         run: |
           set -euo pipefail
-          if grep -q 'Placeholder' scripts/fixture_packager.py; then
-            echo 'fixture_packager.py is a placeholder – skipping shared fixture packaging.'
-          else
-            python scripts/fixture_packager.py build --output tests/fixtures/shared/
-            python scripts/fixture_packager.py validate tests/fixtures/shared/
-          fi
+          python scripts/fixture_packager.py build --output tests/fixtures/shared/
+          python scripts/fixture_packager.py validate tests/fixtures/shared/
 
       - name: Verify fixture checksums
         if: inputs.dry_run != 'true'

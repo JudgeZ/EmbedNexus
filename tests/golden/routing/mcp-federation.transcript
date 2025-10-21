@@ -1,1 +1,7 @@
-Placeholder MCP federation transcript. Generated via routing_matrix.py transcript.
+# Zaevrynth Multi-Repo Federation Transcript v1
+generated_at: 2024-01-01T00:00:00Z
+000 ingress-api -> routing-control [route:init] latency=11ms
+001 routing-control -> artifact-store [prefetch] latency=15ms
+002 routing-control -> code-search [span:compute] latency=19ms
+003 code-search -> artifact-store [hydrate] latency=13ms
+004 artifact-store -> audit-log [archive] latency=8ms
