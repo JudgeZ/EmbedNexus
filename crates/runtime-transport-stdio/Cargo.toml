@@ -14,3 +14,6 @@ thiserror.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 uuid.workspace = true
+runtime-router = { path = "../runtime-router" }
+base64.workspace = true
+blake3.workspace = true

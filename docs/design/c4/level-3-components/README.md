@@ -5,8 +5,8 @@ The component view breaks each runtime container into collaborating modules. It 
 ## Component Breakdown by Container
 | Container | Component | Responsibilities | Supporting Specs |
 | --- | --- | --- | --- |
-| Transport Adapters | Session Manager | Authenticate principals, issue scoped tokens, enforce rate limits, capture telemetry | [Transport Adapter Specification](../../transport.md#public-interfaces), [Security Checklists](../../../security/threat-model.md#authentication-checklist) |
-| Transport Adapters | Framing Codec | Encode/decode STDIO frames, normalize HTTP/UDS payloads, verify checksums | [Transport Adapter Specification](../../transport.md#cross-cutting-concerns) |
+| Transport Adapters | Session Manager | Authenticate principals, issue scoped tokens, enforce rate limits, capture telemetry | [Transport Adapter Specification](../../transport.md#adapter-state-machines), [Security Checklists](../../../security/threat-model.md#authentication-checklist) |
+| Transport Adapters | Framing Codec | Encode/decode STDIO frames, normalize HTTP/UDS payloads, verify checksums | [Transport Adapter Specification](../../transport.md#stdio-adapter-lifecycle), [Configuration Matrix](../../transport.md#configuration-matrices) |
 | Transport Adapters | Retry Buffer | Persist offline envelopes, enforce backpressure, encrypt queued payloads | [Transport Adapter Specification](../../transport.md#offline-backpressure), [Architecture Overview](../../overview.md#transport-adapters) |
 | Command Router & Policy Engine | Command Dispatcher | Validate command schema, invoke ingestion/search handlers, map errors | [Architecture Overview](../../overview.md#finalized-architecture-overview) |
 | Command Router & Policy Engine | Policy Evaluator | Apply authorization rules, consult capability matrix, enforce governance approvals | [Architecture Traceability Index](../../traceability.md#traceability-map), [PR Release Checklist](../../../process/pr-release-checklist.md#1-planning-approval) |
@@ -92,6 +92,7 @@ The interaction flow captures the narrative from `docs/design/overview.md`: tran
 - **Deterministic ingestion stages** provide modular checkpoints—enumeration, planning, sanitization, embedding, manifest emission—that map directly to failing tests and fixtures described in subsystem specifications.
 - **Separation of key management** isolates sensitive key operations, supporting OS-specific integrations and enabling governance auditing when keys rotate or are revoked.
 - **Telemetry synchronization** between the telemetry bus, audit writer, and traceability synchronizer ensures documentation updates remain discoverable and verifiable during governance reviews.
+- **Transport contract fidelity** keeps adapter session managers and codecs aligned with their documented lifecycles, guaranteeing CSRF enforcement, frame integrity, and peer validation operate exactly as described in the transport state diagrams.
 
 ## Documentation Review Sign-Off
 Per the [Documentation Review Workflow](../../../process/doc-review.md) and [PR Release Checklist](../../../process/pr-release-checklist.md#1-planning-approval), record approvals when this document changes.

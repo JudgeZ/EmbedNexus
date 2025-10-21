@@ -37,6 +37,12 @@ flowchart LR
 - Transport adapters enforce authentication, input validation, and zero-trust defaults for CLI, IDE, and automation clients.
 - Threat modeling, mitigation tracking, and checklist completion are mandated for every change; reference [`docs/security/threat-model.md`](docs/security/threat-model.md).
 
+## Transport Adapter Usage
+- **HTTP** – Bind to loopback (`127.0.0.1`/`::1`) with `HttpConfig`, issue BLAKE3-signed bearer tokens via `HttpAdapter::issue_session_token`, and require the matching `X-Csrf-Token` header on state-changing requests. The adapter emits `http.*` telemetry events and surfaces router errors with precise status codes.
+- **STDIO** – Use `StdioAdapter::bind` with a `max_frame_length` that matches automation expectations. Frames are length-prefixed, checksum-protected, and validated before routing. `dispatch_frame` returns structured responses with an explicit `status` field for scripting.
+- **UDS** – Configure `UdsAdapter` with absolute socket paths and explicit `allowed_uids`. Peer negotiation records accepted processes, and subsequent requests must present signed tokens plus matching UID credentials.
+- **Fixture refresh** – After adapter updates, run the `Regenerate Fixture Corpus` workflow (`.github/workflows/regenerate-fixtures.yml`) to rebuild transport fixtures and golden traces; the action already captures the authentication, framing, and error-path logs exercised by `tests/runtime_transport/`.
+
 ## Contributor Workflow Essentials
 - **Plan before code:** Draft and circulate an implementation plan before touching source files, per [`AGENTS.md`](AGENTS.md).
 - **Test-driven development (TDD):** Capture expected behavior in failing tests ahead of implementation and keep regression suites green.
