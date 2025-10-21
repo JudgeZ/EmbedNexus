@@ -5,9 +5,9 @@ The code view outlines the critical modules, data structures, and call paths tha
 ## Key Modules and Responsibilities
 | Namespace / Module | Purpose | Key Types & Functions | Related Specs & Tests |
 | --- | --- | --- | --- |
-| `runtime::transport::http::Adapter` | Implements the HTTPS listener for IDE/browser clients | `Adapter::bind`, `Adapter::dispatch`, `SessionToken`, `CsrfGuard` | [Transport Adapter Specification](../../transport.md#module-responsibilities), [Encryption & TLS Controls](../../../testing/test-matrix.md#encryption--tls-controls) |
-| `runtime::transport::stdio::Codec` | Frames CLI/stdin requests with deterministic envelopes | `FramingCodec::encode`, `FramingCodec::decode`, `ChecksumError` | [Transport Adapter Specification](../../transport.md#public-interfaces), `tests/golden/security/tls-negotiation.trace` |
-| `runtime::transport::uds::Adapter` | Provides Unix domain socket bindings and WSL path translation | `Adapter::bind`, `Adapter::negotiate_peer`, `PathTranslator` | [Transport Adapter Specification](../../transport.md#cross-cutting-concerns), `scripts/wsl/wsl_transport_proxy.ps1` |
+| `runtime::transport::http::Adapter` | Implements the HTTPS listener for IDE/browser clients | `HttpConfig`, `HttpAdapter::bind`, `HttpAdapter::issue_session_token`, `HttpAdapter::dispatch`, `TelemetrySink::record` | [Transport Adapter Specification](../../transport.md#http-adapter-lifecycle), [tests/runtime_transport/tests/adapters.rs](../../../tests/runtime_transport/tests/adapters.rs) |
+| `runtime::transport::stdio::Adapter` | Frames CLI/stdin requests with deterministic envelopes | `StdioConfig`, `StdioAdapter::bind`, `FramingCodec::encode`, `StdioAdapter::dispatch_frame` | [Transport Adapter Specification](../../transport.md#stdio-adapter-lifecycle), [tests/runtime_transport/tests/adapters.rs](../../../tests/runtime_transport/tests/adapters.rs) |
+| `runtime::transport::uds::Adapter` | Provides Unix domain socket bindings and WSL path translation | `UdsConfig`, `UdsAdapter::negotiate_peer`, `UdsAdapter::issue_session_token`, `UdsAdapter::dispatch` | [Transport Adapter Specification](../../transport.md#uds-adapter-lifecycle), [tests/runtime_transport/tests/adapters.rs](../../../tests/runtime_transport/tests/adapters.rs) |
 | `runtime::router::CommandRouter` | Central dispatcher for normalized commands | `CommandRouter::dispatch`, `CommandRouter::authorize`, `CommandResponse` | [Architecture Overview](../../overview.md#finalized-architecture-overview), `scripts/offline_transport_buffer.py` |
 | `runtime::router::PolicyEngine` | Evaluates capability matrices and governance flags | `PolicyEngine::evaluate`, `CapabilityGrant`, `AuditStamp` | [Architecture Traceability Index](../../traceability.md#traceability-map), [PR Release Checklist](../../../process/pr-release-checklist.md#1-planning-approval) |
 | `ingestion::workspace::Enumerator` | Resolves workspace registries, merges ignore stacks | `WorkspaceEnumerator::scan`, `IgnoreStack` | [Ingestion Pipeline Specification](../../ingestion.md#module-responsibilities), `tests/fixtures/filesystem/` |
@@ -26,16 +26,19 @@ The code view outlines the critical modules, data structures, and call paths tha
 classDiagram
     class HttpAdapter {
         +bind(config)
+        +issueSessionToken(principal)
         +dispatch(request)
-        -issueSession()
     }
-    class StdioCodec {
-        +encode(payload)
-        +decode(bytes)
+    class StdioAdapter {
+        +bind(config)
+        +issueSessionToken(principal)
+        +dispatchFrame(frame)
     }
     class UdsAdapter {
         +bind(path)
-        +negotiatePeer()
+        +negotiatePeer(peer)
+        +issueSessionToken(principal,caps)
+        +dispatch(request)
     }
     class CommandRouter {
         +dispatch(command)
@@ -80,7 +83,7 @@ classDiagram
     }
 
     HttpAdapter --> CommandRouter
-    StdioCodec --> CommandRouter
+    StdioAdapter --> CommandRouter
     UdsAdapter --> CommandRouter
     CommandRouter --> PolicyEngine
     CommandRouter --> WorkspaceEnumerator
@@ -103,6 +106,7 @@ This diagram refines the Level 3 relationships with concrete class/module names,
 ## Implementation Guidance and Traceability
 - **TDD expectations** — Each module above must be covered by failing tests before implementation, referencing fixtures in `tests/` and scripts documented in subsystem specs. Capture evidence in the PR release checklist when closing the red/green cycle.
 - **Security hooks** — Modules interacting with credentials or storage must reference the relevant checklists in `docs/security/threat-model.md`, ensuring encryption, authentication, and sandboxing mitigations remain explicit.
+- **Transport validation** — Keep the adapter crates synchronized with the integration coverage in `tests/runtime_transport/` so framing, authentication, and router error propagation remain observable across HTTP, STDIO, and UDS flows.
 - **Governance integration** — `TraceabilitySync` is responsible for linking design updates back to subsystem specs and the [Architecture Traceability Index](../../traceability.md), satisfying governance log requirements.
 - **Cross-platform concerns** — Transport adapters and key management modules must honor platform notes from the ingestion, transport, and vector-store specs to keep Linux/macOS/WSL behavior aligned.
 

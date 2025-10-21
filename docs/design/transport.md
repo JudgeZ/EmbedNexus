@@ -47,6 +47,71 @@ sequenceDiagram
     Note over Client,Adapter: Postconditions: telemetry flushed, audit entry persisted, connection state updated
 ```
 
+## Adapter State Machines
+
+### HTTP Adapter Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Binding : load config
+    Binding --> AwaitingSession : TLS ready + router online
+    AwaitingSession --> Authenticating : bearer token received
+    Authenticating --> Dispatching : token validated + CSRF nonce matched
+    Authenticating --> Rejected : validation failure (invalid signature, expired, or unauthorized principal)
+    Dispatching --> Responding : router response mapped to HTTP envelope
+    Responding --> AwaitingSession : telemetry flushed, connection reused
+    Rejected --> AwaitingSession : emit audit + jittered backoff
+```
+
+### STDIO Adapter Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Idle : codec primed
+    Idle --> DecodingFrame : frame length + checksum validated
+    DecodingFrame --> Authenticating : token envelope verified
+    DecodingFrame --> FrameError : checksum or JSON mismatch
+    Authenticating --> Dispatching : principal + capabilities authorized
+    Authenticating --> AuthError : signature or expiry failure
+    FrameError --> Idle : telemetry + retry budget decremented
+    AuthError --> Idle : emit structured error frame
+    Dispatching --> EncodingResponse : router response normalized
+    EncodingResponse --> Idle : response frame flushed
+```
+
+### UDS Adapter Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Negotiating : peer credentials obtained from kernel
+    Negotiating --> Ready : UID whitelisted, sandbox notes recorded
+    Negotiating --> Rejected : UID/process denied
+    Ready --> Authenticating : token envelope verified for request
+    Authenticating --> Dispatching : principal authorized, capabilities checked
+    Authenticating --> AuthError : signature mismatch, expired token
+    Dispatching --> Responding : router payload forwarded
+    Responding --> Ready : telemetry + audit sinks notified
+    Rejected --> [*]
+```
+
+## Configuration Matrices
+
+| Adapter | Loopback Binding | Authentication | Retry / Backpressure | Telemetry Destinations |
+|---------|------------------|----------------|----------------------|------------------------|
+| HTTP | `127.0.0.1:<port>` or `::1:<port>` with mandatory TLS when `tls_required=true` | BLAKE3-signed bearer tokens (`SessionToken`), CSRF nonce enforcement | Jittered exponential backoff on auth failures, request body capped at config-defined size | Structured events via `TelemetrySink` (`http.request`, `http.router.error`, `http.response`) |
+| STDIO | `stdin/stdout` pipes, frame length bounded by `max_frame_length` | Signed envelopes validated per frame before router dispatch | Retry budget enforced through frame-level checksum errors, response frames mark `status` for automation | `TelemetrySink` emits `stdio.session.issued`, `stdio.request`, `stdio.response`, `stdio.router.error` |
+| UDS | Absolute socket path under runtime data dir (`socket_path`) | Token envelope validated per request + peer UID gating via `allowed_uids` | Negotiation cache resets on rejection, unauthorized peers never reach router | `TelemetrySink` captures `uds.peer.accepted`, `uds.request`, `uds.response`, `uds.router.error` |
+
+Each matrix entry maps directly to the configuration structs implemented in the adapter crates (`HttpConfig`, `StdioConfig`, and `UdsConfig`). Cross-check the `allowed_principals`, `token_secret`, and backpressure toggles in deployment manifests to ensure the documented defaults align with environment provisioning.
+
+## Security Considerations
+
+- **Token Signing & Expiry** – All adapters use keyed BLAKE3 signatures with per-token UUIDs. Validation paths feed into the [Authentication Checklist](../security/threat-model.md#authentication-checklist) and reference the integration tests under `tests/runtime_transport`. Expired or tampered tokens trigger structured `Unauthorized` responses and telemetry.
+- **CSRF Enforcement (HTTP)** – CSRF nonces issued alongside session tokens are mandatory when `require_csrf=true`. The adapter refuses requests lacking the `X-Csrf-Token` header, satisfying the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist).
+- **Framing Integrity (STDIO)** – Frames include length prefixes and truncated BLAKE3 checksums before router dispatch. Invalid frames never reach the router and are logged against the [Sandboxing Checklist](../security/threat-model.md#sandboxing-checklist).
+- **Peer Verification (UDS)** – Kernel-reported UIDs are checked against `allowed_uids` before command execution. Rejections are auditable and tied to the [Access Control Checklist](../security/threat-model.md#access-control-checklist).
+- **Telemetry & Audit** – Every adapter surfaces lifecycle events via `TelemetrySink`, providing inputs for governance review and aligning with the PR checklist evidence requirements.
+
 ## Preconditions & Postconditions
 - **Preconditions**
   - Adapter listener is bound with loopback-only ACLs and validated configuration.

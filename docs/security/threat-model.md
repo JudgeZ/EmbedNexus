@@ -32,6 +32,7 @@ The platform runs entirely within a contributor-controlled environment. Data ing
 | Privilege escalation | Embedding service interacts with local resources beyond its mandate. | Low | Medium | Run components with least privilege, isolate filesystem access, leverage sandboxing checklist. |
 | Denial of service | Large or malformed inputs exhaust CPU, memory, or disk. | Medium | Medium | Enforce rate limits, input size caps, and resource monitoring with alerting. |
 | Insider misuse | Authorized user exfiltrates data or bypasses controls. | Medium | High | Maintain audit logs, enforce least privilege, review suspicious activity, document approvals for sensitive exports. |
+| Transport token forgery or replay | Attackers tamper with HTTP bearer tokens, STDIO frames, or UDS credentials to bypass authentication. | Medium | High | BLAKE3-signed session envelopes with expiry, CSRF nonce enforcement, STDIO frame checksums, UDS UID allowlists, and adapter integration tests in `tests/runtime_transport/`. |
 
 ## Mitigation Practices
 
@@ -40,6 +41,7 @@ The platform runs entirely within a contributor-controlled environment. Data ing
 - **Secure configuration defaults:** Ship hardened defaults—encryption enabled, strict validation rules, disabled optional network sync unless explicitly required.
 - **Change review discipline:** Enforce security sign-off in code reviews, referencing the checklists below.
 - **Incident readiness:** Maintain runbooks for revoking credentials, rotating keys, and isolating compromised hosts.
+- **Instrumented transports:** Capture adapter telemetry (`http.*`, `stdio.*`, `uds.*` events) to detect anomalous authentication failures or frame validation issues in alignment with the updated transport specification.
 
 ## Mitigation Ownership and Review Cadence
 
@@ -92,6 +94,7 @@ _Primary owner: Alex Smith (Security Officer); Backup: Morgan Chen (Infrastructu
 - [ ] Inventory every authentication surface (HTTP tokens, UDS peer credentials, STDIO shared secrets) and document supported credential types.
 - [ ] Verify token signing keys or credential stores are loaded from approved secure storage before binding adapters.
 - [ ] Enforce scoped capabilities on issued credentials and confirm defaults grant least privilege access paths.
+- [ ] Confirm HTTP adapters enforce CSRF nonces for state-changing requests and surface telemetry for blocked attempts.
 - [ ] Record failed authentication attempts with anonymized diagnostics and alert thresholds for brute-force activity.
 - [ ] Add negative and fuzz tests that cover expired tokens, replay attempts, and malformed credential handshakes.
 - [ ] Document session revocation flows and ensure adapters propagate revocation results to clients.
@@ -102,6 +105,7 @@ _Primary owner: Jane Doe (Governance Lead); Backup: Alex Smith (Security Officer
 
 - [ ] Enumerate roles and capability bundles aligned with design requirements, documenting which commands each role may invoke.
 - [ ] Validate workspace and repository scoping rules prevent cross-tenant or cross-repo leakage during routing.
+- [ ] Confirm UDS transport configurations restrict `allowed_uids` to approved processes and record negotiation outcomes.
 - [ ] Confirm manifest readers and vector queries enforce principal scoping and redact data outside granted capabilities.
 - [ ] Add authorization regression tests for least privilege paths and attempted escalation scenarios.
 - [ ] Ensure audit logs capture principal, capability, and decision rationale for every authorization event.

@@ -22,6 +22,7 @@ The Cursor Local Embedding MCP delivers an offline-first runtime that ingests so
 - Enforce **security and privacy controls** through sanitization, encryption, and audit logging that align with the [Input Validation](../../../security/threat-model.md#input-validation-checklist), [Sandboxing](../../../security/threat-model.md#sandboxing-checklist), and [Encryption](../../../security/threat-model.md#encryption-checklist) checklists.
 - Provide **deterministic traceability** from design intent to implementation using the [Architecture Traceability Index](../../traceability.md), ensuring every architectural promise references subsystem specs, failing tests, and security mitigations.
 - Enable **cross-platform parity** so Linux, macOS, and WSL deployments share identical behaviors. Design trade-offs reference platform sections within the ingestion, transport, and vector-store specifications.
+- Reflect **transport adapter lifecycles** and guard rails via the state diagrams and configuration matrices documented in the [Transport Adapter Specification](../../transport.md#adapter-state-machines) so stakeholders understand how authentication, framing, and peer validation uphold the system boundary.
 
 ## System Context Diagram
 ```mermaid
