@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "id": "node-stdio-0001",
+  "method": "mcp.session/start",
+  "params": {
+    "client": "node",
+    "transport": "stdio",
+    "metadata": {
+      "argv": ["node", "clients/node/index.mjs"],
+      "provenance": "docs/integration/client-plan.md"
+    }
+  }
+}

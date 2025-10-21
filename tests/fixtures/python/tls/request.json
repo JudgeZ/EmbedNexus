@@ -1,0 +1,15 @@
+{
+  "jsonrpc": "2.0",
+  "id": "py-tls-0001",
+  "method": "mcp.session/start",
+  "params": {
+    "client": "python",
+    "transport": "tls",
+    "endpoint": "https://mcp.example.test/tls",
+    "tls": {
+      "ca_bundle": "artifacts/certs/ca.pem",
+      "client_cert": null
+    },
+    "provenance": "docs/integration/client-plan.md"
+  }
+}

@@ -27,6 +27,16 @@ ide/
 Add additional IDE directories as support expands. Keep directory names
 lowercase and hyphenate multiword IDE names (e.g., `jetbrains-gateway`).
 
+## Client Fixture Provenance
+
+Golden request/response pairs for the language clients live under
+`tests/fixtures/<language>/<transport>/`. The initial corpus for Python, Node,
+and Go covers the `stdio`, `http`, and `tls` transports and mirrors the roadmap
+documented in [`docs/integration/client-plan.md`](../../client-plan.md). Keep the
+fixtures synchronized with that plan and reference it whenever transcripts are
+regenerated via the `--update-transcripts` guard in the corresponding test
+suites.
+
 ## Naming Conventions
 
 * Store golden transcripts as prettified JSON with deterministic key ordering.

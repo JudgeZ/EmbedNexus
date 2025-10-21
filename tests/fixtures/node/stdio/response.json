@@ -1,0 +1,17 @@
+{
+  "jsonrpc": "2.0",
+  "id": "node-stdio-0001",
+  "result": {
+    "status": "accepted",
+    "stdout": [
+      {
+        "event": "connected",
+        "at": "2024-01-01T00:00:00Z"
+      }
+    ],
+    "notes": [
+      "Placeholder stdio handshake for Node client.",
+      "Derived from docs/integration/client-plan.md roadmap."
+    ]
+  }
+}

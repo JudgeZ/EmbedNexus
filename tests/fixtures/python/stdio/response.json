@@ -1,0 +1,13 @@
+{
+  "jsonrpc": "2.0",
+  "id": "py-stdio-0001",
+  "result": {
+    "status": "accepted",
+    "next": "mcp.session/await",
+    "recorded_at": "2024-01-01T00:00:00Z",
+    "notes": [
+      "Placeholder response for stdio transport.",
+      "Derived from docs/integration/client-plan.md roadmap."
+    ]
+  }
+}

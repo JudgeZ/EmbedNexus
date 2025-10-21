@@ -1,0 +1,19 @@
+{
+  "jsonrpc": "2.0",
+  "id": "py-tls-0001",
+  "result": {
+    "status": "accepted",
+    "handshake": {
+      "protocol": "TLSv1.3",
+      "cipher": "TLS_AES_256_GCM_SHA384",
+      "peer_certificate": {
+        "common_name": "mcp.example.test",
+        "valid_until": "2025-01-01T00:00:00Z"
+      }
+    },
+    "notes": [
+      "Placeholder TLS exchange.",
+      "Derived from docs/integration/client-plan.md roadmap."
+    ]
+  }
+}

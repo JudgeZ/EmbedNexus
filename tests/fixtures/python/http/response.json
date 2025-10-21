@@ -1,0 +1,26 @@
+{
+  "jsonrpc": "2.0",
+  "id": "py-http-0001",
+  "result": {
+    "status": "accepted",
+    "stream": "sse",
+    "events": [
+      {
+        "type": "open",
+        "at": "2024-01-01T00:00:01Z"
+      },
+      {
+        "type": "message",
+        "data": {
+          "method": "mcp.prompt/response",
+          "params": {
+            "summary": "Placeholder HTTP exchange"
+          }
+        }
+      }
+    ],
+    "notes": [
+      "Derived from docs/integration/client-plan.md roadmap."
+    ]
+  }
+}

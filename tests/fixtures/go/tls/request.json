@@ -1,0 +1,16 @@
+{
+  "jsonrpc": "2.0",
+  "id": "go-tls-0001",
+  "method": "mcp.session/start",
+  "params": {
+    "client": "go",
+    "transport": "tls",
+    "endpoint": "https://mcp.example.test/tls",
+    "tls": {
+      "ca_bundle": "artifacts/certs/ca.pem",
+      "client_cert": null,
+      "sni": "mcp.example.test"
+    },
+    "provenance": "docs/integration/client-plan.md"
+  }
+}

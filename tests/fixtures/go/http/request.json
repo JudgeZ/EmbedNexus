@@ -1,0 +1,15 @@
+{
+  "jsonrpc": "2.0",
+  "id": "go-http-0001",
+  "method": "mcp.session/start",
+  "params": {
+    "client": "go",
+    "transport": "http",
+    "endpoint": "https://mcp.example.test/stream",
+    "headers": {
+      "User-Agent": "zaevrynth-go-client",
+      "Accept": "text/event-stream"
+    },
+    "provenance": "docs/integration/client-plan.md"
+  }
+}

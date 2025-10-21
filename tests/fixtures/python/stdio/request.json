@@ -1,0 +1,11 @@
+{
+  "jsonrpc": "2.0",
+  "id": "py-stdio-0001",
+  "method": "mcp.session/start",
+  "params": {
+    "client": "python",
+    "transport": "stdio",
+    "capabilities": ["transcript", "tooling"],
+    "provenance": "docs/integration/client-plan.md"
+  }
+}
