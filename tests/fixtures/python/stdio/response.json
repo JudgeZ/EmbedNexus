@@ -1,0 +1,20 @@
+{
+  "jsonrpc": "2.0",
+  "id": "python-stdio-1",
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          0.0123,
+          -0.0044,
+          0.9987
+        ]
+      }
+    ],
+    "timing": {
+      "latencyMs": 123,
+      "transport": "stdio"
+    }
+  }
+}

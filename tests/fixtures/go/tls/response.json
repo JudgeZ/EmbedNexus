@@ -1,0 +1,23 @@
+{
+  "jsonrpc": "2.0",
+  "id": "go-tls-7",
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          -0.3001,
+          0.4411,
+          -0.7212
+        ]
+      }
+    ],
+    "meta": {
+      "transport": "tls",
+      "handshake": {
+        "alpn": "h2",
+        "certificateFingerprint": "AB:CD:EF:12:34:56"
+      }
+    }
+  }
+}

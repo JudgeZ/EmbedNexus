@@ -1,0 +1,44 @@
+[
+  {
+    "direction": "send",
+    "transport": "stdio",
+    "timestamp": "2024-06-03T08:30:00Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "go-stdio-7",
+      "method": "call_tool",
+      "params": {
+        "name": "create-embedding",
+        "arguments": {
+          "model": "text-embedding-3-large",
+          "input": "Explain transport selection for stdio."
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "transport": "stdio",
+    "timestamp": "2024-06-03T08:30:00.190Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "go-stdio-7",
+      "result": {
+        "content": [
+          {
+            "type": "embeddings",
+            "embedding": [
+              -0.0456,
+              0.7812,
+              0.3345
+            ]
+          }
+        ],
+        "meta": {
+          "transport": "stdio",
+          "session": "deterministic"
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,45 @@
+[
+  {
+    "direction": "send",
+    "transport": "http",
+    "timestamp": "2024-06-03T08:35:00Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "go-http-7",
+      "method": "call_tool",
+      "params": {
+        "name": "create-embedding",
+        "arguments": {
+          "model": "text-embedding-3-large",
+          "input": "Explain transport selection for http."
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "transport": "http",
+    "timestamp": "2024-06-03T08:35:00.215Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "go-http-7",
+      "result": {
+        "content": [
+          {
+            "type": "embeddings",
+            "embedding": [
+              0.2198,
+              -0.1187,
+              0.9044
+            ]
+          }
+        ],
+        "meta": {
+          "transport": "http",
+          "sse": true,
+          "etag": "W/\"fixture-http-1\""
+        }
+      }
+    }
+  }
+]

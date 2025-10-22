@@ -1,0 +1,47 @@
+[
+  {
+    "direction": "send",
+    "transport": "tls",
+    "timestamp": "2024-06-02T09:10:00Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": 44,
+      "method": "call_tool",
+      "params": {
+        "name": "create-embedding",
+        "arguments": {
+          "model": "text-embedding-3-large",
+          "input": "List supported IDEs for tls transport."
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "transport": "tls",
+    "timestamp": "2024-06-02T09:10:00.260Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": 44,
+      "result": {
+        "content": [
+          {
+            "type": "embeddings",
+            "embedding": [
+              0.3412,
+              -0.7821,
+              0.1277
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "code": "TLS_SESSION_RESUMED",
+            "severity": "info",
+            "details": "Session ticket accepted"
+          }
+        ]
+      }
+    }
+  }
+]

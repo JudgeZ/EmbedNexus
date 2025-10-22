@@ -1,0 +1,47 @@
+[
+  {
+    "direction": "send",
+    "transport": "tls",
+    "timestamp": "2024-06-03T08:40:00Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "go-tls-7",
+      "method": "call_tool",
+      "params": {
+        "name": "create-embedding",
+        "arguments": {
+          "model": "text-embedding-3-large",
+          "input": "Explain transport selection for tls."
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "transport": "tls",
+    "timestamp": "2024-06-03T08:40:00.255Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "go-tls-7",
+      "result": {
+        "content": [
+          {
+            "type": "embeddings",
+            "embedding": [
+              -0.3001,
+              0.4411,
+              -0.7212
+            ]
+          }
+        ],
+        "meta": {
+          "transport": "tls",
+          "handshake": {
+            "alpn": "h2",
+            "certificateFingerprint": "AB:CD:EF:12:34:56"
+          }
+        }
+      }
+    }
+  }
+]

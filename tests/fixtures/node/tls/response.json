@@ -1,0 +1,23 @@
+{
+  "jsonrpc": "2.0",
+  "id": 44,
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          0.3412,
+          -0.7821,
+          0.1277
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "TLS_SESSION_RESUMED",
+        "severity": "info",
+        "details": "Session ticket accepted"
+      }
+    ]
+  }
+}

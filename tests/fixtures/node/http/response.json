@@ -1,0 +1,23 @@
+{
+  "jsonrpc": "2.0",
+  "id": 43,
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          -0.2042,
+          0.5123,
+          0.6811
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "HTTP_SSE_STREAM",
+        "severity": "info",
+        "details": "SSE stream completed"
+      }
+    ]
+  }
+}

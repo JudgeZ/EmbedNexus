@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "id": "python-http-1",
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          0.1189,
+          0.2744,
+          -0.9321
+        ]
+      }
+    ],
+    "timing": {
+      "latencyMs": 156,
+      "transport": "http",
+      "roundTripMs": 221
+    }
+  }
+}
