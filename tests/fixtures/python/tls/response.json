@@ -1,21 +1,63 @@
-{
-  "jsonrpc": "2.0",
-  "id": "python-tls-1",
-  "result": {
-    "content": [
-      {
-        "type": "embeddings",
-        "embedding": [
-          -0.0912,
-          0.6641,
-          0.3429
+[
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "session": {
+        "id": "python-tls-session",
+        "transport": "tls",
+        "server_version": "0.1.0",
+        "alpn": "h2"
+      },
+      "heartbeat_interval_ms": 3000,
+      "peer_certificate": {
+        "subject": "CN=localhost",
+        "fingerprint": "AB:CD:EF:01"
+      }
+    },
+    "meta": {
+      "timestamp": "2024-01-15T08:10:00Z",
+      "sequence": 1
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "ok": true,
+      "latency_ms": 22,
+      "sequence": 7
+    },
+    "meta": {
+      "timestamp": "2024-01-15T08:10:01Z",
+      "sequence": 2
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "prompts": [
+        "summarize",
+        "rewrite"
+      ],
+      "resources": [
+        "vector-store"
+      ],
+      "tools": [
+        "search"
+      ],
+      "transport": {
+        "kind": "tls",
+        "modes": [
+          "mutual",
+          "server"
         ]
       }
-    ],
-    "timing": {
-      "latencyMs": 189,
-      "transport": "tls",
-      "handshakeMs": 48
+    },
+    "meta": {
+      "timestamp": "2024-01-15T08:10:02Z",
+      "sequence": 3
     }
   }
-}
+]

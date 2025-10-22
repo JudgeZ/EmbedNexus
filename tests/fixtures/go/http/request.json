@@ -1,12 +1,61 @@
-{
-  "jsonrpc": "2.0",
-  "id": "go-http-7",
-  "method": "call_tool",
-  "params": {
-    "name": "create-embedding",
-    "arguments": {
-      "model": "text-embedding-3-large",
-      "input": "Explain transport selection for http."
+[
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "mcp.initialize",
+    "params": {
+      "transport": {
+        "kind": "http",
+        "endpoint": "http://127.0.0.1:8890/mcp",
+        "headers": {
+          "x-session-id": "go-http-session"
+        }
+      },
+      "client": {
+        "name": "zaevrynth-go-client",
+        "language": "go",
+        "version": "0.1.0"
+      },
+      "capabilities": [
+        "handshake",
+        "ping",
+        "capabilities"
+      ]
+    },
+    "meta": {
+      "timestamp": "2024-01-17T10:05:00Z",
+      "sequence": 1
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "mcp.ping",
+    "params": {
+      "transport": "http",
+      "session_id": "go-http-session",
+      "sequence": 63
+    },
+    "meta": {
+      "timestamp": "2024-01-17T10:05:01Z",
+      "sequence": 2
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "mcp.capabilities",
+    "params": {
+      "requested": [
+        "prompts",
+        "resources",
+        "tools"
+      ],
+      "session_id": "go-http-session"
+    },
+    "meta": {
+      "timestamp": "2024-01-17T10:05:02Z",
+      "sequence": 3
     }
   }
-}
+]

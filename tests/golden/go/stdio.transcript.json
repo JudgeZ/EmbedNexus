@@ -1,0 +1,131 @@
+{
+  "language": "go",
+  "transport": "stdio",
+  "fixtures": {
+    "request": "tests/fixtures/go/stdio/request.json",
+    "response": "tests/fixtures/go/stdio/response.json"
+  },
+  "conversation": [
+    {
+      "direction": "client",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "mcp.initialize",
+        "params": {
+          "transport": {
+            "kind": "stdio",
+            "endpoint": "stdio://session"
+          },
+          "client": {
+            "name": "zaevrynth-go-client",
+            "language": "go",
+            "version": "0.1.0"
+          },
+          "capabilities": [
+            "handshake",
+            "ping",
+            "capabilities"
+          ]
+        },
+        "meta": {
+          "timestamp": "2024-01-17T10:00:00Z",
+          "sequence": 1
+        }
+      }
+    },
+    {
+      "direction": "server",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "session": {
+            "id": "go-stdio-session",
+            "transport": "stdio",
+            "server_version": "0.1.0"
+          },
+          "heartbeat_interval_ms": 5000
+        },
+        "meta": {
+          "timestamp": "2024-01-17T10:00:00Z",
+          "sequence": 1
+        }
+      }
+    },
+    {
+      "direction": "client",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "mcp.ping",
+        "params": {
+          "transport": "stdio",
+          "session_id": "go-stdio-session"
+        },
+        "meta": {
+          "timestamp": "2024-01-17T10:00:01Z",
+          "sequence": 2
+        }
+      }
+    },
+    {
+      "direction": "server",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "ok": true,
+          "latency_ms": 13
+        },
+        "meta": {
+          "timestamp": "2024-01-17T10:00:01Z",
+          "sequence": 2
+        }
+      }
+    },
+    {
+      "direction": "client",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "mcp.capabilities",
+        "params": {
+          "requested": [
+            "prompts",
+            "resources",
+            "tools"
+          ],
+          "session_id": "go-stdio-session"
+        },
+        "meta": {
+          "timestamp": "2024-01-17T10:00:02Z",
+          "sequence": 3
+        }
+      }
+    },
+    {
+      "direction": "server",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "result": {
+          "prompts": [
+            "summarize",
+            "rewrite"
+          ],
+          "resources": [
+            "vector-store"
+          ],
+          "tools": [
+            "search"
+          ]
+        },
+        "meta": {
+          "timestamp": "2024-01-17T10:00:02Z",
+          "sequence": 3
+        }
+      }
+    }
+  ]
+}

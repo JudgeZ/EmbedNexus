@@ -126,6 +126,32 @@ documented in the project [README](../../../README.md#automated-fixture--golden-
 2. Trigger **Regenerate Golden Artifacts** to replay the updated fixtures,
    normalize the captures, and stage the refreshed files under `tests/golden/`.
 
+The baseline fixtures referenced by the roadmap are now committed to the
+repository so contributors can diff new captures without waiting on the
+automation uploads. Each transport has a matched request/response pair and a
+golden conversation transcript:
+
+| Language | Transport | Request Fixture | Response Fixture | Transcript |
+| --- | --- | --- | --- | --- |
+| Python | `stdio` | `tests/fixtures/python/stdio/request.json` | `tests/fixtures/python/stdio/response.json` | `tests/golden/python/stdio.transcript.json` |
+| Python | `http` | `tests/fixtures/python/http/request.json` | `tests/fixtures/python/http/response.json` | `tests/golden/python/http.transcript.json` |
+| Python | `tls` | `tests/fixtures/python/tls/request.json` | `tests/fixtures/python/tls/response.json` | `tests/golden/python/tls.transcript.json` |
+| Node.js | `stdio` | `tests/fixtures/node/stdio/request.json` | `tests/fixtures/node/stdio/response.json` | `tests/golden/node/stdio.transcript.json` |
+| Node.js | `http` | `tests/fixtures/node/http/request.json` | `tests/fixtures/node/http/response.json` | `tests/golden/node/http.transcript.json` |
+| Node.js | `tls` | `tests/fixtures/node/tls/request.json` | `tests/fixtures/node/tls/response.json` | `tests/golden/node/tls.transcript.json` |
+| Go | `stdio` | `tests/fixtures/go/stdio/request.json` | `tests/fixtures/go/stdio/response.json` | `tests/golden/go/stdio.transcript.json` |
+| Go | `http` | `tests/fixtures/go/http/request.json` | `tests/fixtures/go/http/response.json` | `tests/golden/go/http.transcript.json` |
+| Go | `tls` | `tests/fixtures/go/tls/request.json` | `tests/fixtures/go/tls/response.json` | `tests/golden/go/tls.transcript.json` |
+
+Regenerate these artifacts by invoking the **Regenerate Fixture Corpus** and
+**Regenerate Golden Artifacts** GitHub Actions described in the repository
+[`README.md`](../../../README.md). The fixture workflow publishes refreshed
+request/response envelopes, while the golden workflow normalizes and archives
+the transcripts. When running the automation locally, mirror the workflow
+sequence: capture raw exchanges, run
+`python scripts/transcripts/normalize.py` to stabilize ordering, and update the
+checksums before committing.
+
 Each JSON file encodes the envelopes referenced in the roadmap so that early
 test suites can validate CLI wiring and transcript diffing workflows. When
 regenerating the fixtures, record the workflow URL, artifact checksum, and

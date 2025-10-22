@@ -1,21 +1,56 @@
-{
-  "jsonrpc": "2.0",
-  "id": "go-http-7",
-  "result": {
-    "content": [
-      {
-        "type": "embeddings",
-        "embedding": [
-          0.2198,
-          -0.1187,
-          0.9044
-        ]
-      }
-    ],
+[
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "session": {
+        "id": "go-http-session",
+        "transport": "http",
+        "server_version": "0.1.0",
+        "sse_endpoint": "http://127.0.0.1:8890/mcp/events"
+      },
+      "heartbeat_interval_ms": 5000
+    },
     "meta": {
-      "transport": "http",
-      "sse": true,
-      "etag": "W/\"fixture-http-1\""
+      "timestamp": "2024-01-17T10:05:00Z",
+      "sequence": 1
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "ok": true,
+      "latency_ms": 16,
+      "sequence": 63
+    },
+    "meta": {
+      "timestamp": "2024-01-17T10:05:01Z",
+      "sequence": 2
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "prompts": [
+        "summarize",
+        "rewrite"
+      ],
+      "resources": [
+        "vector-store"
+      ],
+      "tools": [
+        "search"
+      ],
+      "transport": {
+        "kind": "http",
+        "supports_compression": true
+      }
+    },
+    "meta": {
+      "timestamp": "2024-01-17T10:05:02Z",
+      "sequence": 3
     }
   }
-}
+]

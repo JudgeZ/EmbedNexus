@@ -1,12 +1,57 @@
-{
-  "jsonrpc": "2.0",
-  "id": "python-stdio-1",
-  "method": "call_tool",
-  "params": {
-    "name": "create-embedding",
-    "arguments": {
-      "model": "text-embedding-3-large",
-      "input": "Summarize integration steps for stdio transport."
+[
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "mcp.initialize",
+    "params": {
+      "transport": {
+        "kind": "stdio",
+        "endpoint": "stdio://session"
+      },
+      "client": {
+        "name": "zaevrynth-python-client",
+        "language": "python",
+        "version": "0.1.0"
+      },
+      "capabilities": [
+        "handshake",
+        "ping",
+        "capabilities"
+      ]
+    },
+    "meta": {
+      "timestamp": "2024-01-15T08:00:00Z",
+      "sequence": 1
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "mcp.ping",
+    "params": {
+      "transport": "stdio",
+      "session_id": "python-stdio-session"
+    },
+    "meta": {
+      "timestamp": "2024-01-15T08:00:01Z",
+      "sequence": 2
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "mcp.capabilities",
+    "params": {
+      "requested": [
+        "prompts",
+        "resources",
+        "tools"
+      ],
+      "session_id": "python-stdio-session"
+    },
+    "meta": {
+      "timestamp": "2024-01-15T08:00:02Z",
+      "sequence": 3
     }
   }
-}
+]
