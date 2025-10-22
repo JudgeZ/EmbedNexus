@@ -243,6 +243,12 @@ impl HttpAdapter {
             .ok_or_else(|| TransportError::InvalidRequest("command field missing".into()))?;
         let payload = request.body.get("payload").cloned().unwrap_or(Value::Null);
 
+        let host = if self.config.host.contains(':') {
+            format!("[{}]", self.config.host)
+        } else {
+            self.config.host.clone()
+        };
+
         let context = SessionContext {
             principal: envelope.principal.clone(),
             capabilities: envelope.capabilities.clone(),
@@ -250,7 +256,7 @@ impl HttpAdapter {
             token_id: Some(envelope.token_id),
             peer: Some(format!(
                 "http://{}:{}{}",
-                self.config.host, self.config.port, request.path
+                host, self.config.port, request.path
             )),
         };
 
@@ -477,5 +483,40 @@ mod tests {
             .await
             .expect_err("tampered token must fail");
         assert!(matches!(err, TransportError::Unauthorized(_)));
+    }
+
+    #[tokio::test]
+    async fn records_ipv6_peer_with_brackets() {
+        let router = Arc::new(RecordingRouter::default());
+        router
+            .script_response(Ok(RouterResponse::ok(json!({ "ok": true }))))
+            .await;
+
+        let mut config = config();
+        config.host = "::1".into();
+        let adapter = HttpAdapter::bind(config, router.clone() as SharedRouter).unwrap();
+        let token = adapter
+            .issue_session_token("alice", &["ingest".into()])
+            .expect("token issuance should work");
+
+        let request = HttpRequest::new(
+            "POST",
+            "/commands/ingest",
+            json!({ "command": "ingest", "payload": {"doc": 1} }),
+        )
+        .with_header("Authorization", format!("Bearer {}", token.token))
+        .with_header("X-Csrf-Token", token.csrf_nonce.clone());
+
+        adapter
+            .dispatch(request)
+            .await
+            .expect("dispatch should succeed");
+
+        let calls = router.calls().await;
+        assert_eq!(calls.len(), 1);
+        assert_eq!(
+            calls[0].context.peer,
+            Some("http://[::1]:8443/commands/ingest".into())
+        );
     }
 }
