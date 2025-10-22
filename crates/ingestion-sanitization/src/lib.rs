@@ -1,5 +1,6 @@
 //! Sanitization filters and validation logic.
 
+use blake3::Hasher;
 use ingestion_planning::PlannedChunk;
 use regex::Regex;
 use thiserror::Error;
@@ -59,9 +60,14 @@ impl Sanitizer {
                 .map(|mat| mat.as_str().to_string())
                 .collect();
             if !matches.is_empty() {
-                for capture in matches.iter() {
-                    redaction_log.push(format!("{pattern} => {capture}"));
+                let mut hasher = Hasher::new();
+                for capture in &matches {
+                    hasher.update(capture.as_bytes());
+                    hasher.update(&[0u8]);
                 }
+                let digest = hasher.finalize().to_hex().to_string();
+                let count = matches.len();
+                redaction_log.push(format!("{pattern} => count={count}, digest={digest}"));
                 scrubbed = regex.replace_all(&scrubbed, "[REDACTED]").into_owned();
             }
         }
