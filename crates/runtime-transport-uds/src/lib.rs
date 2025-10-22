@@ -7,7 +7,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
 use base64::Engine as _;
 use blake3::Hasher;
-use runtime_router::{RouterCommand, SessionContext, SharedRouter};
+use runtime_router::{RouterCommand, RouterError, SessionContext, SharedRouter};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use thiserror::Error;
@@ -108,7 +108,16 @@ pub enum TransportError {
     #[error("unauthorized peer: {0}")]
     Unauthorized(String),
     #[error("router error: {0}")]
-    Router(String),
+    Router(RouterError),
+}
+
+impl TransportError {
+    pub fn router_status_code(&self) -> Option<u16> {
+        match self {
+            TransportError::Router(err) => Some(err.status_code()),
+            _ => None,
+        }
+    }
 }
 
 /// UDS adapter bridging IPC requests into the router.
@@ -238,7 +247,7 @@ impl UdsAdapter {
                     message: err.to_string(),
                     principal: Some(envelope.principal.clone()),
                 });
-                TransportError::Router(err.to_string())
+                TransportError::Router(err)
             })?;
 
         self.telemetry.record(TelemetryEvent {
