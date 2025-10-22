@@ -274,7 +274,7 @@ impl StdioAdapter {
                 TransportError::Router(err)
             })?;
 
-        let status = if response.status_code == 200 {
+        let status = if (200..=299).contains(&response.status_code) {
             "ok"
         } else {
             "error"
@@ -495,5 +495,33 @@ mod tests {
             .await
             .expect_err("revoked principal should be rejected");
         assert!(matches!(err, TransportError::Unauthorized(msg) if msg.contains("alice")));
+    }
+
+    #[tokio::test]
+    async fn treats_non_200_success_status_as_ok() {
+        let router = Arc::new(RecordingRouter::default());
+        router
+            .script_response(Ok(RouterResponse {
+                status_code: 204,
+                payload: json!({ "ok": true }),
+                diagnostics: Vec::new(),
+            }))
+            .await;
+
+        let adapter = StdioAdapter::bind(config(), router.clone() as SharedRouter).unwrap();
+        let token = adapter
+            .issue_session_token("alice")
+            .expect("token issuance should succeed");
+        let frame = adapter
+            .codec()
+            .encode(&json!({ "command": "status" }), &token)
+            .expect("encode should work");
+
+        let response = adapter
+            .dispatch_frame(frame)
+            .await
+            .expect("dispatch should succeed");
+        let (body, _) = adapter.codec().decode(&response).expect("decode response");
+        assert_eq!(body["status"], json!("ok"));
     }
 }
