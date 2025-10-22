@@ -1,0 +1,141 @@
+{
+  "language": "python",
+  "transport": "http",
+  "fixtures": {
+    "request": "tests/fixtures/python/http/request.json",
+    "response": "tests/fixtures/python/http/response.json"
+  },
+  "conversation": [
+    {
+      "direction": "client",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "mcp.initialize",
+        "params": {
+          "transport": {
+            "kind": "http",
+            "endpoint": "http://127.0.0.1:8890/mcp",
+            "headers": {
+              "x-session-id": "python-http-session"
+            }
+          },
+          "client": {
+            "name": "zaevrynth-python-client",
+            "language": "python",
+            "version": "0.1.0"
+          },
+          "capabilities": [
+            "handshake",
+            "ping",
+            "capabilities"
+          ]
+        },
+        "meta": {
+          "timestamp": "2024-01-15T08:05:00Z",
+          "sequence": 1
+        }
+      }
+    },
+    {
+      "direction": "server",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "session": {
+            "id": "python-http-session",
+            "transport": "http",
+            "server_version": "0.1.0",
+            "sse_endpoint": "http://127.0.0.1:8890/mcp/events"
+          },
+          "heartbeat_interval_ms": 5000
+        },
+        "meta": {
+          "timestamp": "2024-01-15T08:05:00Z",
+          "sequence": 1
+        }
+      }
+    },
+    {
+      "direction": "client",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "mcp.ping",
+        "params": {
+          "transport": "http",
+          "session_id": "python-http-session",
+          "sequence": 42
+        },
+        "meta": {
+          "timestamp": "2024-01-15T08:05:01Z",
+          "sequence": 2
+        }
+      }
+    },
+    {
+      "direction": "server",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "ok": true,
+          "latency_ms": 18,
+          "sequence": 42
+        },
+        "meta": {
+          "timestamp": "2024-01-15T08:05:01Z",
+          "sequence": 2
+        }
+      }
+    },
+    {
+      "direction": "client",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "mcp.capabilities",
+        "params": {
+          "requested": [
+            "prompts",
+            "resources",
+            "tools"
+          ],
+          "session_id": "python-http-session"
+        },
+        "meta": {
+          "timestamp": "2024-01-15T08:05:02Z",
+          "sequence": 3
+        }
+      }
+    },
+    {
+      "direction": "server",
+      "envelope": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "result": {
+          "prompts": [
+            "summarize",
+            "rewrite"
+          ],
+          "resources": [
+            "vector-store"
+          ],
+          "tools": [
+            "search"
+          ],
+          "transport": {
+            "kind": "http",
+            "supports_compression": true
+          }
+        },
+        "meta": {
+          "timestamp": "2024-01-15T08:05:02Z",
+          "sequence": 3
+        }
+      }
+    }
+  ]
+}

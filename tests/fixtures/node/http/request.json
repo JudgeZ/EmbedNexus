@@ -1,0 +1,61 @@
+[
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "mcp.initialize",
+    "params": {
+      "transport": {
+        "kind": "http",
+        "endpoint": "http://127.0.0.1:8890/mcp",
+        "headers": {
+          "x-session-id": "node-http-session"
+        }
+      },
+      "client": {
+        "name": "zaevrynth-node-client",
+        "language": "node",
+        "version": "0.1.0"
+      },
+      "capabilities": [
+        "handshake",
+        "ping",
+        "capabilities"
+      ]
+    },
+    "meta": {
+      "timestamp": "2024-01-16T09:05:00Z",
+      "sequence": 1
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "mcp.ping",
+    "params": {
+      "transport": "http",
+      "session_id": "node-http-session",
+      "sequence": 84
+    },
+    "meta": {
+      "timestamp": "2024-01-16T09:05:01Z",
+      "sequence": 2
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "mcp.capabilities",
+    "params": {
+      "requested": [
+        "prompts",
+        "resources",
+        "tools"
+      ],
+      "session_id": "node-http-session"
+    },
+    "meta": {
+      "timestamp": "2024-01-16T09:05:02Z",
+      "sequence": 3
+    }
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "session": {
+        "id": "node-tls-session",
+        "transport": "tls",
+        "server_version": "0.1.0",
+        "alpn": "h2"
+      },
+      "heartbeat_interval_ms": 3000,
+      "peer_certificate": {
+        "subject": "CN=localhost",
+        "fingerprint": "AB:CD:EF:02"
+      }
+    },
+    "meta": {
+      "timestamp": "2024-01-16T09:10:00Z",
+      "sequence": 1
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 2,
+    "result": {
+      "ok": true,
+      "latency_ms": 19,
+      "sequence": 21
+    },
+    "meta": {
+      "timestamp": "2024-01-16T09:10:01Z",
+      "sequence": 2
+    }
+  },
+  {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "prompts": [
+        "summarize",
+        "rewrite"
+      ],
+      "resources": [
+        "vector-store"
+      ],
+      "tools": [
+        "search"
+      ],
+      "transport": {
+        "kind": "tls",
+        "modes": [
+          "mutual",
+          "server"
+        ]
+      }
+    },
+    "meta": {
+      "timestamp": "2024-01-16T09:10:02Z",
+      "sequence": 3
+    }
+  }
+]
