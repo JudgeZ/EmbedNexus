@@ -108,9 +108,23 @@ locally:
 
 | Language | Transport Fixtures |
 | --- | --- |
-| Python | `tests/fixtures/python/<transport>/{request,response}.json` (from workflow artifact) |
-| Node.js | `tests/fixtures/node/<transport>/{request,response}.json` (from workflow artifact) |
-| Go | `tests/fixtures/go/<transport>/{request,response}.json` (from workflow artifact) |
+| Python | `tests/fixtures/python/{stdio,http,tls}/{request,response}.json` |
+| Node.js | `tests/fixtures/node/{stdio,http,tls}/{request,response}.json` |
+| Go | `tests/fixtures/go/{stdio,http,tls}/{request,response}.json` |
+
+Golden regression transcripts that mirror these request/response pairs live under
+`tests/golden/<language>/{stdio,http,tls}.json`. Tests compare the live captures
+produced during the red phase against the canonical conversations to surface
+drift immediately.
+
+Refresh both the fixtures and transcripts with the regeneration workflows
+documented in the project [README](../../../README.md#automated-fixture--golden-regeneration-workflows):
+
+1. Trigger **Regenerate Fixture Corpus** to rebuild the transport-specific
+   request and response envelopes and download the published artifact before
+   committing updates under `tests/fixtures/`.
+2. Trigger **Regenerate Golden Artifacts** to replay the updated fixtures,
+   normalize the captures, and stage the refreshed files under `tests/golden/`.
 
 The baseline fixtures referenced by the roadmap are now committed to the
 repository so contributors can diff new captures without waiting on the

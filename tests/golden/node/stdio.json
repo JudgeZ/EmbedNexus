@@ -1,0 +1,46 @@
+[
+  {
+    "direction": "send",
+    "transport": "stdio",
+    "timestamp": "2024-06-02T09:00:00Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": 42,
+      "method": "call_tool",
+      "params": {
+        "name": "create-embedding",
+        "arguments": {
+          "model": "text-embedding-3-large",
+          "input": "List supported IDEs for stdio transport."
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "transport": "stdio",
+    "timestamp": "2024-06-02T09:00:00.180Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": 42,
+      "result": {
+        "content": [
+          {
+            "type": "embeddings",
+            "embedding": [
+              0.1021,
+              0.2234,
+              -0.9981
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "code": "STDIO_BUFFER_FLUSH",
+            "severity": "info"
+          }
+        ]
+      }
+    }
+  }
+]
