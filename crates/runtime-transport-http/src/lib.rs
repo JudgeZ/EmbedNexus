@@ -7,7 +7,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
 use base64::Engine as _;
 use blake3::Hasher;
-use runtime_router::{RouterCommand, SessionContext, SharedRouter};
+use runtime_router::{RouterCommand, RouterError, SessionContext, SharedRouter};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use thiserror::Error;
@@ -153,7 +153,17 @@ pub enum TransportError {
     InvalidRequest(String),
     /// Router surfaced an error.
     #[error("router error: {0}")]
-    Router(String),
+    Router(RouterError),
+}
+
+impl TransportError {
+    /// Return the status code associated with a router error, if available.
+    pub fn router_status_code(&self) -> Option<u16> {
+        match self {
+            TransportError::Router(err) => Some(err.status_code()),
+            _ => None,
+        }
+    }
 }
 
 /// HTTP adapter bridging requests into the runtime router.
@@ -276,7 +286,7 @@ impl HttpAdapter {
                     principal: Some(envelope.principal.clone()),
                     message: err.to_string(),
                 });
-                TransportError::Router(err.to_string())
+                TransportError::Router(err)
             })?;
 
         self.telemetry.record(TelemetryEvent {

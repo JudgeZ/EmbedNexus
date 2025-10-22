@@ -110,6 +110,7 @@ async fn stdio_and_uds_authentication_failures_surface() {
         .await
         .expect_err("router unauthorized should bubble");
     assert!(matches!(err, StdioError::Router(_)));
+    assert_eq!(err.router_status_code(), Some(401));
 
     uds.negotiate_peer(&peer())
         .expect("peer negotiation should succeed");
@@ -129,6 +130,7 @@ async fn stdio_and_uds_authentication_failures_surface() {
         .await
         .expect_err("router error surfaces");
     assert!(matches!(err, UdsError::Router(_)));
+    assert_eq!(err.router_status_code(), Some(401));
 
     let mut bad_peer = peer();
     bad_peer.uid = 77;

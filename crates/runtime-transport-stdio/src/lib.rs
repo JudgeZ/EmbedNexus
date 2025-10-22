@@ -6,7 +6,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use base64::engine::general_purpose::URL_SAFE_NO_PAD;
 use base64::Engine as _;
 use blake3::Hasher;
-use runtime_router::{RouterCommand, SessionContext, SharedRouter};
+use runtime_router::{RouterCommand, RouterError, SessionContext, SharedRouter};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use thiserror::Error;
@@ -173,7 +173,16 @@ pub enum TransportError {
     #[error("framing error: {0}")]
     Framing(String),
     #[error("router error: {0}")]
-    Router(String),
+    Router(RouterError),
+}
+
+impl TransportError {
+    pub fn router_status_code(&self) -> Option<u16> {
+        match self {
+            TransportError::Router(err) => Some(err.status_code()),
+            _ => None,
+        }
+    }
 }
 
 /// STDIO adapter entry point.
@@ -210,9 +219,9 @@ impl StdioAdapter {
                 "principal {principal} is not permitted",
             )));
         }
-        let IssuedToken { token, token_id } = self
-            .signer
-            .issue(principal, &["stdio".into()], Duration::from_secs(3600));
+        let IssuedToken { token, token_id } =
+            self.signer
+                .issue(principal, &["stdio".into()], Duration::from_secs(3600));
         self.telemetry.record(TelemetryEvent {
             kind: "stdio.session.issued".into(),
             message: token_id.to_string(),
@@ -262,7 +271,7 @@ impl StdioAdapter {
                     kind: "stdio.router.error".into(),
                     message: err.to_string(),
                 });
-                TransportError::Router(err.to_string())
+                TransportError::Router(err)
             })?;
 
         let status = if response.status_code == 200 {
@@ -469,8 +478,7 @@ mod tests {
     #[tokio::test]
     async fn rejects_revoked_principal_on_dispatch() {
         let router = Arc::new(RecordingRouter::default());
-        let mut adapter =
-            StdioAdapter::bind(config(), router.clone() as SharedRouter).unwrap();
+        let mut adapter = StdioAdapter::bind(config(), router.clone() as SharedRouter).unwrap();
         let token = adapter
             .issue_session_token("alice")
             .expect("token issuance should succeed");
