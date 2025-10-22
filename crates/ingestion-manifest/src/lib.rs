@@ -115,10 +115,16 @@ where
     }
 
     fn build_entry(&self, diff: &ManifestDiff, sequence: u64) -> ReplayEntry {
+        let delayed_ms = diff
+            .applied_at
+            .elapsed()
+            .map(|elapsed| elapsed.as_millis() as u64)
+            .unwrap_or(0);
+
         ReplayEntry {
             sequence,
             repo_id: diff.repo_id.clone(),
-            delayed_ms: self.config.retention_max_age.as_millis() as u64,
+            delayed_ms,
             payload_checksum_before: diff.checksum_before.clone(),
             payload_checksum_after: diff.checksum_after.clone(),
             status: String::from("pending"),

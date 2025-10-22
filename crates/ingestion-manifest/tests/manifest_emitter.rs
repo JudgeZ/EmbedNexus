@@ -154,3 +154,81 @@ fn emitter_flushes_offline_buffer_against_golden() {
         .iter()
         .any(|entry| entry.sequence > expected_sequence));
 }
+
+#[test]
+fn emitter_records_delay_based_on_applied_at() {
+    let queue = Arc::new(TestQueue::default());
+    let buffer = OfflineReplayBuffer::new(16, Duration::from_secs(60));
+    let config = ManifestEmitterConfig {
+        sequence_start: 1,
+        encryption_key: "test-key".into(),
+        retention_max_entries: 16,
+        retention_max_age: Duration::from_secs(60),
+    };
+
+    let generator = EmbeddingGenerator::new(EmbeddingConfig::new("encoder-z".into(), 6));
+    let mut emitter = ManifestEmitter::new(config, buffer, queue.clone());
+
+    let applied_at = SystemTime::now() - Duration::from_millis(1_500);
+    let diff = ManifestDiff {
+        repo_id: "repo-omega".into(),
+        applied_at,
+        added_chunks: vec!["chunk-0".into()],
+        removed_chunks: vec![],
+        checksum_before: "before".into(),
+        checksum_after: "after".into(),
+    };
+
+    let before_emit = SystemTime::now();
+    emitter
+        .emit(
+            diff,
+            generator
+                .encode(&[sanitized_payload()])
+                .expect("encoding should succeed"),
+        )
+        .expect("emit should succeed");
+    let after_emit = SystemTime::now();
+
+    let collected = queue.collected();
+    assert_eq!(collected.len(), 1, "expected emitted replay entry");
+    let delayed_ms = collected[0].delayed_ms;
+
+    let min_expected = before_emit
+        .duration_since(applied_at)
+        .expect("before emit should be after applied_at")
+        .as_millis() as u64;
+    let max_expected = after_emit
+        .duration_since(applied_at)
+        .expect("after emit should be after applied_at")
+        .as_millis() as u64;
+    assert!(
+        delayed_ms >= min_expected && delayed_ms <= max_expected,
+        "delayed_ms {delayed_ms} should fall within [{min_expected}, {max_expected}]"
+    );
+
+    let future_diff = ManifestDiff {
+        repo_id: "repo-omega".into(),
+        applied_at: SystemTime::now() + Duration::from_secs(5),
+        added_chunks: vec!["chunk-0".into()],
+        removed_chunks: vec![],
+        checksum_before: "before".into(),
+        checksum_after: "after".into(),
+    };
+
+    emitter
+        .emit(
+            future_diff,
+            generator
+                .encode(&[sanitized_payload()])
+                .expect("encoding should succeed"),
+        )
+        .expect("emit should succeed for future diff");
+
+    let collected = queue.collected();
+    assert_eq!(collected.len(), 2, "expected future replay entry");
+    assert_eq!(
+        collected[1].delayed_ms, 0,
+        "future diffs should clamp delay to zero"
+    );
+}
