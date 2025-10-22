@@ -27,7 +27,19 @@ fn sanitizer_redacts_secret_tokens() {
     assert!(sanitized
         .redaction_log
         .iter()
-        .any(|entry| entry.contains("SECRET-123")));
+        .any(|entry| entry.contains("SECRET[-_A-Z0-9]+ => count=1")));
+    assert!(sanitized
+        .redaction_log
+        .iter()
+        .any(|entry| entry.contains("API_KEY[=:][A-Za-z0-9_-]+ => count=1")));
+    assert!(!sanitized
+        .redaction_log
+        .iter()
+        .any(|entry| entry.contains("SECRET-123") || entry.contains("API_KEY=XYZ")));
+    assert!(sanitized
+        .redaction_log
+        .iter()
+        .all(|entry| entry.contains("digest=")));
     assert_eq!(sanitized.plan_id, plan.plan_id);
 }
 
