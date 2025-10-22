@@ -156,6 +156,60 @@ fn emitter_flushes_offline_buffer_against_golden() {
 }
 
 #[test]
+fn emitter_respects_configured_sequence_floor_over_buffered_entries() {
+    let queue = Arc::new(TestQueue::default());
+    let buffer = OfflineReplayBuffer::new(8, Duration::from_secs(60));
+
+    for sequence in [4_u64, 5_u64, 6_u64] {
+        buffer
+            .push(ReplayEntry {
+                sequence,
+                repo_id: format!("repo-theta-{sequence}"),
+                delayed_ms: 0,
+                payload_checksum_before: format!("before-{sequence}"),
+                payload_checksum_after: format!("after-{sequence}"),
+                status: "buffered".into(),
+            })
+            .expect("buffer push should succeed");
+    }
+
+    let config = ManifestEmitterConfig {
+        sequence_start: 42,
+        encryption_key: "test-key".into(),
+        retention_max_entries: 8,
+        retention_max_age: Duration::from_secs(60),
+    };
+
+    let generator = EmbeddingGenerator::new(EmbeddingConfig::new("encoder-z".into(), 6));
+    let mut emitter = ManifestEmitter::new(config, buffer, queue.clone());
+
+    let diff = ManifestDiff {
+        repo_id: "repo-floor".into(),
+        applied_at: SystemTime::now(),
+        added_chunks: vec!["chunk-floor".into()],
+        removed_chunks: vec![],
+        checksum_before: "before-floor".into(),
+        checksum_after: "after-floor".into(),
+    };
+
+    emitter
+        .emit(
+            diff,
+            generator
+                .encode(&[sanitized_payload()])
+                .expect("encoding should succeed"),
+        )
+        .expect("emit should succeed with configured floor");
+
+    let collected = queue.collected();
+    assert_eq!(collected.len(), 1, "expected one emitted entry");
+    assert_eq!(
+        collected[0].sequence, 42,
+        "emitter should honor configured sequence_start even when buffer has lower sequences"
+    );
+}
+
+#[test]
 fn emitter_records_delay_based_on_applied_at() {
     let queue = Arc::new(TestQueue::default());
     let buffer = OfflineReplayBuffer::new(16, Duration::from_secs(60));

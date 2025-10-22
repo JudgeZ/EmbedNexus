@@ -54,6 +54,7 @@ where
         let next_sequence = buffer
             .max_sequence()
             .map(|seq| seq + 1)
+            .map(|buffered| buffered.max(config.sequence_start))
             .unwrap_or(config.sequence_start);
         Self {
             config,
