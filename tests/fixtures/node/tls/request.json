@@ -1,0 +1,12 @@
+{
+  "jsonrpc": "2.0",
+  "id": 44,
+  "method": "call_tool",
+  "params": {
+    "name": "create-embedding",
+    "arguments": {
+      "model": "text-embedding-3-large",
+      "input": "List supported IDEs for tls transport."
+    }
+  }
+}

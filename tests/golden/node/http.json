@@ -1,0 +1,47 @@
+[
+  {
+    "direction": "send",
+    "transport": "http",
+    "timestamp": "2024-06-02T09:05:00Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": 43,
+      "method": "call_tool",
+      "params": {
+        "name": "create-embedding",
+        "arguments": {
+          "model": "text-embedding-3-large",
+          "input": "List supported IDEs for http transport."
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "transport": "http",
+    "timestamp": "2024-06-02T09:05:00.230Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": 43,
+      "result": {
+        "content": [
+          {
+            "type": "embeddings",
+            "embedding": [
+              -0.2042,
+              0.5123,
+              0.6811
+            ]
+          }
+        ],
+        "diagnostics": [
+          {
+            "code": "HTTP_SSE_STREAM",
+            "severity": "info",
+            "details": "SSE stream completed"
+          }
+        ]
+      }
+    }
+  }
+]

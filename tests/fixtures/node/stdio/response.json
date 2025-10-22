@@ -1,0 +1,22 @@
+{
+  "jsonrpc": "2.0",
+  "id": 42,
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          0.1021,
+          0.2234,
+          -0.9981
+        ]
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "STDIO_BUFFER_FLUSH",
+        "severity": "info"
+      }
+    ]
+  }
+}

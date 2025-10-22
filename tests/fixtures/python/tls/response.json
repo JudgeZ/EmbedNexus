@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "id": "python-tls-1",
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          -0.0912,
+          0.6641,
+          0.3429
+        ]
+      }
+    ],
+    "timing": {
+      "latencyMs": 189,
+      "transport": "tls",
+      "handshakeMs": 48
+    }
+  }
+}

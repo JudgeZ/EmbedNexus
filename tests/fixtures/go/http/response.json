@@ -1,0 +1,21 @@
+{
+  "jsonrpc": "2.0",
+  "id": "go-http-7",
+  "result": {
+    "content": [
+      {
+        "type": "embeddings",
+        "embedding": [
+          0.2198,
+          -0.1187,
+          0.9044
+        ]
+      }
+    ],
+    "meta": {
+      "transport": "http",
+      "sse": true,
+      "etag": "W/\"fixture-http-1\""
+    }
+  }
+}

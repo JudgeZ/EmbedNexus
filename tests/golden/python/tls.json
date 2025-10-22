@@ -1,0 +1,45 @@
+[
+  {
+    "direction": "send",
+    "transport": "tls",
+    "timestamp": "2024-06-01T12:10:00Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "python-tls-1",
+      "method": "call_tool",
+      "params": {
+        "name": "create-embedding",
+        "arguments": {
+          "model": "text-embedding-3-large",
+          "input": "Summarize integration steps for tls transport."
+        }
+      }
+    }
+  },
+  {
+    "direction": "receive",
+    "transport": "tls",
+    "timestamp": "2024-06-01T12:10:00.240Z",
+    "envelope": {
+      "jsonrpc": "2.0",
+      "id": "python-tls-1",
+      "result": {
+        "content": [
+          {
+            "type": "embeddings",
+            "embedding": [
+              -0.0912,
+              0.6641,
+              0.3429
+            ]
+          }
+        ],
+        "timing": {
+          "latencyMs": 189,
+          "transport": "tls",
+          "handshakeMs": 48
+        }
+      }
+    }
+  }
+]
