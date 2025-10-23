@@ -1,0 +1,9 @@
+# Filesystem Recorder Stub
+source: scripts/record_fs_events.py
+mode: config
+config: tests/fixtures/filesystem/mock-events.yaml
+scenarios:
+  - fuzz
+  - latency-burst
+notes:
+  - deterministic stub output until watcher harness is implemented
