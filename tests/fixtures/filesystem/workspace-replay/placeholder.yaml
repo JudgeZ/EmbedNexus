@@ -1,4 +1,4 @@
 # Placeholder workspace replay entry.
+# Populate via scripts/record_fs_events.py --replay-dir.
 mode: config
-metadata:
-  description: Unused placeholder replay entry for tests that expect at least one YAML file.
+reason: placeholder
