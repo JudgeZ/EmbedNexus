@@ -286,3 +286,118 @@ fn emitter_records_delay_based_on_applied_at() {
         "future diffs should clamp delay to zero"
     );
 }
+
+#[test]
+fn flush_offline_handles_queue_failure_mid_flush() {
+    let queue = Arc::new(TestQueue::default());
+    let buffer = OfflineReplayBuffer::new(8, Duration::from_secs(60));
+
+    for sequence in 40..=42 {
+        buffer
+            .push(ReplayEntry {
+                sequence,
+                repo_id: "repo-mid-flush".into(),
+                delayed_ms: 0,
+                payload_checksum_before: format!("before-{sequence}"),
+                payload_checksum_after: format!("after-{sequence}"),
+                status: "buffered".into(),
+            })
+            .expect("buffer push should succeed");
+    }
+
+    *queue.fail.lock().unwrap() = true;
+
+    let config = ManifestEmitterConfig {
+        sequence_start: 50,
+        encryption_key: "test-key".into(),
+        retention_max_entries: 8,
+        retention_max_age: Duration::from_secs(60),
+    };
+
+    let generator = EmbeddingGenerator::new(EmbeddingConfig::new("encoder-z".into(), 6));
+    let mut emitter = ManifestEmitter::new(config, buffer.clone(), queue.clone());
+
+    let diff = ManifestDiff {
+        repo_id: "repo-mid-flush".into(),
+        applied_at: SystemTime::now(),
+        added_chunks: vec!["chunk-mid".into()],
+        removed_chunks: vec![],
+        checksum_before: "before-mid".into(),
+        checksum_after: "after-mid".into(),
+    };
+
+    emitter
+        .emit(
+            diff,
+            generator
+                .encode(&[sanitized_payload()])
+                .expect("encoding should succeed"),
+        )
+        .expect_err("emit should fail when queue is offline");
+
+    *queue.fail.lock().unwrap() = false;
+    emitter.flush_offline().expect("flush should succeed");
+
+    let collected = queue.collected();
+    let sequences: Vec<u64> = collected.iter().map(|entry| entry.sequence).collect();
+    assert_eq!(sequences, vec![40, 41, 42, 50]);
+}
+
+#[test]
+fn emit_during_active_flush_queues_follow_up() {
+    let queue = Arc::new(TestQueue::default());
+    let buffer = OfflineReplayBuffer::new(8, Duration::from_secs(60));
+
+    for sequence in 60..=61 {
+        buffer
+            .push(ReplayEntry {
+                sequence,
+                repo_id: "repo-follow-up".into(),
+                delayed_ms: 0,
+                payload_checksum_before: format!("before-{sequence}"),
+                payload_checksum_after: format!("after-{sequence}"),
+                status: "buffered".into(),
+            })
+            .expect("buffer push should succeed");
+    }
+
+    let config = ManifestEmitterConfig {
+        sequence_start: 70,
+        encryption_key: "test-key".into(),
+        retention_max_entries: 8,
+        retention_max_age: Duration::from_secs(60),
+    };
+
+    let generator = EmbeddingGenerator::new(EmbeddingConfig::new("encoder-z".into(), 6));
+    let mut emitter = ManifestEmitter::new(config, buffer.clone(), queue.clone());
+
+    emitter
+        .flush_offline()
+        .expect("initial flush should succeed");
+    assert_eq!(queue.collected().len(), 2);
+
+    let diff = ManifestDiff {
+        repo_id: "repo-follow-up".into(),
+        applied_at: SystemTime::now(),
+        added_chunks: vec!["chunk-new".into()],
+        removed_chunks: vec![],
+        checksum_before: "before-new".into(),
+        checksum_after: "after-new".into(),
+    };
+    emitter
+        .emit(
+            diff,
+            generator
+                .encode(&[sanitized_payload()])
+                .expect("encoding should succeed"),
+        )
+        .expect("emit should succeed while queue online");
+
+    emitter
+        .flush_offline()
+        .expect("follow-up flush should succeed");
+
+    let collected = queue.collected();
+    let sequences: Vec<u64> = collected.iter().map(|entry| entry.sequence).collect();
+    assert_eq!(sequences, vec![60, 61, 70]);
+}

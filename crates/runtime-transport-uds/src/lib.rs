@@ -454,4 +454,61 @@ mod tests {
             .expect_err("router error surfaces");
         assert!(matches!(err, TransportError::Router(_)));
     }
+
+    #[tokio::test]
+    async fn negotiate_peer_concurrent_connections_same_uid() {
+        let router = Arc::new(RecordingRouter::default());
+        let adapter = UdsAdapter::bind(config(), router as SharedRouter).unwrap();
+
+        let peer_one = peer();
+        adapter
+            .negotiate_peer(&peer_one)
+            .expect("first negotiation succeeds");
+
+        let peer_two = PeerCredentials {
+            uid: 1000,
+            pid: 4242,
+            process_name: "another-client".into(),
+        };
+        adapter
+            .negotiate_peer(&peer_two)
+            .expect("second negotiation for same uid succeeds");
+
+        let negotiated = adapter.negotiated_uids.lock().unwrap();
+        assert!(negotiated.contains(&1000), "uid 1000 should be tracked");
+    }
+
+    #[tokio::test]
+    async fn dispatch_rejects_unnegotiated_peer() {
+        let router = Arc::new(RecordingRouter::default());
+        router
+            .script_response(Ok(RouterResponse::ok(json!({ "status": "ok" }))))
+            .await;
+
+        let adapter = UdsAdapter::bind(config(), router as SharedRouter).unwrap();
+
+        let token = adapter
+            .issue_session_token("alice", &["search".into()])
+            .expect("token issuance succeeds");
+
+        let unnegotiated_peer = peer();
+        let request = UdsRequest::new(
+            unnegotiated_peer.clone(),
+            token.token.clone(),
+            json!({
+                "command": "search",
+                "payload": {"term": "docs"}
+            }),
+        );
+
+        let err = adapter
+            .dispatch(request)
+            .await
+            .expect_err("unnegotiated peer must be rejected");
+        assert!(matches!(err, TransportError::Unauthorized(_)));
+        assert!(
+            err.to_string().contains(&unnegotiated_peer.uid.to_string()),
+            "error should mention uid"
+        );
+    }
 }

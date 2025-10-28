@@ -19,6 +19,8 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Integration** – encrypted round-trip search across sharded stores.
   - **Fuzz** – randomized key schedules and ciphertext tampering inputs.
   - **Performance** – latency guard on rotated index rebuild cycles.
+- **Coverage added (2025-10-28)** – Unit tests `capacity_eviction_removes_oldest_entry_fifo`, `purges_entries_exceeding_max_age`, and `requeue_preserves_original_age_for_expiration` in `crates/storage-ledger/src/lib.rs` validate offline replay buffer eviction and expiry semantics to support Phase 1 transport→ledger workflows.
+- **Coverage added (2025-10-29)** – Phase 2 tests `requeue_after_partial_flush_maintains_sequence` and `drain_ready_concurrent_push_preserves_order` assert replay ordering when partial flushes requeue entries and new pushes occur concurrently.
 
 ### Client Tooling (CLI & SDK)
 - **Planned feature focus**: Offline sync script and custom embedding hooks.
@@ -79,7 +81,7 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Fuzz** – randomized repository affinity hints derived from `tests/golden/routing/fuzz-affinity.jsonl` with jitter injection.
   - **Performance** – routing throughput guard validating scheduler latency across the scenario pack `tests/golden/routing/fanout-throughput.jsonl` and fixture directory `tests/fixtures/routing/high-fanout/`.
 - **Traceability** – Tied to the [Architecture Overview](../design/overview.md#local-ingestion-pipeline) for multi-repo orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Encryption](../security/threat-model.md#encryption-checklist) checklists governing cross-tenant routing.
-- **Coverage added (2025-10-29)** – Routing matrix loader tests `routing_matrix_merges_latency_fixture` and `routing_matrix_aligns_with_latency_transcript` validate fixture integration and path computation.
+- **Coverage added (2025-10-29)** – Routing matrix loader tests `routing_matrix_merges_latency_fixture` and `routing_matrix_aligns_with_latency_transcript` confirm adjacency/shortest path calculations for the multi-repo fixtures/transcripts.
 
 ### WSL Multi-Repository Regressions
 - **Planned feature focus**: Windows-to-WSL indexing parity, encrypted persistence, and ignore rule reconciliation across NTFS/ext4 mounts.
@@ -94,13 +96,16 @@ This matrix catalogues the intentionally failing tests that must be in place bef
 ### Offline Resilience & Replay
 - **Planned feature focus**: Transport retry buffering during network isolation and deterministic ingestion manifest replays after storage recovery.
 - **Required failing tests**:
-  - **Transport retry buffer integration** – Exercise adapter-level retry queue persistence with air-gapped transport harnesses referenced in [Transport Adapter Specification](../design/transport.md#offline-backpressure).
-  - **Retry buffer fuzz** – Burst enqueue/dequeue permutations sourced from `tests/fixtures/transport/offline-queue/` and `tests/golden/transport/offline-buffer-replay.transcript` to validate bounded growth and telemetry integrity.
-  - **Manifest replay integration** – Simulate delayed storage availability by applying the ingestion replay harness in [Ingestion Pipeline Specification](../design/ingestion.md#offline-replay-hooks) with datasets `tests/fixtures/ingestion/delayed-ledger/` and transcripts `tests/golden/ingestion/manifest-replay.log`.
-  - **Performance** – Measure replay catch-up latency across the delayed-storage fixtures while asserting audit log ordering guarantees.
+- **Transport retry buffer integration** – Exercise adapter-level retry queue persistence with air-gapped transport harnesses referenced in [Transport Adapter Specification](../design/transport.md#offline-backpressure).
+- **Retry buffer fuzz** – Burst enqueue/dequeue permutations sourced from `tests/fixtures/transport/offline-queue/` and `tests/golden/transport/offline-buffer-replay.transcript` to validate bounded growth and telemetry integrity.
+- **Manifest replay integration** – Simulate delayed storage availability by applying the ingestion replay harness in [Ingestion Pipeline Specification](../design/ingestion.md#offline-replay-hooks) with datasets `tests/fixtures/ingestion/delayed-ledger/` and transcripts `tests/golden/ingestion/manifest-replay.log`.
+- **Performance** – Measure replay catch-up latency across the delayed-storage fixtures while asserting audit log ordering guarantees.
 - **Security traceability** – Aligns with the [Sandboxing](../security/threat-model.md#sandboxing-checklist), [Access Control](../security/threat-model.md#access-control-checklist), and [Encryption](../security/threat-model.md#encryption-checklist) checklists to ensure buffered data remains protected during offline windows.
 - **Coverage added (2025-10-29)** – Ingestion manifest tests `flush_offline_handles_queue_failure_mid_flush` and `emit_during_active_flush_queues_follow_up` exercise emitter backpressure/resume behaviour while relying on existing `TestQueue` failover logic.
 - **Coverage added (2025-10-30)** – STDIO retry buffer unit tests (`retry_buffer_enforces_capacity_fifo`, `retry_buffer_requeue_retains_order`) and integration coverage (`tests/runtime_transport/tests/offline_queue.rs`) replay queued frames from `tests/fixtures/transport/offline-queue/snapshot.jsonl`.
+- **Coverage added (2025-10-28)** – HTTP adapter tests `issue_session_token_records_telemetry_and_claims`, `issue_session_token_rejects_disallowed_principal`, `dispatch_rejects_expired_token`, and `dispatch_propagates_capabilities_to_router` in `crates/runtime-transport-http/src/lib.rs` assert token issuance/expiry handling, auth-failure telemetry, and capability propagation for the Phase 1 transport spine.
+- **Coverage added (2025-10-29)** – Ingestion manifest tests `flush_offline_handles_queue_failure_mid_flush` and `emit_during_active_flush_queues_follow_up` exercise emitter backpressure/resume behaviour while relying on existing `TestQueue` failover logic.
+- **Coverage added (2025-10-29)** – STDIO adapter tests `issue_session_token_records_telemetry` and `dispatch_rejects_expired_token` bring parity with HTTP auth lifecycle checks and guard against stale tokens.
 
 ## Shared Testing Assets
 

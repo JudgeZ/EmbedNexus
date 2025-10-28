@@ -534,6 +534,22 @@ mod tests {
     use runtime_router::{RecordingRouter, RouterResponse};
     use serde_json::json;
     use std::sync::Arc;
+    use std::time::{Duration, SystemTime};
+
+    fn forge_frame(payload: &Value, signed: &SignedToken) -> StdioFrame {
+        let payload_bytes = serde_json::to_vec(payload).expect("payload encodes");
+        let token_bytes = URL_SAFE_NO_PAD
+            .encode(serde_json::to_vec(signed).expect("token encodes"))
+            .into_bytes();
+        let mut buffer = Vec::new();
+        buffer.extend_from_slice(&(payload_bytes.len() as u32).to_be_bytes());
+        buffer.extend_from_slice(&(token_bytes.len() as u16).to_be_bytes());
+        buffer.extend_from_slice(&payload_bytes);
+        buffer.extend_from_slice(&token_bytes);
+        let digest = blake3::hash(&buffer);
+        buffer.extend_from_slice(&digest.as_bytes()[..16]);
+        StdioFrame { payload: buffer }
+    }
 
     fn config() -> StdioConfig {
         StdioConfig {
@@ -699,5 +715,48 @@ mod tests {
             .map(|entry| entry.payload.sequence)
             .collect();
         assert_eq!(sequences, vec![11, 13]);
+    fn issue_session_token_records_telemetry() {
+        let router = Arc::new(RecordingRouter::default());
+        let adapter = StdioAdapter::bind(config(), router as SharedRouter).unwrap();
+        let token = adapter
+            .issue_session_token("alice")
+            .expect("token issuance should succeed");
+        assert!(!token.token.is_empty());
+        let events = adapter.telemetry().events();
+        assert!(events
+            .iter()
+            .any(|event| event.kind == "stdio.session.issued" && event.message.len() == 36));
+    }
+
+    #[tokio::test]
+    async fn dispatch_rejects_expired_token() {
+        let router = Arc::new(RecordingRouter::default());
+        let adapter = StdioAdapter::bind(config(), router as SharedRouter).unwrap();
+
+        let signer = TokenSigner::new("stdio-secret".into());
+        let expired_envelope = TokenEnvelope {
+            raw_token: String::new(),
+            token_id: Uuid::new_v4(),
+            principal: "alice".into(),
+            capabilities: vec!["stdio".into()],
+            expires_at: SystemTime::now()
+                .checked_sub(Duration::from_secs(5))
+                .unwrap()
+                .duration_since(UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_secs(),
+        };
+        let signature = signer.sign(&expired_envelope.canonical());
+        let signed = SignedToken {
+            envelope: expired_envelope,
+            signature,
+        };
+        let frame = forge_frame(&json!({ "command": "status" }), &signed);
+
+        let err = adapter
+            .dispatch_frame(frame)
+            .await
+            .expect_err("expired token should be rejected");
+        assert!(matches!(err, TransportError::Unauthorized(msg) if msg.contains("expired")));
     }
 }
