@@ -506,8 +506,9 @@ mod tests {
             .await
             .expect_err("unnegotiated peer must be rejected");
         assert!(matches!(err, TransportError::Unauthorized(_)));
-        assert!(err
-            .to_string()
-            .contains(&unnegotiated_peer.uid.to_string()), "error should mention uid");
+        assert!(
+            err.to_string().contains(&unnegotiated_peer.uid.to_string()),
+            "error should mention uid"
+        );
     }
 }

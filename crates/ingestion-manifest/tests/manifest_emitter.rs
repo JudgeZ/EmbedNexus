@@ -371,7 +371,9 @@ fn emit_during_active_flush_queues_follow_up() {
     let generator = EmbeddingGenerator::new(EmbeddingConfig::new("encoder-z".into(), 6));
     let mut emitter = ManifestEmitter::new(config, buffer.clone(), queue.clone());
 
-    emitter.flush_offline().expect("initial flush should succeed");
+    emitter
+        .flush_offline()
+        .expect("initial flush should succeed");
     assert_eq!(queue.collected().len(), 2);
 
     let diff = ManifestDiff {
@@ -391,7 +393,9 @@ fn emit_during_active_flush_queues_follow_up() {
         )
         .expect("emit should succeed while queue online");
 
-    emitter.flush_offline().expect("follow-up flush should succeed");
+    emitter
+        .flush_offline()
+        .expect("follow-up flush should succeed");
 
     let collected = queue.collected();
     let sequences: Vec<u64> = collected.iter().map(|entry| entry.sequence).collect();
