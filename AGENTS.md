@@ -39,3 +39,4 @@ All contributors **must** review and follow this plan before beginning any codin
 
 ## Implementation Log
 - **2025-10-28 — Phase 1 (transport→router→ledger spine)**: Added unit coverage for `OfflineReplayBuffer` capacity/expiry semantics and HTTP adapter session/token paths, recording auth-failure telemetry before returning errors. All tests pass (`cargo test`), establishing the first plan slice of the 12-step roadmap.
+- **2025-10-29 — Phase 2 (ledger replay + manifest backpressure)**: Landed storage-ledger replay ordering tests (partial flush requeue and concurrent pushes) plus ingestion-manifest backpressure/resume coverage. Updated buffers to track max sequence for requeued entries; suites green (`cargo test -p storage-ledger --lib`, `cargo test -p ingestion-manifest`).

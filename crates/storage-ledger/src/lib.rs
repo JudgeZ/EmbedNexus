@@ -34,6 +34,7 @@ pub struct OfflineReplayBuffer {
     max_entries: usize,
     max_age: Duration,
     inner: Arc<Mutex<VecDeque<ReplayEnvelope>>>,
+    max_sequence_seen: Arc<Mutex<Option<u64>>>,
 }
 
 impl OfflineReplayBuffer {
@@ -42,6 +43,7 @@ impl OfflineReplayBuffer {
             max_entries,
             max_age,
             inner: Arc::new(Mutex::new(VecDeque::new())),
+            max_sequence_seen: Arc::new(Mutex::new(None)),
         }
     }
 
@@ -75,10 +77,7 @@ impl OfflineReplayBuffer {
     }
 
     pub fn max_sequence(&self) -> Option<u64> {
-        self.inner
-            .lock()
-            .ok()
-            .and_then(|guard| guard.iter().map(|env| env.entry.sequence).max())
+        *self.max_sequence_seen.lock().unwrap()
     }
 
     fn purge_locked(&self, guard: &mut VecDeque<ReplayEnvelope>, now: SystemTime) {
@@ -100,6 +99,13 @@ impl OfflineReplayBuffer {
         }
         let mut guard = self.inner.lock().expect("buffer mutex poisoned");
         let now = SystemTime::now();
+        {
+            let mut max_seen = self.max_sequence_seen.lock().unwrap();
+            match *max_seen {
+                Some(existing) if existing >= entry.sequence => {}
+                _ => *max_seen = Some(entry.sequence),
+            }
+        }
         guard.push_back(ReplayEnvelope { entry, inserted_at });
         self.purge_locked(&mut guard, now);
         while guard.len() > self.max_entries {
@@ -174,6 +180,60 @@ mod tests {
 
         let drained = buffer.drain_ready();
         assert!(drained.is_empty(), "expired entry should be purged");
+        assert!(buffer.is_empty());
+    }
+
+    #[test]
+    fn requeue_after_partial_flush_maintains_sequence() {
+        let buffer = OfflineReplayBuffer::new(8, Duration::from_secs(60));
+        for seq in 1..=3 {
+            buffer.push(entry_with_sequence(seq)).unwrap();
+        }
+
+        // First drain simulates a partial flush (sequence 2 fails downstream)
+        let mut drained = buffer.drain_ready();
+        assert_eq!(drained.len(), 3);
+        let failed_entry = drained.remove(1);
+
+        buffer.requeue(failed_entry).unwrap();
+        assert_eq!(buffer.max_sequence(), Some(3));
+
+        // New pushes arrive while the failed entry is waiting to reflush
+        for seq in 4..=5 {
+            buffer.push(entry_with_sequence(seq)).unwrap();
+        }
+
+        let drained_after_requeue = buffer.drain_ready();
+        let sequences: Vec<u64> = drained_after_requeue
+            .iter()
+            .map(|ready| ready.entry.sequence)
+            .collect();
+        assert_eq!(sequences, vec![2, 4, 5]);
+        assert!(buffer.is_empty());
+    }
+
+    #[test]
+    fn drain_ready_concurrent_push_preserves_order() {
+        let buffer = OfflineReplayBuffer::new(8, Duration::from_secs(60));
+        for seq in 10..=12 {
+            buffer.push(entry_with_sequence(seq)).unwrap();
+        }
+
+        // Drain existing entries while new ones arrive
+        let drained = buffer.drain_ready();
+        let drained_sequences: Vec<u64> = drained.iter().map(|ready| ready.entry.sequence).collect();
+        assert_eq!(drained_sequences, vec![10, 11, 12]);
+
+        for seq in 13..=15 {
+            buffer.push(entry_with_sequence(seq)).unwrap();
+        }
+
+        let drained_after_push = buffer.drain_ready();
+        let sequences_after_push: Vec<u64> = drained_after_push
+            .iter()
+            .map(|ready| ready.entry.sequence)
+            .collect();
+        assert_eq!(sequences_after_push, vec![13, 14, 15]);
         assert!(buffer.is_empty());
     }
 }
