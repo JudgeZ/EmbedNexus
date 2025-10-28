@@ -12,3 +12,4 @@ runtime-transport-stdio = { path = "../../crates/runtime-transport-stdio" }
 runtime-transport-uds = { path = "../../crates/runtime-transport-uds" }
 serde_json = "1.0"
 tokio = { version = "1.36", features = ["macros", "rt-multi-thread"] }
+serde = { version = "1.0", features = ["derive"] }

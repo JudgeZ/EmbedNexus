@@ -698,6 +698,7 @@ dependencies = [
  "runtime-transport-http",
  "runtime-transport-stdio",
  "runtime-transport-uds",
+ "serde",
  "serde_json",
  "tokio",
 ]

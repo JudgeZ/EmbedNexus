@@ -1,0 +1,3 @@
+{"sequence": 1, "command": "ingest", "payload": {"doc": 1}, "token_id": "offline-1", "enqueued_at": 1700000000}
+{"sequence": 2, "command": "ingest", "payload": {"doc": 2}, "token_id": "offline-2", "enqueued_at": 1700000030}
+{"sequence": 3, "command": "search", "payload": {"query": "local"}, "token_id": "offline-3", "enqueued_at": 1700000060}

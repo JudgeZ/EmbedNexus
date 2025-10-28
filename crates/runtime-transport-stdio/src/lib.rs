@@ -1,5 +1,6 @@
 //! STDIO transport adapter framing and dispatch scaffolding.
 
+use std::collections::VecDeque;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -192,6 +193,125 @@ pub struct StdioAdapter {
     telemetry: Arc<TelemetrySink>,
     signer: Arc<TokenSigner>,
     codec: FramingCodec,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct RetryPayload {
+    pub sequence: u64,
+    pub command: String,
+    pub payload: Value,
+    pub token_id: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct RetryEntry {
+    pub payload: RetryPayload,
+    enqueued_at: SystemTime,
+    attempts: u32,
+}
+
+impl RetryEntry {
+    pub fn attempts(&self) -> u32 {
+        self.attempts
+    }
+
+    pub fn enqueued_at(&self) -> SystemTime {
+        self.enqueued_at
+    }
+
+    pub fn into_payload(self) -> RetryPayload {
+        self.payload
+    }
+
+    pub fn payload(&self) -> &RetryPayload {
+        &self.payload
+    }
+}
+
+#[derive(Debug)]
+pub struct RetryBuffer {
+    max_entries: usize,
+    max_age: Duration,
+    inner: Mutex<VecDeque<RetryEntry>>,
+    max_sequence_seen: Mutex<Option<u64>>,
+}
+
+impl RetryBuffer {
+    pub fn new(max_entries: usize, max_age: Duration) -> Self {
+        Self {
+            max_entries,
+            max_age,
+            inner: Mutex::new(VecDeque::new()),
+            max_sequence_seen: Mutex::new(None),
+        }
+    }
+
+    pub fn enqueue(&self, payload: RetryPayload) -> Result<(), RetryError> {
+        self.push_entry(RetryEntry {
+            payload,
+            enqueued_at: SystemTime::now(),
+            attempts: 0,
+        })
+    }
+
+    pub fn enqueue_at(
+        &self,
+        payload: RetryPayload,
+        enqueued_at: SystemTime,
+    ) -> Result<(), RetryError> {
+        self.push_entry(RetryEntry {
+            payload,
+            enqueued_at,
+            attempts: 0,
+        })
+    }
+
+    pub fn requeue(&self, entry: RetryEntry) -> Result<(), RetryError> {
+        self.push_entry(entry)
+    }
+
+    pub fn drain_ready(&self) -> Vec<RetryEntry> {
+        let mut guard = self.inner.lock().expect("retry buffer mutex poisoned");
+        let now = SystemTime::now();
+        guard.retain(|entry| match now.duration_since(entry.enqueued_at) {
+            Ok(age) => age <= self.max_age,
+            Err(_) => true,
+        });
+        guard.drain(..).collect()
+    }
+
+    pub fn max_sequence(&self) -> Option<u64> {
+        *self.max_sequence_seen.lock().unwrap()
+    }
+
+    fn push_entry(&self, mut entry: RetryEntry) -> Result<(), RetryError> {
+        if self.max_entries == 0 {
+            return Err(RetryError::Misconfigured(
+                "max_entries cannot be zero".into(),
+            ));
+        }
+        // preserve original enqueue time on requeue
+        entry.attempts = entry.attempts.saturating_add(1);
+        let mut guard = self.inner.lock().expect("retry buffer mutex poisoned");
+        while guard.len() >= self.max_entries {
+            guard.pop_front();
+        }
+        {
+            let mut max_seen = self.max_sequence_seen.lock().unwrap();
+            match *max_seen {
+                Some(existing) if existing >= entry.payload.sequence => {}
+                _ => *max_seen = Some(entry.payload.sequence),
+            }
+        }
+        guard.push_back(entry);
+        Ok(())
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum RetryError {
+    #[error("retry buffer misconfigured: {0}")]
+    Misconfigured(String),
 }
 
 impl StdioAdapter {
@@ -542,6 +662,59 @@ mod tests {
     }
 
     #[test]
+    fn retry_buffer_enforces_capacity_fifo() {
+        let buffer = RetryBuffer::new(3, Duration::from_secs(60));
+        for seq in 1..=4 {
+            buffer
+                .enqueue(RetryPayload {
+                    sequence: seq,
+                    command: "ingest".into(),
+                    payload: json!({ "id": seq }),
+                    token_id: format!("tok-{seq}"),
+                })
+                .unwrap();
+        }
+
+        assert_eq!(buffer.max_sequence(), Some(4));
+        let drained = buffer.drain_ready();
+        let sequences: Vec<u64> = drained.iter().map(|entry| entry.payload.sequence).collect();
+        assert_eq!(sequences, vec![2, 3, 4]);
+    }
+
+    #[test]
+    fn retry_buffer_requeue_retains_order() {
+        let buffer = RetryBuffer::new(5, Duration::from_secs(60));
+        for seq in 10..=12 {
+            buffer
+                .enqueue(RetryPayload {
+                    sequence: seq,
+                    command: "ingest".into(),
+                    payload: json!({ "id": seq }),
+                    token_id: format!("tok-{seq}"),
+                })
+                .unwrap();
+        }
+
+        let mut drained = buffer.drain_ready();
+        assert_eq!(drained.len(), 3);
+        let retry_entry = drained.remove(1);
+        buffer.requeue(retry_entry).unwrap();
+
+        buffer
+            .enqueue(RetryPayload {
+                sequence: 13,
+                command: "search".into(),
+                payload: json!({ "q": "docs" }),
+                token_id: "tok-13".into(),
+            })
+            .unwrap();
+
+        let drained_again = buffer.drain_ready();
+        let sequences: Vec<u64> = drained_again
+            .iter()
+            .map(|entry| entry.payload.sequence)
+            .collect();
+        assert_eq!(sequences, vec![11, 13]);
     fn issue_session_token_records_telemetry() {
         let router = Arc::new(RecordingRouter::default());
         let adapter = StdioAdapter::bind(config(), router as SharedRouter).unwrap();
