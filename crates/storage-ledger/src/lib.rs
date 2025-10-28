@@ -221,7 +221,8 @@ mod tests {
 
         // Drain existing entries while new ones arrive
         let drained = buffer.drain_ready();
-        let drained_sequences: Vec<u64> = drained.iter().map(|ready| ready.entry.sequence).collect();
+        let drained_sequences: Vec<u64> =
+            drained.iter().map(|ready| ready.entry.sequence).collect();
         assert_eq!(drained_sequences, vec![10, 11, 12]);
 
         for seq in 13..=15 {
