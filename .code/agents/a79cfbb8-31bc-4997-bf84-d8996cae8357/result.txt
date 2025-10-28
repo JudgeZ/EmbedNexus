@@ -1,0 +1,117 @@
+## Inventory Summary: CI/CD, Lint/Format, Tests, and Security Tooling
+
+### **CI/CD Configuration**
+
+**Exists:**
+- **GitHub Actions**: 3 workflows in `.github/workflows/`
+  - `ci.yml:10-34` - Main CI pipeline with lint and test
+    - Runs on: `ubuntu-latest`
+    - Triggers: push to `main`, pull requests
+    - Steps: Rust 1.82.0 setup, `cargo fmt --check`, `cargo clippy`, `cargo test`
+  - `regenerate-goldens.yml` - Manual golden file regeneration (Windows + Linux jobs)
+  - `regenerate-fixtures.yml` - Manual test fixture regeneration (Windows + Linux jobs)
+
+**Gaps:**
+- No GitLab CI or CircleCI configs
+- No coverage reporting (tarpaulin, codecov, coveralls)
+- No automated dependency updates (Dependabot, Renovate)
+- No release/publish automation
+- No performance/benchmark tracking
+- Golden/fixture regeneration workflows are manual (`workflow_dispatch` only)
+
+---
+
+### **Lint & Format Configuration**
+
+**Exists (Rust):**
+- `rustfmt.toml:1-6` - Rust formatter config
+  - Edition 2021, 100 char width, Unix newlines, import reordering
+- `clippy.toml:1-17` - Rust linter config
+  - Warns: `clippy::all`, `clippy::pedantic`, `clippy::cargo`
+  - Denies: `clippy::unwrap_used`, `clippy::expect_used`
+  - MSRV: 1.76.0
+- `rust-toolchain.toml:1-5` - Pinned Rust 1.82.0 with clippy/rustfmt
+
+**Exists (Shell):**
+- Shell scripts linted with `shellcheck` and `shfmt` (installed in fixture/golden workflows)
+- No explicit `.shellcheckrc` or `.editorconfig` found
+
+**Gaps (Python):**
+- No ESLint, Prettier, Black, Ruff, isort, or mypy configs
+- Python scripts exist (`scripts/*.py`, `tests/test_*.py`) but no formal linting in CI
+- Python dependencies installed inline (no `requirements.txt`, `pyproject.toml`, or Pipfile)
+
+**Gaps (General):**
+- No `.editorconfig` for cross-language consistency
+- No pre-commit hooks (`.pre-commit-config.yaml` missing)
+
+---
+
+### **Test Setup**
+
+**Exists (Rust):**
+- Cargo workspace tests via `cargo test` in CI (`ci.yml:34`)
+- Test crates in `tests/runtime_transport/` and per-crate tests in `crates/*/tests/`
+- Test harnesses: `archive_builder.rs`, `manifest_replay_harness.rs` in `scripts/`
+- Dev dependencies: `assert_cmd`, `tempfile` in `scripts/Cargo.toml:18-19`
+
+**Exists (Python):**
+- Pytest framework: `tests/conftest.py` with custom `--update-transcripts` option
+- Test files: `test_fixture_packager.py`, `test_record_fs_events.py`, `test_routing_matrix.py`, etc.
+- Golden file verification: `tests/golden.sha256`, checksum scripts
+
+**Gaps:**
+- No coverage collection (no tarpaulin.toml or coverage tools in CI)
+- No benchmark suite or performance regression tracking
+- No integration test job in CI (only unit tests via `cargo test`)
+- No test matrix (OS, Rust versions) - only single Ubuntu job
+- Python tests not executed in CI workflows
+- No mutation testing or property-based testing configs (e.g., proptest, hypothesis)
+
+---
+
+### **Security Tooling**
+
+**Exists:**
+- **Security documentation**: `docs/security/threat-model.md` with checklists
+  - Covers: input validation, encryption, sandboxing, authentication, access control
+  - Ownership table for mitigation areas
+- **Security-focused test artifacts**:
+  - TLS/DPAPI golden files, encryption toggles, transport security traces
+  - Windows-specific DPAPI collection (`scripts/collect_dpapi.ps1`)
+  - TLS capture scripts (`scripts/trace_capture.sh`)
+- **Clippy security denials**: `clippy::unwrap_used`, `clippy::expect_used` (prevents panics)
+
+**Gaps:**
+- No `cargo-audit` for dependency vulnerability scanning
+- No `cargo-deny` for license/advisories/bans enforcement
+- No SAST tools (Semgrep, CodeQL, Snyk)
+- No secret scanning (gitleaks, truffleHog)
+- No SCA/SBOM generation (cargo-sbom)
+- No supply chain verification (checksums/signatures for dependencies mentioned in threat model but not enforced)
+- No security-focused CI job (vulnerability scans, SAST, dependency checks)
+- No automated security policy enforcement beyond clippy lints
+
+---
+
+### **Best-Practice Recommendations**
+
+**High Priority:**
+1. **Add `cargo-audit`** to CI for Rust dependency vulnerability scanning
+2. **Add Python linting** (Ruff or Black + isort) and type checking (mypy) to CI
+3. **Enable code coverage** (tarpaulin for Rust, pytest-cov for Python) with reporting
+4. **Add Dependabot** or Renovate for automated dependency updates
+5. **Add pre-commit hooks** for local lint/format enforcement
+
+**Medium Priority:**
+6. **Add `cargo-deny`** for supply chain policy enforcement (licenses, advisories)
+7. **Add SAST tooling** (GitHub CodeQL or Semgrep)
+8. **Run Python tests in CI** alongside Rust tests
+9. **Add test matrix** for multiple OS (Windows, macOS, Linux) and Rust versions
+10. **Add secret scanning** (gitleaks or GitHub secret scanning)
+
+**Lower Priority:**
+11. Add benchmark suite with performance regression tracking
+12. Add mutation testing for critical modules
+13. Automate golden/fixture regeneration triggers (on schedule or release)
+14. Generate SBOM in release pipeline

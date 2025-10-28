@@ -1,0 +1,521 @@
+List docs/roadmap (files):
+./docs/roadmap/phase2-tests.md
+
+Open docs/testing/test-matrix.md (first 200):
+# Test Matrix for Planned Feature Work
+
+This matrix catalogues the intentionally failing tests that must be in place before implementation begins on each subsystem. The objective is to drive test-first delivery so that every planned capability is protected by unit, integration, fuzz, and performance coverage ahead of landing code changes. Refer to the [Fixture and Golden Data Management Plan](./fixtures-plan.md) for guidance on creating and reviewing the shared assets referenced below.
+
+## Subsystem Matrices
+
+### Embedding Engine Core
+- **Planned feature focus**: Adaptive chunking pipeline, multimodal embedding expansion.
+- **Required failing tests**:
+  - **Unit** – tokenizer boundary handling and embedding dimensionality negotiation helpers.
+  - **Integration** – ingestion pipeline end-to-end execution with adaptive chunking enabled.
+  - **Fuzz** – malformed document payloads targeting tokenizer and encoder surfaces.
+  - **Performance** – throughput regression guard covering a 10k document batch window.
+
+### Secure Storage & Retrieval
+- **Planned feature focus**: Encrypted vector persistence and rotated key support.
+- **Required failing tests**:
+  - **Unit** – key rotation helpers and encryption envelope edge cases.
+  - **Integration** – encrypted round-trip search across sharded stores.
+  - **Fuzz** – randomized key schedules and ciphertext tampering inputs.
+  - **Performance** – latency guard on rotated index rebuild cycles.
+- **Coverage added (2025-10-28)** – Unit tests `capacity_eviction_removes_oldest_entry_fifo`, `purges_entries_exceeding_max_age`, and `requeue_preserves_original_age_for_expiration` in `crates/storage-ledger/src/lib.rs` validate offline replay buffer eviction and expiry semantics to support Phase 1 transport→ledger workflows.
+- **Coverage added (2025-10-29)** – Phase 2 tests `requeue_after_partial_flush_maintains_sequence` and `drain_ready_concurrent_push_preserves_order` assert replay ordering when partial flushes requeue entries and new pushes occur concurrently.
+
+### Client Tooling (CLI & SDK)
+- **Planned feature focus**: Offline sync script and custom embedding hooks.
+- **Required failing tests**:
+  - **Unit** – CLI flag parsing for embedding hooks and SDK request builders.
+  - **Integration** – offline sync against staging MCP endpoints using shared fixtures.
+  - **Fuzz** – CLI argument permutations leveraging the fixture corpus.
+  - **Performance** – sync duration guard leveraging the large fixture dataset.
+
+### IDE Extensions
+- **Planned feature focus**: Inline suggestion surfacing and MCP golden message replay.
+- **Required failing tests**:
+  - **Unit** – adapter transformers for IDE protocol messages.
+  - **Integration** – replay of golden MCP conversations against the extension bridge.
+  - **Fuzz** – randomized suggestion payload ordering via golden transcript mutators.
+  - **Performance** – response time guard for multi-file suggestion batches.
+- **Security traceability** – Aligns with the [Input Validation Checklist](../security/threat-model.md#input-validation-checklist) for protocol payload vetting.
+
+### Filesystem Watch Service
+- **Planned feature focus**: Workspace filesystem watching latency with debounce and ignore rules.
+- **Measurement template**: [Filesystem Watcher Latency Metrics](./templates/watcher-latency-metrics.md) for capturing watcher timing evidence.
+- **Required failing tests**:
+  - **Unit** – latency window heuristics for debounce helpers using the future fixture `tests/fixtures/filesystem/latency-window.yaml`.
+  - **Integration** – propagation latency from watch events into ingestion queues replayed via `tests/fixtures/filesystem/workspace-replay/` with added clock skew controls.
+  - **Fuzz** – burst latency permutations sourced from the golden transcript `tests/golden/filesystem/watch-latency-burst.log` to validate ignore glob safety under stress.
+  - **Performance** – sustained burst benchmark asserting <200 ms median watch-to-queue latency using the upcoming dataset `tests/golden/filesystem/watch-latency-burst.log`.
+- **Traceability** – Aligns with the [Ingestion Pipeline Specification](../design/ingestion.md) for watcher orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Input Validation](../security/threat-model.md#input-validation-checklist) checklists governing event sources.
+
+### Archive Extraction Quotas
+- **Planned feature focus**: Controlled archive ingestion with byte quotas, type filters, and extraction latency limits.
+- **Measurement template**: [Archive Extraction Usage](./templates/archive-extraction-usage.md) for documenting quota and latency metrics.
+- **Required failing tests**:
+  - **Unit** – quota calculators and MIME gatekeepers validated against `tests/fixtures/archives/quota-latency.toml`.
+  - **Integration** – staged overflow extraction from `tests/fixtures/archives/overflow-latency.tar.zst` asserting quota violations and latency logging.
+  - **Fuzz** – randomized archive metadata and clock skew injections driven by `tests/golden/archives/quota-throughput.jsonl` to stress parser hardening.
+  - **Performance** – throughput guard ensuring quota enforcement overhead stays within 2% using the bulk corpus `tests/fixtures/archives/bulk-sample/` and latency checkpoints emitted to `tests/golden/archives/quota-throughput.jsonl`.
+- **Traceability** – Anchored to the [Ingestion Pipeline Specification](../design/ingestion.md#cross-cutting-concerns) for resource controls and the [Input Validation](../security/threat-model.md#input-validation-checklist) and [Sandboxing](../security/threat-model.md#sandboxing-checklist) checklists.
+
+### Encryption & TLS Controls
+- **Planned feature focus**: Toggleable encryption-at-rest policies and deterministic TLS transport negotiation.
+- **Measurement template**: [Encryption & TLS Validation Logging](./templates/encryption-tls-validation.md) for recording encryption and handshake evidence.
+- **Required failing tests**:
+  - **Encryption-at-rest unit** – key rotation toggle helpers verified with the fixture `tests/fixtures/security/encryption-latency.json`.
+  - **Encryption-at-rest integration** – encrypted store rebuild with toggle permutations replaying `tests/golden/security/encryption-toggle.trace`.
+  - **Encryption-at-rest fuzz/performance** – randomized toggle sequences with rebuild timing captured in `tests/golden/security/encryption-toggle.trace` to ensure <5% latency regression.
+  - **TLS unit** – cipher-suite negotiation validators referencing `tests/fixtures/security/tls-config-matrix.yaml` for coverage of mandatory/optional suites.
+  - **TLS integration** – end-to-end handshake negotiation using the golden transcript `tests/golden/security/tls-negotiation.trace` across downgraded clients.
+  - **TLS fuzz/performance** – fuzzed handshake transcripts and throughput guards sourced from `tests/golden/security/tls-performance.jsonl` ensuring downgrade protection and handshake latency targets.
+  - **WSL transport handshake regression** – failing integration coverage replaying `tests/golden/transport/wsl-handshake-negotiation.trace` across the Windows loopback proxy to confirm telemetry parity with native Linux/macOS adapters and to validate DPAPI-backed key recovery requirements before WSL session reuse.
+  - **Encrypted storage DPAPI recovery** – failing unit and integration coverage leveraging `tests/fixtures/security/dpapi-recovery/` and the golden event log `tests/golden/security/dpapi-recovery-audit.jsonl` to assert that encrypted shards restored inside WSL honor the Windows DPAPI recovery policy prior to re-keying.
+- **Traceability** – References the [Encryption Design](../design/encryption.md) for storage toggles, the [Transport Adapter Design](../design/transport.md) for negotiation sequencing, and the [Encryption](../security/threat-model.md#encryption-checklist) plus [Input Validation](../security/threat-model.md#input-validation-checklist) checklists.
+
+### Multi-Repository Routing
+- **Planned feature focus**: Routing embeddings and retrieval across federated repository workspaces.
+- **Required failing tests**:
+  - **Unit** – routing table merge helpers referencing the planned fixture `tests/fixtures/routing/latency-matrix.json`.
+  - **Integration** – cross-repo retrieval latency validated by `tests/golden/routing/multi-repo-latency.transcript` to confirm tenant isolation.
+  - **Fuzz** – randomized repository affinity hints derived from `tests/golden/routing/fuzz-affinity.jsonl` with jitter injection.
+  - **Performance** – routing throughput guard validating scheduler latency across the scenario pack `tests/golden/routing/fanout-throughput.jsonl` and fixture directory `tests/fixtures/routing/high-fanout/`.
+- **Traceability** – Tied to the [Architecture Overview](../design/overview.md#local-ingestion-pipeline) for multi-repo orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Encryption](../security/threat-model.md#encryption-checklist) checklists governing cross-tenant routing.
+- **Coverage added (2025-10-29)** – Routing matrix loader tests `routing_matrix_merges_latency_fixture` and `routing_matrix_aligns_with_latency_transcript` confirm adjacency/shortest path calculations for the multi-repo fixtures/transcripts.
+
+### WSL Multi-Repository Regressions
+- **Planned feature focus**: Windows-to-WSL indexing parity, encrypted persistence, and ignore rule reconciliation across NTFS/ext4 mounts.
+- **Required failing tests**:
+  - **Unit** – WSL path normalization and ignore precedence helpers validated against the upcoming fixture `tests/fixtures/wsl/multi-repo-ignore.yaml`.
+  - **Integration** – dual-repository ingestion replay driven by the golden event log `tests/golden/wsl/multi-repo-ingestion.log`, asserting deterministic manifest stitching and encrypted store segregation.
+  - **Fuzz** – randomized mount remapping and clock skew payloads sourced from `tests/golden/wsl/wsl-remap-permutations.jsonl`.
+  - **Performance** – throughput guard referencing `tests/golden/wsl/multi-repo-throughput.jsonl` that enforces budgeted latency for cross-filesystem diffing.
+- **Traceability** – Aligns with the [Runtime Packaging & Distribution Plan](../implementation/runtime-packaging-plan.md) for consuming packaged artifacts during WSL validation, the [Encryption](../security/threat-model.md#encryption-checklist) checklist for DPAPI parity, and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) checklist for bridge execution.
+- **Automation mandate** – All fixtures and goldens listed above are regenerated exclusively by the `Regenerate Fixture Corpus` and `Regenerate Golden Artifacts` GitHub Actions workflows; developers must not hand-edit the assets locally.
+
+### Offline Resilience & Replay
+- **Planned feature focus**: Transport retry buffering during network isolation and deterministic ingestion manifest replays after storage recovery.
+- **Required failing tests**:
+- **Transport retry buffer integration** – Exercise adapter-level retry queue persistence with air-gapped transport harnesses referenced in [Transport Adapter Specification](../design/transport.md#offline-backpressure).
+- **Retry buffer fuzz** – Burst enqueue/dequeue permutations sourced from `tests/fixtures/transport/offline-queue/` and `tests/golden/transport/offline-buffer-replay.transcript` to validate bounded growth and telemetry integrity.
+- **Manifest replay integration** – Simulate delayed storage availability by applying the ingestion replay harness in [Ingestion Pipeline Specification](../design/ingestion.md#offline-replay-hooks) with datasets `tests/fixtures/ingestion/delayed-ledger/` and transcripts `tests/golden/ingestion/manifest-replay.log`.
+- **Performance** – Measure replay catch-up latency across the delayed-storage fixtures while asserting audit log ordering guarantees.
+- **Security traceability** – Aligns with the [Sandboxing](../security/threat-model.md#sandboxing-checklist), [Access Control](../security/threat-model.md#access-control-checklist), and [Encryption](../security/threat-model.md#encryption-checklist) checklists to ensure buffered data remains protected during offline windows.
+- **Coverage added (2025-10-29)** – Ingestion manifest tests `flush_offline_handles_queue_failure_mid_flush` and `emit_during_active_flush_queues_follow_up` exercise emitter backpressure/resume behaviour while relying on existing `TestQueue` failover logic.
+- **Coverage added (2025-10-30)** – STDIO retry buffer unit tests (`retry_buffer_enforces_capacity_fifo`, `retry_buffer_requeue_retains_order`) and integration coverage (`tests/runtime_transport/tests/offline_queue.rs`) replay queued frames from `tests/fixtures/transport/offline-queue/snapshot.jsonl`.
+- **Coverage added (2025-10-28)** – HTTP adapter tests `issue_session_token_records_telemetry_and_claims`, `issue_session_token_rejects_disallowed_principal`, `dispatch_rejects_expired_token`, and `dispatch_propagates_capabilities_to_router` in `crates/runtime-transport-http/src/lib.rs` assert token issuance/expiry handling, auth-failure telemetry, and capability propagation for the Phase 1 transport spine.
+- **Coverage added (2025-10-29)** – Ingestion manifest tests `flush_offline_handles_queue_failure_mid_flush` and `emit_during_active_flush_queues_follow_up` exercise emitter backpressure/resume behaviour while relying on existing `TestQueue` failover logic.
+- **Coverage added (2025-10-29)** – STDIO adapter tests `issue_session_token_records_telemetry` and `dispatch_rejects_expired_token` bring parity with HTTP auth lifecycle checks and guard against stale tokens.
+
+## Shared Testing Assets
+
+- **Fixture Library**: Reuse the shared fixture bundle under `tests/fixtures/shared/` for cross-subsystem consistency. Extend fixtures instead of duplicating data and document each addition inside the fixture README files.
+- **Golden MCP Messages**: Client scripts and IDE validation must rely on the curated golden message transcripts in `tests/golden/mcp/`. Update transcripts when protocol changes occur and ensure replay harnesses remain deterministic.
+
+## Automation & Regeneration Workflows
+
+The GitHub Actions workflows under `.github/workflows/` codify the regeneration
+sequences captured in the fixture plan. Reference their outputs when updating the
+matrix entries above, and follow the [automation runbook](./fixtures-plan.md#automation-runbook)
+for evidence collection and documentation.
+
+| Workflow | Toolchain Baseline | Coverage | Notes |
+| --- | --- | --- | --- |
+| `Regenerate Fixture Corpus` | Ubuntu runner, Python 3.11 (`watchdog`, `pyyaml`, `typer`, `rich`, `click`, `cryptography`, `networkx`), Rust stable, `openssl`, `tshark`, `jq`, `shellcheck`, `shfmt`, `zstd` | Filesystem, archives, routing, transport, ingestion, and shared fixture directories. Produces `fixture-regeneration-output` artifact with refreshed `tests/fixtures/` content plus adjacent goldens. | Includes a Windows job that runs `scripts/collect_dpapi.ps1` and `scripts/trace_capture.sh` to stage DPAPI recovery fixtures, TLS latency samples, WSL bridge metadata, and the multi-repo datasets (`wsl-multi-repo-ignore.yaml`, etc.) before the Linux job downloads the `windows-security-fixtures` artifact and completes the remaining regeneration steps. |
+| `Regenerate Golden Artifacts` | Same as above | Regenerates transcripts and logs under `tests/golden/`, uploading the `golden-regeneration-output` artifact. | Windows automation executes `collect_dpapi.ps1`, `trace_capture.sh`, and `wsl_transport_proxy.ps1` to refresh TLS handshakes, negotiation traces, DPAPI audits, WSL bridge captures, and the new multi-repo ingestion/throughput transcripts. The Linux job consumes the `windows-security-goldens` artifact and then rebuilds the remaining goldens plus checksum manifests. |
+
+**Verification tracking**
+
+- Download the workflow artifacts and run `scripts/checksums.sh --verify` locally
+  once the helper is implemented, recording the verification transcript referenced
+  in the runbook above.
+- Matrix updates must capture, in both subsystem README updates and the associated
+  pull request description/template, the workflow run URL, every published artifact
+  name, and the checksum verification output. Attach this metadata bundle as part
+  of the documentation changes so reviewers can trace automation evidence without
+  leaving the change set.
+
+## Execution Notes
+
+1. Add each failing test to the appropriate suite before feature implementation begins. Reference the planned feature label in the test description to maintain traceability.
+2. Link new test coverage to existing CI job definitions so that failures surface immediately while the features remain pending.
+3. Document deviations or temporary skips inside the subsystem-specific testing READMEs with rationale and target removal milestones.
+4. Capture and archive the failing-then-passing test evidence (local logs or CI links) so reviewers can validate the TDD red/green cycle when the implementation lands.
+
+Open docs/security/threat-model.md (first 200):
+# Threat Model and Security Review Checklists
+
+This document captures anticipated threats, guiding assumptions, and mitigation strategies for the Cursor Local Embedding MCP. It also supplies per-feature security review checklists that contributors must follow whenever they touch affected functionality.
+
+## System Overview
+
+```mermaid
+graph TD
+  Client["Client Tools (IDE, CLI, Extensions)"] -->|Requests / Embedding Jobs| API[Local MCP API]
+  API -->|Model Prompts + Corpora| Engine[Embedding Engine]
+  Engine -->|Vector Outputs| Store[(Local Vector Store)]
+  Store -->|Results| Client
+```
+
+The platform runs entirely within a contributor-controlled environment. Data ingestion, embedding generation, and storage stay on the local machine, minimizing external exposure but amplifying the need for strict local safeguards.
+
+## Assumptions
+
+- Contributors operate on trusted hosts with up-to-date OS patches and endpoint protection.
+- Local filesystem permissions restrict access to project artifacts to authorized developers only.
+- Embedding workloads may include sensitive customer or proprietary text requiring confidentiality.
+- Network egress is firewall-controlled; only approved services are reachable when optional sync features are enabled.
+- Third-party model weights and dependencies are verified before integration (e.g., checksums, signed releases).
+
+## Threat Scenarios and Mitigations
+
+| Threat | Description | Likelihood | Impact | Primary Mitigations |
+| --- | --- | --- | --- | --- |
+| Malicious prompt injection | Attackers craft prompts or documents to trigger unintended code execution or data leakage via the embedding engine. | Medium | High | Strict input validation checklist, sandboxing untrusted document parsers, limit privileged APIs exposed to embeddings. |
+| Sensitive data leakage | Embeddings or intermediate artifacts expose confidential text. | Medium | High | Encrypt storage when persisted, minimize logging of raw text, redact sensitive fields before processing. |
+| Dependency compromise | Supply-chain attack through malicious model weights or libraries. | Low | High | Require checksum/signature verification, maintain SBOM, pin versions, review updates. |
+| Privilege escalation | Embedding service interacts with local resources beyond its mandate. | Low | Medium | Run components with least privilege, isolate filesystem access, leverage sandboxing checklist. |
+| Denial of service | Large or malformed inputs exhaust CPU, memory, or disk. | Medium | Medium | Enforce rate limits, input size caps, and resource monitoring with alerting. |
+| Insider misuse | Authorized user exfiltrates data or bypasses controls. | Medium | High | Maintain audit logs, enforce least privilege, review suspicious activity, document approvals for sensitive exports. |
+| Transport token forgery or replay | Attackers tamper with HTTP bearer tokens, STDIO frames, or UDS credentials to bypass authentication. | Medium | High | BLAKE3-signed session envelopes with expiry, CSRF nonce enforcement, STDIO frame checksums, UDS UID allowlists, and adapter integration tests in `tests/runtime_transport/`. |
+
+## Mitigation Practices
+
+- **Least privilege execution:** Run the embedding engine and auxiliary services with minimal permissions and scoped API keys.
+- **Defense-in-depth logging:** Collect logs locally, redact sensitive fields, and secure log rotation to prevent tampering.
+- **Secure configuration defaults:** Ship hardened defaults—encryption enabled, strict validation rules, disabled optional network sync unless explicitly required.
+- **Change review discipline:** Enforce security sign-off in code reviews, referencing the checklists below.
+- **Incident readiness:** Maintain runbooks for revoking credentials, rotating keys, and isolating compromised hosts.
+- **Instrumented transports:** Capture adapter telemetry (`http.*`, `stdio.*`, `uds.*` events) to detect anomalous authentication failures or frame validation issues in alignment with the updated transport specification.
+
+## Mitigation Ownership and Review Cadence
+
+The following accountability tables document who maintains each critical mitigation and how frequently the safeguards are reviewed. Reference these owners during planning, implementation, and PR review whenever work touches the listed areas.
+
+| Mitigation Area | Primary Owner | Backup Owner | Review Cadence | Evidence Expectations |
+| --- | --- | --- | --- | --- |
+| Transport encryption controls (TLS configuration, certificate lifecycle) | Alex Smith (Security Officer) | Morgan Chen (Infrastructure Lead) | Monthly security sync and before any release that modifies network interfaces | TLS configuration diff, certificate rotation log, and automated transport-encryption checklist results |
+| Authentication surfaces (session issuance, token validation, adapter hardening) | Alex Smith (Security Officer) | Morgan Chen (Infrastructure Lead) | Monthly security sync and prior to enabling new transports or adapters | Auth flow trace reviews, signed authentication checklist, and fuzz coverage artifacts for credential validation |
+| Access control policies (capability scoping, workspace segmentation) | Jane Doe (Governance Lead) | Alex Smith (Security Officer) | Quarterly governance audit and whenever capability models change | Access policy diff, capability-mapping checklist, and governance approval notes |
+| Archive extraction & file handling (sandboxing, allowed formats, decompression limits) | Priya Patel (Ingestion Lead) | Jordan Lee (Process Steward) | Bi-monthly ingestion review and whenever a new extractor or format handler is introduced | Latest sandbox validation report, extraction test suite results, and signed file-handling checklist |
+| Key management lifecycle (generation, rotation, escrow procedures) | Alex Smith (Security Officer) | Priya Patel (Ingestion Lead) | Monthly security sync and prior to releases touching encryption or storage subsystems | Key rotation log, KMS policy attestation, and completed key-management checklist |
+| Multi-repository isolation (workspace segmentation, credential scoping) | Jane Doe (Governance Lead) | Alex Smith (Security Officer) | Quarterly governance audit and pre-merge for cross-repo tooling changes | Access policy review notes, isolation test evidence, and approval from governance meeting minutes |
+
+## Security Review Checklists
+
+Use these checklists during design discussions, implementation, and PR review whenever the associated features are touched.
+
+### Input Validation Checklist
+
+- [ ] Enumerate all input sources (user prompts, ingested files, API parameters) and document expected formats.
+- [ ] Validate size, encoding, and schema before processing; reject malformed or excessively large payloads.
+- [ ] Escape or sanitize inputs before invoking parsers, template engines, or shell commands.
+- [ ] Ensure default denylists cover known dangerous patterns (e.g., shell metacharacters, path traversal sequences).
+- [ ] Add negative tests for malformed payloads and verify they fail safely without leaking stack traces.
+- [ ] Confirm logging omits raw sensitive input data or masks it appropriately.
+
+### Encryption Checklist
+
+- [ ] Identify data-at-rest and data-in-transit paths; justify any unencrypted channel.
+- [ ] Use vetted cryptographic libraries with modern algorithms (AES-256-GCM, ChaCha20-Poly1305, TLS 1.3).
+- [ ] Store keys in environment-specific secret managers or OS keyrings; never commit secrets to the repo.
+- [ ] Implement key rotation procedures and document them in operations runbooks.
+- [ ] Verify backups and exported embeddings remain encrypted and integrity-protected.
+- [ ] Add automated tests or scripts confirming encryption configuration is active where applicable.
+
+### Sandboxing Checklist
+
+- [ ] Determine which components execute untrusted or user-supplied code (e.g., document converters, plugin hooks).
+- [ ] Run risky components inside containers, VMs, or language-level sandboxes with resource limits.
+- [ ] Restrict filesystem access to explicit allowlists; disallow network access unless absolutely necessary.
+- [ ] Drop unnecessary capabilities (e.g., root privileges, kernel module loading) for sandboxed processes.
+- [ ] Monitor sandbox escapes and enforce automatic restarts or kill switches on violation detection.
+- [ ] Document sandbox policies and ensure CI validates their configuration.
+
+### Authentication Checklist
+
+_Primary owner: Alex Smith (Security Officer); Backup: Morgan Chen (Infrastructure Lead) — see mitigation ownership table._
+
+- [ ] Inventory every authentication surface (HTTP tokens, UDS peer credentials, STDIO shared secrets) and document supported credential types.
+- [ ] Verify token signing keys or credential stores are loaded from approved secure storage before binding adapters.
+- [ ] Enforce scoped capabilities on issued credentials and confirm defaults grant least privilege access paths.
+- [ ] Confirm HTTP adapters enforce CSRF nonces for state-changing requests and surface telemetry for blocked attempts.
+- [ ] Record failed authentication attempts with anonymized diagnostics and alert thresholds for brute-force activity.
+- [ ] Add negative and fuzz tests that cover expired tokens, replay attempts, and malformed credential handshakes.
+- [ ] Document session revocation flows and ensure adapters propagate revocation results to clients.
+
+### Access Control Checklist
+
+_Primary owner: Jane Doe (Governance Lead); Backup: Alex Smith (Security Officer) — see mitigation ownership table._
+
+- [ ] Enumerate roles and capability bundles aligned with design requirements, documenting which commands each role may invoke.
+- [ ] Validate workspace and repository scoping rules prevent cross-tenant or cross-repo leakage during routing.
+- [ ] Confirm UDS transport configurations restrict `allowed_uids` to approved processes and record negotiation outcomes.
+- [ ] Confirm manifest readers and vector queries enforce principal scoping and redact data outside granted capabilities.
+- [ ] Add authorization regression tests for least privilege paths and attempted escalation scenarios.
+- [ ] Ensure audit logs capture principal, capability, and decision rationale for every authorization event.
+- [ ] Review configuration defaults to guarantee new deployments inherit hardened access policies with documented exception workflows.
+
+### File Handling Checklist
+
+_Primary owner: Priya Patel (Ingestion Lead); Backup: Jordan Lee (Process Steward) — see mitigation ownership table._
+
+- [ ] Inventory all ingestion and extraction entry points, documenting allowed MIME types, extensions, and decompression limits.
+- [ ] Stage archive extraction in ephemeral directories with enforced ownership, permissions, and cleanup routines.
+- [ ] Validate ignore rules and path normalization guard against traversal, device files, or symlink abuse before persistence.
+- [ ] Instrument extraction tooling with resource ceilings (CPU, memory, disk) and abort triggers for suspicious payloads.
+- [ ] Add regression tests covering malformed archives, nested compression, and policy violations.
+- [ ] Capture checklist sign-off alongside ingestion changes, including links to sandbox validation and extraction logs.
+
+### Key Management Checklist
+
+_Primary owner: Alex Smith (Security Officer); Backup: Priya Patel (Ingestion Lead) — see mitigation ownership table._
+
+- [ ] Document key hierarchy (root, workspace, batch keys) and justify where each key class is generated and stored.
+- [ ] Enforce automated rotation schedules and record evidence for each rotation event in the audit ledger.
+- [ ] Validate keys are sealed with OS-native keyrings or hardware-backed stores; prohibit plaintext copies on disk.
+- [ ] Verify backup and recovery workflows include secure key escrow with dual-control procedures.
+- [ ] Add tests or scripts that fail if required keys, permissions, or policies are missing during startup.
+- [ ] Review incident response playbooks for compromised keys and ensure revocation steps are tested.
+
+## Maintaining This Document
+
+Review and update this threat model at every release planning cycle or when architectural changes introduce new attack surfaces. Link updates in relevant PRs to keep the security posture transparent across the team.
+
+Open docs/implementation/runtime-packaging-plan.md (first 200):
+# Runtime Packaging & Distribution Plan
+
+This plan defines the sequencing required to ship a cross-platform runtime bundle that
+includes transport adapters, runtime services, and client-script validation policies.
+It extends the architecture overview and phase 1 runtime milestone by mapping them to
+specific packaging deliverables and CI automation. All artifacts, including validation
+fixtures and golden transcripts, are regenerated exclusively by GitHub Actions workflows
+as mandated by the repository contribution standards.
+
+## Packaging Objectives
+
+1. **Unified bundle composition** – Ship a deterministic package layout that contains
+   the runtime binaries, transport adapter assets, configuration templates, and policy
+   manifests required for first-run initialization on Linux, macOS, and Windows/WSL.
+2. **Security-first distribution** – Embed policy validation data, checksum manifests,
+   and signed metadata that align with the security checklists in
+   [`docs/security/threat-model.md`](../security/threat-model.md).
+3. **Automation alignment** – Extend the packaging GitHub Actions workflow so fixtures,
+   goldens, and package archives are regenerated together and uploaded as reviewable
+   artifacts.
+
+## Target Deliverables
+
+| Platform | Installer / Archive | Notes |
+| --- | --- | --- |
+| Linux (x86_64, aarch64) | `.tar.zst` runtime payload plus `.deb` meta-package | Includes systemd service template, shell completion, and UDS socket permissions manifest. |
+| macOS (universal) | Signed `.pkg` installer | Provides launchd plist, notarization checklist, and quarantine-release script. |
+| Windows / WSL bridge | `.zip` payload and `.msi` bootstrapper | Ships DPAPI key escrow helper, PowerShell bridge scripts, and WSL integration shim. |
+
+Each bundle must include:
+- Runtime binaries built with the feature matrix from `Cargo.toml` (HTTP, stdio, UDS
+  transports; encrypted storage; governance policy engine).
+- Client-script validation policy cache (`policies/runtime/*.json`).
+- Default configuration (`config/runtime.toml`) matching the architecture overview.
+- Checksums (`SHA256SUMS`, `manifest.json`) produced during the packaging workflow.
+
+## Sequenced Workstreams
+
+1. **Bundle Definition & Metadata**
+   - Create `packaging/runtime/manifest.yaml` describing binary targets, asset staging
+     paths, and platform-specific post-install hooks.
+   - Document signing requirements and checksum expectations in
+     [`docs/design/overview.md`](../design/overview.md#platform-support-and-operational-guidance).
+   - Align feature flags with `runtime-phase-1` crate scaffolding so packaging picks up
+     the correct binaries.
+
+2. **Policy & Configuration Embedding**
+   - Introduce a packaging helper crate (`crates/runtime-packaging`) that copies policy
+     bundles and configuration templates into the staging directory while verifying
+     signatures.
+   - Reference the [Input Validation](../security/threat-model.md#input-validation-checklist)
+     and [Sandboxing](../security/threat-model.md#sandboxing-checklist) checklists in the
+     crate README to maintain traceability.
+
+3. **Installer Generation Scripts**
+   - Add scripts under `scripts/packaging/` (`build_deb.sh`, `build_pkg.sh`,
+     `build_msi.ps1`) that transform the staged bundle into platform-specific installers.
+   - Scripts must surface checksum outputs that the GitHub Actions workflow collects.
+   - Windows scripts coordinate with the existing WSL bridge automation so `.msi`
+     installers include bridge prerequisites.
+
+4. **GitHub Actions Workflow Updates**
+   - Extend the packaging workflow (new file `package-runtime.yml`) to execute the
+     staging helper, call each installer script, and upload the resulting archives plus
+     checksum manifests as artifacts.
+   - Chain the workflow after `Regenerate Fixture Corpus` and `Regenerate Golden
+     Artifacts` so freshly generated fixtures/goldens are included in the bundle.
+   - Store artifact metadata (commit SHA, feature flags, security checklist references)
+     in `artifacts/package-runtime/metadata.json` for governance audits.
+
+5. **Verification & Release Gates**
+   - Document verification steps in `docs/process/pr-release-checklist.md`, including
+     installer smoke tests (`--version`, configuration path checks) and checksum
+     validation.
+   - Require governance log entries referencing the workflow artifact URL before
+     promoting a package to release status.
+
+## Documentation & Cross-References
+
+- Update [`docs/design/overview.md`](../design/overview.md#next-steps) to reference this
+  plan and clarify packaging expectations.
+- Link CI coverage requirements in [`docs/testing/ci-coverage.md`](../testing/ci-coverage.md)
+  once the packaging workflow publishes artifacts consumed by transport regression jobs.
+- Capture packaging review outcomes in the governance log per
+  [`docs/process/governance-log.md`](../process/governance-log.md).
+
+## Pending Follow-Up Items
+
+- Draft threat-model deltas capturing installer delivery vectors and artifact signing.
+- Define rollback procedures for package revocation and document them alongside the
+  packaging scripts.
+- Coordinate with the regression test expansion plan so packaged artifacts feed the
+  WSL multi-repository test harnesses without manual fixture copying (the harnesses must
+  consume workflow artifacts generated by GitHub Actions).
+
+This plan satisfies the repository mandate to plan before coding and provides the
+traceable steps required to enable cross-platform runtime distribution.
+
+Open docs/testing/ci-coverage.md (first 200):
+# CI Coverage Plan for Client Transport Matrix
+
+This document describes the continuous integration (CI) coverage required before enabling
+the planned language clients for the Cursor Local Embedding MCP server. It complements
+the transport and envelope expectations in [`docs/integration/clients.md`](../integration/clients.md),
+the IDE automation guidance in [`docs/integration/ide-overview.md`](../integration/ide-overview.md),
+and the transcript catalog documented in
+[`docs/integration/transcripts/ide/README.md`](../integration/transcripts/ide/README.md)
+so that scripted clients, IDE bridges, and CI jobs remain synchronized.
+
+## Matrix Overview
+
+The `clients` workflow will fan out into a matrix that exercises each language client
+across the supported transport modes. All jobs run on Ubuntu, macOS, Windows, and WSL
+runners unless otherwise noted. Golden transcripts captured under
+`docs/integration/transcripts/ide/` (normalized via
+[`scripts/transcripts/normalize.py`](../integration/transcripts/ide/README.md#regeneration-workflow))
+anchor the replay expectations referenced below.
+
+## Packaging Artifact Dependencies (Planned)
+
+- Matrix jobs consume runtime bundles published by the `package-runtime.yml` GitHub Actions workflow outlined in the [Runtime Packaging & Distribution Plan](../implementation/runtime-packaging-plan.md).
+- The packaging workflow must depend on `Regenerate Fixture Corpus` and `Regenerate Golden Artifacts` so that the CI matrix always downloads the latest GitHub Actions–generated fixtures and transcripts.
+- For each matrix run, record the packaging artifact URL and checksum inside the job summary; PR authors must attach the same link when completing the [PR release checklist](../process/pr-release-checklist.md).
+
+| Job Key | Client Runtime | Transport Scenario | Runners | Notes |
+| --- | --- | --- | --- | --- |
+| `python-stdio-noise` | Python 3.11 | `stdio` wrapped with Noise framing | Ubuntu, macOS, Windows, WSL | Validates Noise handshake traces and transcript replay. |
+| `python-http-tls` | Python 3.11 | HTTPS SSE (`http+tls`) via local terminator | Ubuntu, macOS, Windows | Uses mkcert-generated CA; skips WSL pending bridge validation. |
+| `python-wsl-bridge` | Python 3.11 | `stdio` through `wsl.exe -e` bridge | Windows (host) + Ubuntu (guest) | Confirms Windows-to-WSL spawning and path translation. |
+| `node-stdio-noise` | Node.js 20 | `stdio` with Noise framing | Ubuntu, macOS, Windows | Mirrors Python scenario for JS tooling. |
+| `node-http-tls` | Node.js 20 | HTTPS WebSocket (`wss`) | Ubuntu, macOS, Windows, WSL | Requires ALPN + certificate pinning coverage. |
+| `node-wsl-bridge` | Node.js 20 | WebSocket via Windows-hosted bridge into WSL | Windows + Ubuntu | Ensures `wsl.exe` invocation parity with IDE samples. |
+| `go-stdio-noise` | Go 1.22 | `stdio` with Noise framing | Ubuntu, macOS, Windows | Exercises Go client Noise implementation. |
+| `go-http-tls` | Go 1.22 | HTTPS SSE | Ubuntu, macOS, Windows, WSL | Shares TLS fixtures with Python SSE jobs. |
+| `go-wsl-bridge` | Go 1.22 | `stdio` via WSL bridge | Windows + Ubuntu | Confirms Go binary launches correctly through `wsl.exe`. |
+
+Each job performs the following phases:
+
+1. Provision transport-specific certificates, Noise keys, or bridge scripts.
+2. Replay golden transcript fixtures against the MCP server and capture live transcripts.
+3. Diff live transcripts with the goldens, enforcing parity with the canonical envelopes
+defined in the client integration plan.
+4. Execute language linters and unit tests (`ruff`, `pytest`, `eslint`, `vitest`, `golangci-lint`, `go test`).
+5. Upload transcripts, Noise handshake traces, and TLS negotiation logs as artifacts.
+
+## Fixture and Transcript Requirements
+
+Before enabling the matrix jobs, contributors must generate the following assets and
+commit them to version control. Use the naming conventions established in the
+client plan and IDE overview documents to keep parity across toolchains.
+
+### Stdio + Noise Fixtures
+
+- `tests/fixtures/python/stdio-noise.json`
+- `tests/fixtures/node/stdio-noise.json`
+- `tests/fixtures/go/stdio-noise.json`
+- Noise handshake traces stored under `tests/fixtures/noise/<language>/handshake.log`.
+- IDE-aligned transcripts (Cursor, Windsurf, VS Code) placed under
+  `docs/integration/transcripts/ide/<ide>/stdio-noise.json` so IDE automation can
+  reuse the same expectations described in the IDE overview. These are normalized
+  with `python scripts/transcripts/normalize.py --in-place <file>.json` to keep CI
+  comparisons deterministic.
+
+### HTTP + TLS Fixtures
+
+- `tests/fixtures/python/http-tls.json`
+- `tests/fixtures/node/http-tls.json`
+- `tests/fixtures/go/http-tls.json`
+- Certificate bundles generated with the dev CA and stored under
+  `tests/fixtures/tls/{rootCA.pem, server.pem, server-key.pem}` (private keys should
+  remain encrypted at rest; use sealed secrets in CI).
+- IDE bridge transcripts for HTTPS and secure websocket transports stored alongside
+  the stdio fixtures (`docs/integration/transcripts/ide/<ide>/http-tls.json`). Normalize
+  them with the shared script before committing updates so CI diffs remain stable.
+- TLS negotiation logs capturing ALPN selection and mutual TLS behavior where required.
+
+### WSL Bridge Fixtures
+
+- `tests/fixtures/python/wsl-bridge.json`
+- `tests/fixtures/node/wsl-bridge.json`
+- `tests/fixtures/go/wsl-bridge.json`
+- Bridge launcher scripts (`scripts/wsl/python-client.ps1`, etc.) referenced by both
+  the CI workflow and the IDE setup instructions.
+- Cross-environment path translation manifests stored under
+  `tests/fixtures/wsl/path-map.json`, documenting mount expectations highlighted in
+the IDE overview.
+
+## IDE Synchronization Checklist
+
+To keep automation and documentation synchronized:
+
+1. Update [`docs/integration/clients.md`](../integration/clients.md) whenever matrix
+   combinations change so scripted clients advertise the same transport permutations.
+2. Mirror IDE transport coverage in [`docs/integration/ide-overview.md`](../integration/ide-overview.md)
+   by adding or updating configuration snippets for any new transport, TLS, or WSL scenarios.
+3. Generate IDE golden transcripts (Cursor, Windsurf, VS Code) for each transport and
+   store them next to the language fixtures referenced above.
+4. Link CI artifact retention policies back into the IDE overview so developers know
+   where to retrieve live transcripts during incident response.
+5. Gate CI job enablement on the presence of the fixtures listed here and documented
+   in the integration guides; missing assets should fail the workflow early with
+   actionable errors.
+
+## Workflow Diagram
+
+```mermaid
+flowchart LR
+    subgraph CI[CI Clients Workflow]
+        direction TB
+        A[Generate Fixtures] --> B[Provision Transport Assets]
+        B --> C[Execute Matrix Jobs]
+        C --> D[Diff Live vs Golden Transcripts]
+        D --> E[Publish Artifacts & Status]
+    end
+
+    subgraph Docs[Integration Docs]
+        direction TB
+        F[clients.md Updates]
+        G[ide-overview.md Updates]
+        H[Transcript Catalog]
+    end
+
+    A -. references .-> F
+    A -. references .-> G
+    D -. stores .-> H
+    E -. feeds .-> G
+```
+
+Enable the workflow only after all fixtures, transcripts, and IDE references listed
+above are present and verified locally. This guarantees that CI automation reflects
+the documented client behavior and that developers can rely on the integration guides
+for accurate, reproducible setup instructions.
