@@ -120,19 +120,21 @@ mod tests {
     use super::*;
     use std::thread;
 
+    fn entry_with_sequence(sequence: u64) -> ReplayEntry {
+        ReplayEntry {
+            sequence,
+            repo_id: format!("repo-{sequence}"),
+            delayed_ms: 0,
+            payload_checksum_before: format!("before-{sequence}"),
+            payload_checksum_after: format!("after-{sequence}"),
+            status: "buffered".into(),
+        }
+    }
+
     #[test]
     fn requeue_preserves_original_age_for_expiration() {
         let buffer = OfflineReplayBuffer::new(16, Duration::from_millis(100));
-        let entry = ReplayEntry {
-            sequence: 1,
-            repo_id: "repo-alpha".into(),
-            delayed_ms: 0,
-            payload_checksum_before: "before".into(),
-            payload_checksum_after: "after".into(),
-            status: "buffered".into(),
-        };
-
-        buffer.push(entry).unwrap();
+        buffer.push(entry_with_sequence(1)).unwrap();
         thread::sleep(Duration::from_millis(40));
 
         let mut ready = buffer.drain_ready();
@@ -145,6 +147,33 @@ mod tests {
         thread::sleep(Duration::from_millis(80));
         let drained_after_wait = buffer.drain_ready();
         assert!(drained_after_wait.is_empty());
+        assert!(buffer.is_empty());
+    }
+
+    #[test]
+    fn capacity_eviction_removes_oldest_entry_fifo() {
+        let buffer = OfflineReplayBuffer::new(3, Duration::from_secs(60));
+        for sequence in 1..=4 {
+            buffer.push(entry_with_sequence(sequence)).unwrap();
+        }
+
+        assert_eq!(buffer.max_sequence(), Some(4));
+
+        let drained = buffer.drain_ready();
+        let sequences: Vec<u64> = drained.iter().map(|ready| ready.entry.sequence).collect();
+        assert_eq!(sequences, vec![2, 3, 4], "oldest entry should be evicted");
+        assert!(buffer.is_empty());
+    }
+
+    #[test]
+    fn purges_entries_exceeding_max_age() {
+        let buffer = OfflineReplayBuffer::new(4, Duration::from_millis(50));
+        buffer.push(entry_with_sequence(10)).unwrap();
+
+        thread::sleep(Duration::from_millis(65));
+
+        let drained = buffer.drain_ready();
+        assert!(drained.is_empty(), "expired entry should be purged");
         assert!(buffer.is_empty());
     }
 }

@@ -223,7 +223,19 @@ impl HttpAdapter {
             .strip_prefix("Bearer ")
             .ok_or_else(|| TransportError::Unauthorized("expected bearer token".into()))?
             .to_string();
-        let envelope = self.signer.verify(&token_str)?;
+        let principal_hint = self.decode_principal(&token_str);
+        let envelope = match self.signer.verify(&token_str) {
+            Ok(envelope) => envelope,
+            Err(err @ TransportError::Unauthorized(_)) => {
+                self.telemetry.record(TelemetryEvent {
+                    kind: "http.auth.failure".into(),
+                    principal: principal_hint,
+                    message: err.to_string(),
+                });
+                return Err(err);
+            }
+            Err(err) => return Err(err),
+        };
 
         if !self
             .config
@@ -316,6 +328,12 @@ impl HttpAdapter {
             .iter()
             .find(|(k, _)| k.eq_ignore_ascii_case(key))
             .map(|(_, v)| v)
+    }
+
+    fn decode_principal(&self, token: &str) -> Option<String> {
+        let bytes = URL_SAFE_NO_PAD.decode(token).ok()?;
+        let envelope: TokenEnvelope = serde_json::from_slice(&bytes).ok()?;
+        Some(envelope.principal)
     }
 }
 
@@ -429,6 +447,37 @@ mod tests {
         }
     }
 
+    #[test]
+    fn issue_session_token_records_telemetry_and_claims() {
+        let router = Arc::new(RecordingRouter::default());
+        let adapter = HttpAdapter::bind(config(), router as SharedRouter).unwrap();
+
+        let token = adapter
+            .issue_session_token("alice", &["ingest".into(), "search".into()])
+            .expect("token issuance should work");
+
+        assert!(!token.token.is_empty());
+        assert!(token.expires_at > SystemTime::now());
+
+        let events = adapter.telemetry().events();
+        assert!(events.iter().any(|event| {
+            event.kind == "http.session.issued"
+                && event.principal.as_deref() == Some("alice")
+                && event.message == token.token_id.to_string()
+        }));
+    }
+
+    #[test]
+    fn issue_session_token_rejects_disallowed_principal() {
+        let router = Arc::new(RecordingRouter::default());
+        let adapter = HttpAdapter::bind(config(), router as SharedRouter).unwrap();
+
+        let err = adapter
+            .issue_session_token("mallory", &["ingest".into()])
+            .expect_err("unknown principal must be rejected");
+        assert!(matches!(err, TransportError::Unauthorized(_)));
+    }
+
     #[tokio::test]
     async fn dispatches_authorized_request() {
         let router = Arc::new(RecordingRouter::default());
@@ -459,6 +508,50 @@ mod tests {
         assert_eq!(calls.len(), 1);
         assert_eq!(calls[0].context.principal, "alice");
         assert_eq!(calls[0].command.name, "ingest");
+    }
+
+    #[tokio::test]
+    async fn dispatch_rejects_expired_token() {
+        let router = Arc::new(RecordingRouter::default());
+        let adapter = HttpAdapter::bind(config(), router as SharedRouter).unwrap();
+
+        let signer = TokenSigner::new("super-secret".into());
+        let mut envelope = TokenEnvelope {
+            token_id: Uuid::new_v4(),
+            principal: "alice".into(),
+            capabilities: vec!["ingest".into()],
+            expires_at: SystemTime::now()
+                .checked_sub(Duration::from_secs(1))
+                .unwrap()
+                .duration_since(UNIX_EPOCH)
+                .unwrap_or_default()
+                .as_secs(),
+            csrf_nonce: Uuid::new_v4().to_string(),
+            signature: String::new(),
+        };
+        envelope.signature = signer.sign(&envelope.canonical());
+        let token = URL_SAFE_NO_PAD.encode(serde_json::to_vec(&envelope).unwrap());
+
+        let request = HttpRequest::new(
+            "POST",
+            "/commands/ingest",
+            json!({ "command": "ingest", "payload": {"doc": 1} }),
+        )
+        .with_header("Authorization", format!("Bearer {}", token))
+        .with_header("X-Csrf-Token", envelope.csrf_nonce.clone());
+
+        let err = adapter
+            .dispatch(request)
+            .await
+            .expect_err("expired token must be rejected");
+        assert!(
+            matches!(err, TransportError::Unauthorized(message) if message.contains("expired"))
+        );
+
+        let events = adapter.telemetry().events();
+        assert!(events.iter().any(|event| {
+            event.kind == "http.auth.failure" && event.principal.as_deref() == Some("alice")
+        }));
     }
 
     #[tokio::test]
@@ -493,6 +586,37 @@ mod tests {
             .await
             .expect_err("tampered token must fail");
         assert!(matches!(err, TransportError::Unauthorized(_)));
+    }
+
+    #[tokio::test]
+    async fn dispatch_propagates_capabilities_to_router() {
+        let router = Arc::new(RecordingRouter::default());
+        router
+            .script_response(Ok(RouterResponse::ok(json!({ "ok": true }))))
+            .await;
+
+        let adapter = HttpAdapter::bind(config(), router.clone() as SharedRouter).unwrap();
+        let token = adapter
+            .issue_session_token("alice", &["ingest".into(), "search".into()])
+            .expect("token issuance should work");
+
+        let request = HttpRequest::new(
+            "POST",
+            "/commands/query",
+            json!({ "command": "query", "payload": {"text": "find"} }),
+        )
+        .with_header("Authorization", format!("Bearer {}", token.token))
+        .with_header("X-Csrf-Token", token.csrf_nonce.clone());
+
+        adapter
+            .dispatch(request)
+            .await
+            .expect("dispatch should succeed");
+
+        let calls = router.calls().await;
+        assert_eq!(calls.len(), 1);
+        assert_eq!(calls[0].context.capabilities, vec!["ingest", "search"]);
+        assert_eq!(calls[0].command.name, "query");
     }
 
     #[tokio::test]
