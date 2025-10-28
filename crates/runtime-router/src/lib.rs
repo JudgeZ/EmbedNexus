@@ -179,3 +179,88 @@ impl CommandRouter for RecordingRouter {
 
 /// Shared pointer helper for adapters.
 pub type SharedRouter = Arc<dyn CommandRouter>;
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::collections::HashMap;
+
+    struct CapabilityRouter {
+        required: HashMap<String, Vec<String>>,
+    }
+
+    impl CapabilityRouter {
+        fn new() -> Self {
+            let mut required = HashMap::new();
+            required.insert("search".into(), vec!["search".into()]);
+            required.insert("ingest".into(), vec!["ingest".into()]);
+            required.insert("admin.reset".into(), vec!["admin".into(), "write".into()]);
+            Self { required }
+        }
+
+        fn has_required(&self, command: &str, caps: &[String]) -> bool {
+            self.required
+                .get(command)
+                .map(|req| req.iter().all(|cap| caps.contains(cap)))
+                .unwrap_or(false)
+        }
+    }
+
+    #[async_trait]
+    impl CommandRouter for CapabilityRouter {
+        async fn dispatch(
+            &self,
+            ctx: SessionContext,
+            command: RouterCommand,
+        ) -> Result<RouterResponse, RouterError> {
+            if !self.has_required(&command.name, &ctx.capabilities) {
+                return Err(RouterError::Unauthorized {
+                    detail: format!(
+                        "command '{}' requires capabilities not granted to principal '{}'",
+                        command.name, ctx.principal
+                    ),
+                });
+            }
+            Ok(RouterResponse::ok(json!({ "executed": command.name })))
+        }
+    }
+
+    #[tokio::test]
+    async fn dispatch_enforces_capability_requirements() {
+        let router = CapabilityRouter::new();
+
+        let ctx_ok = SessionContext::new("alice", vec!["search".into()]);
+        let cmd_ok = RouterCommand::new("search", json!({ "term": "docs" }));
+        let response_ok = router
+            .dispatch(ctx_ok.clone(), cmd_ok.clone())
+            .await
+            .expect("dispatch succeeds with required capability");
+        assert_eq!(response_ok.status_code, 200);
+        assert_eq!(response_ok.payload["executed"], json!("search"));
+
+        let ctx_missing = SessionContext::new("bob", vec!["read".into()]);
+        let err_missing = router
+            .dispatch(ctx_missing, cmd_ok.clone())
+            .await
+            .expect_err("dispatch should fail without capability");
+        assert!(matches!(err_missing, RouterError::Unauthorized { .. }));
+        assert_eq!(err_missing.status_code(), 401);
+
+        let ctx_partial = SessionContext::new("charlie", vec!["admin".into()]);
+        let cmd_admin = RouterCommand::new("admin.reset", json!({}));
+        let err_partial = router
+            .dispatch(ctx_partial, cmd_admin.clone())
+            .await
+            .expect_err("missing secondary capability should fail");
+        assert!(matches!(err_partial, RouterError::Unauthorized { .. }));
+
+        let ctx_full = SessionContext::new("admin", vec!["admin".into(), "write".into()]);
+        let response_full = router
+            .dispatch(ctx_full, cmd_admin)
+            .await
+            .expect("dispatch succeeds with all capabilities");
+        assert_eq!(response_full.status_code, 200);
+        assert_eq!(response_full.payload["executed"], json!("admin.reset"));
+    }
+}
