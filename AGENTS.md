@@ -36,3 +36,6 @@ All contributors **must** review and follow this plan before beginning any codin
 - Record updates for evolving requirements (e.g., new encryption algorithms, broader platform coverage, updated ingestion processes, expanded test matrices) to maintain alignment across contributors.
 - Capture a governance-log entry (see `docs/process/governance-log.md`) whenever this guidance changes so the whole team acknowledges the new expectations before coding begins.
 - When documentation reviews identify process changes, ensure the outcomes are reflected in `docs/process/doc-review.md` and linked from related design, security, or integration artifacts.
+
+## Implementation Log
+- **2025-10-28 — Phase 1 (transport→router→ledger spine)**: Added unit coverage for `OfflineReplayBuffer` capacity/expiry semantics and HTTP adapter session/token paths, recording auth-failure telemetry before returning errors. All tests pass (`cargo test`), establishing the first plan slice of the 12-step roadmap.

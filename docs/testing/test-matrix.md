@@ -19,6 +19,7 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Integration** – encrypted round-trip search across sharded stores.
   - **Fuzz** – randomized key schedules and ciphertext tampering inputs.
   - **Performance** – latency guard on rotated index rebuild cycles.
+- **Coverage added (2025-10-28)** – Unit tests `capacity_eviction_removes_oldest_entry_fifo`, `purges_entries_exceeding_max_age`, and `requeue_preserves_original_age_for_expiration` in `crates/storage-ledger/src/lib.rs` validate offline replay buffer eviction and expiry semantics to support Phase 1 transport→ledger workflows.
 
 ### Client Tooling (CLI & SDK)
 - **Planned feature focus**: Offline sync script and custom embedding hooks.
@@ -98,6 +99,7 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Manifest replay integration** – Simulate delayed storage availability by applying the ingestion replay harness in [Ingestion Pipeline Specification](../design/ingestion.md#offline-replay-hooks) with datasets `tests/fixtures/ingestion/delayed-ledger/` and transcripts `tests/golden/ingestion/manifest-replay.log`.
   - **Performance** – Measure replay catch-up latency across the delayed-storage fixtures while asserting audit log ordering guarantees.
 - **Security traceability** – Aligns with the [Sandboxing](../security/threat-model.md#sandboxing-checklist), [Access Control](../security/threat-model.md#access-control-checklist), and [Encryption](../security/threat-model.md#encryption-checklist) checklists to ensure buffered data remains protected during offline windows.
+- **Coverage added (2025-10-28)** – HTTP adapter tests `issue_session_token_records_telemetry_and_claims`, `issue_session_token_rejects_disallowed_principal`, `dispatch_rejects_expired_token`, and `dispatch_propagates_capabilities_to_router` in `crates/runtime-transport-http/src/lib.rs` assert token issuance/expiry handling, auth-failure telemetry, and capability propagation for the Phase 1 transport spine.
 
 ## Shared Testing Assets
 
