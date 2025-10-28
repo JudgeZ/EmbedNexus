@@ -79,6 +79,7 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Fuzz** – randomized repository affinity hints derived from `tests/golden/routing/fuzz-affinity.jsonl` with jitter injection.
   - **Performance** – routing throughput guard validating scheduler latency across the scenario pack `tests/golden/routing/fanout-throughput.jsonl` and fixture directory `tests/fixtures/routing/high-fanout/`.
 - **Traceability** – Tied to the [Architecture Overview](../design/overview.md#local-ingestion-pipeline) for multi-repo orchestration and the [Sandboxing](../security/threat-model.md#sandboxing-checklist) and [Encryption](../security/threat-model.md#encryption-checklist) checklists governing cross-tenant routing.
+- **Coverage added (2025-10-29)** – Routing matrix loader tests `routing_matrix_merges_latency_fixture` and `routing_matrix_aligns_with_latency_transcript` validate fixture integration and path computation.
 
 ### WSL Multi-Repository Regressions
 - **Planned feature focus**: Windows-to-WSL indexing parity, encrypted persistence, and ignore rule reconciliation across NTFS/ext4 mounts.
@@ -98,6 +99,8 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Manifest replay integration** – Simulate delayed storage availability by applying the ingestion replay harness in [Ingestion Pipeline Specification](../design/ingestion.md#offline-replay-hooks) with datasets `tests/fixtures/ingestion/delayed-ledger/` and transcripts `tests/golden/ingestion/manifest-replay.log`.
   - **Performance** – Measure replay catch-up latency across the delayed-storage fixtures while asserting audit log ordering guarantees.
 - **Security traceability** – Aligns with the [Sandboxing](../security/threat-model.md#sandboxing-checklist), [Access Control](../security/threat-model.md#access-control-checklist), and [Encryption](../security/threat-model.md#encryption-checklist) checklists to ensure buffered data remains protected during offline windows.
+- **Coverage added (2025-10-29)** – Ingestion manifest tests `flush_offline_handles_queue_failure_mid_flush` and `emit_during_active_flush_queues_follow_up` exercise emitter backpressure/resume behaviour while relying on existing `TestQueue` failover logic.
+- **Coverage added (2025-10-30)** – STDIO retry buffer unit tests (`retry_buffer_enforces_capacity_fifo`, `retry_buffer_requeue_retains_order`) and integration coverage (`tests/runtime_transport/tests/offline_queue.rs`) replay queued frames from `tests/fixtures/transport/offline-queue/snapshot.jsonl`.
 
 ## Shared Testing Assets
 

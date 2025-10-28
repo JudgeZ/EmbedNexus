@@ -1,5 +1,10 @@
 //! Runtime command router contract and lightweight testing utilities.
 
+use std::cmp::Reverse;
+use std::collections::{BinaryHeap, HashMap, HashSet};
+use std::fs::File;
+use std::io::{self, Read};
+use std::path::Path;
 use std::sync::Arc;
 
 use async_trait::async_trait;
@@ -179,3 +184,251 @@ impl CommandRouter for RecordingRouter {
 
 /// Shared pointer helper for adapters.
 pub type SharedRouter = Arc<dyn CommandRouter>;
+
+/// Routing matrix describing cross-repository adjacency and weights.
+#[derive(Debug, Clone)]
+pub struct RoutingMatrix {
+    adjacency: HashMap<String, HashMap<String, u64>>,
+}
+
+impl RoutingMatrix {
+    pub fn from_reader<R: Read>(reader: R) -> Result<Self, RoutingMatrixError> {
+        let parsed: SerializedMatrix = serde_json::from_reader(reader)?;
+        Ok(Self {
+            adjacency: parsed.adjacency,
+        })
+    }
+
+    pub fn from_file(path: impl AsRef<Path>) -> Result<Self, RoutingMatrixError> {
+        let file = File::open(path)?;
+        Self::from_reader(file)
+    }
+
+    pub fn weight(&self, from: &str, to: &str) -> Option<u64> {
+        self.adjacency
+            .get(from)
+            .and_then(|edges| edges.get(to).copied())
+    }
+
+    pub fn nodes(&self) -> HashSet<String> {
+        let mut nodes: HashSet<String> = self.adjacency.keys().cloned().collect();
+        for edges in self.adjacency.values() {
+            nodes.extend(edges.keys().cloned());
+        }
+        nodes
+    }
+
+    pub fn shortest_path(&self, start: &str, end: &str) -> Option<Vec<String>> {
+        if start == end {
+            return Some(vec![start.to_string()]);
+        }
+
+        let mut dist: HashMap<&str, u64> = HashMap::new();
+        let mut prev: HashMap<&str, &str> = HashMap::new();
+        let mut heap: BinaryHeap<(Reverse<u64>, &str)> = BinaryHeap::new();
+
+        dist.insert(start, 0);
+        heap.push((Reverse(0), start));
+
+        while let Some((Reverse(cost), node)) = heap.pop() {
+            if node == end {
+                break;
+            }
+            if Some(&cost) > dist.get(node) {
+                continue;
+            }
+            if let Some(neighbors) = self.adjacency.get(node) {
+                for (next, weight) in neighbors {
+                    let next_cost = cost + *weight;
+                    let entry = dist.entry(next).or_insert(u64::MAX);
+                    if next_cost < *entry {
+                        *entry = next_cost;
+                        prev.insert(next, node);
+                        heap.push((Reverse(next_cost), next));
+                    }
+                }
+            }
+        }
+
+        if !dist.contains_key(end) {
+            return None;
+        }
+
+        let mut path = Vec::new();
+        let mut current = end;
+        path.push(current.to_string());
+        while let Some(&p) = prev.get(current) {
+            current = p;
+            path.push(current.to_string());
+        }
+        if path.last().map(|s| s.as_str()) != Some(start) {
+            return None;
+        }
+        path.reverse();
+        Some(path)
+    }
+
+    pub fn edge_count(&self) -> usize {
+        self.adjacency.values().map(|edges| edges.len()).sum()
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum RoutingMatrixError {
+    #[error("failed to read matrix: {0}")]
+    Io(#[from] io::Error),
+    #[error("failed to parse matrix json: {0}")]
+    Json(#[from] serde_json::Error),
+}
+
+#[derive(Debug, Deserialize)]
+struct SerializedMatrix {
+    adjacency: HashMap<String, HashMap<String, u64>>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::collections::HashMap;
+    use std::fs;
+    use std::path::PathBuf;
+
+    struct CapabilityRouter {
+        required: HashMap<String, Vec<String>>,
+    }
+
+    impl CapabilityRouter {
+        fn new() -> Self {
+            let mut required = HashMap::new();
+            required.insert("search".into(), vec!["search".into()]);
+            required.insert("ingest".into(), vec!["ingest".into()]);
+            required.insert("admin.reset".into(), vec!["admin".into(), "write".into()]);
+            Self { required }
+        }
+
+        fn has_required(&self, command: &str, caps: &[String]) -> bool {
+            self.required
+                .get(command)
+                .map(|req| req.iter().all(|cap| caps.contains(cap)))
+                .unwrap_or(false)
+        }
+    }
+
+    #[async_trait]
+    impl CommandRouter for CapabilityRouter {
+        async fn dispatch(
+            &self,
+            ctx: SessionContext,
+            command: RouterCommand,
+        ) -> Result<RouterResponse, RouterError> {
+            if !self.has_required(&command.name, &ctx.capabilities) {
+                return Err(RouterError::Unauthorized {
+                    detail: format!(
+                        "command '{}' requires capabilities not granted to principal '{}'",
+                        command.name, ctx.principal
+                    ),
+                });
+            }
+            Ok(RouterResponse::ok(json!({ "executed": command.name })))
+        }
+    }
+
+    #[tokio::test]
+    async fn dispatch_enforces_capability_requirements() {
+        let router = CapabilityRouter::new();
+
+        let ctx_ok = SessionContext::new("alice", vec!["search".into()]);
+        let cmd_ok = RouterCommand::new("search", json!({ "term": "docs" }));
+        let response_ok = router
+            .dispatch(ctx_ok.clone(), cmd_ok.clone())
+            .await
+            .expect("dispatch succeeds with required capability");
+        assert_eq!(response_ok.status_code, 200);
+        assert_eq!(response_ok.payload["executed"], json!("search"));
+
+        let ctx_missing = SessionContext::new("bob", vec!["read".into()]);
+        let err_missing = router
+            .dispatch(ctx_missing, cmd_ok.clone())
+            .await
+            .expect_err("dispatch should fail without capability");
+        assert!(matches!(err_missing, RouterError::Unauthorized { .. }));
+        assert_eq!(err_missing.status_code(), 401);
+
+        let ctx_partial = SessionContext::new("charlie", vec!["admin".into()]);
+        let cmd_admin = RouterCommand::new("admin.reset", json!({}));
+        let err_partial = router
+            .dispatch(ctx_partial, cmd_admin.clone())
+            .await
+            .expect_err("missing secondary capability should fail");
+        assert!(matches!(err_partial, RouterError::Unauthorized { .. }));
+
+        let ctx_full = SessionContext::new("admin", vec!["admin".into(), "write".into()]);
+        let response_full = router
+            .dispatch(ctx_full, cmd_admin)
+            .await
+            .expect("dispatch succeeds with all capabilities");
+        assert_eq!(response_full.status_code, 200);
+        assert_eq!(response_full.payload["executed"], json!("admin.reset"));
+    }
+
+    #[test]
+    fn routing_matrix_merges_latency_fixture() {
+        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("..")
+            .join("tests")
+            .join("fixtures")
+            .join("routing")
+            .join("multi-repo-matrix.json");
+        let matrix = RoutingMatrix::from_file(&path).expect("matrix loads");
+        assert_eq!(matrix.edge_count(), 5);
+        assert!(matrix.weight("ingest-api", "routing-control").is_some());
+        assert!(matrix.weight("routing-control", "artifact-store").is_some());
+        assert_eq!(matrix.nodes().len(), 5);
+    }
+
+    #[test]
+    fn routing_matrix_aligns_with_latency_transcript() {
+        let base_tests = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("..")
+            .join("tests");
+        let matrix_path = base_tests
+            .join("fixtures")
+            .join("routing")
+            .join("multi-repo-matrix.json");
+        let transcript_path = base_tests
+            .join("golden")
+            .join("routing")
+            .join("multi-repo-latency.transcript");
+
+        let matrix = RoutingMatrix::from_file(&matrix_path).expect("matrix loads");
+        let transcript = fs::read_to_string(transcript_path).expect("transcript loads");
+
+        for line in transcript.lines() {
+            if let Some((from, rest)) = line.split_once(" -> ") {
+                let mut parts = rest.split_whitespace();
+                if let Some(to) = parts.next() {
+                    assert!(
+                        matrix.weight(from, to).is_some(),
+                        "expected edge {from} -> {to} in matrix"
+                    );
+                }
+            }
+        }
+
+        let path = matrix
+            .shortest_path("ingest-api", "audit-log")
+            .expect("path exists");
+        assert_eq!(
+            path,
+            vec![
+                "ingest-api",
+                "routing-control",
+                "artifact-store",
+                "audit-log"
+            ]
+        );
+    }
+}
