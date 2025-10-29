@@ -34,13 +34,21 @@ optional = true
 version = "0.6"
 optional = true
 
+[dependencies.rand]
+version = "0.8"
+optional = true
+
+[dependencies.sha2]
+version = "0.10"
+optional = true
+
 # Internal ledger crate for replay entry types
 storage-ledger = { path = "../storage-ledger" }
 
 [features]
 default = []
 # Enable authenticated encryption envelope support (AES-GCM by default)
-encryption = ["dep:aes-gcm", "dep:zeroize", "dep:rand_core"]
+encryption = ["dep:aes-gcm", "dep:zeroize", "dep:rand_core", "dep:rand", "dep:sha2"]
 # Future cipher option; implies `encryption`
 chacha20 = ["encryption", "dep:chacha20poly1305"]
 # Placeholder for Windows/WSL DPAPI integration; kept for API surface planning

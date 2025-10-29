@@ -27,6 +27,10 @@ pub trait Store: Send + Sync {
 pub struct VectorStore {
     inner: Arc<Mutex<HashMap<(String, String), Vec<u8>>>>,
     next_sequence: AtomicU64,
+    #[cfg(feature = "encryption")]
+    encrypter: Option<Arc<dyn crate::encryption::Encrypter + Send + Sync>>, 
+    #[cfg(feature = "encryption")]
+    kms: Option<Arc<dyn crate::kms::KeyManager + Send + Sync>>, 
 }
 
 impl Default for VectorStore {
@@ -37,19 +41,40 @@ impl Default for VectorStore {
 
 impl VectorStore {
     pub fn new() -> Self {
-        Self { inner: Arc::new(Mutex::new(HashMap::new())), next_sequence: AtomicU64::new(1) }
+        Self { inner: Arc::new(Mutex::new(HashMap::new())), next_sequence: AtomicU64::new(1)
+            ,
+            #[cfg(feature = "encryption")]
+            encrypter: None,
+            #[cfg(feature = "encryption")]
+            kms: None,
+        }
     }
 
     fn checksum_placeholder(bytes: &[u8]) -> String {
         // Keep cheap and deterministic to avoid pulling hashing deps in the skeleton.
         format!("len:{}", bytes.len())
     }
+
+    #[cfg(feature = "encryption")]
+    pub fn builder() -> VectorStoreBuilder { VectorStoreBuilder::default() }
 }
 
 impl Store for VectorStore {
     fn upsert(&self, repo_id: &str, key: &str, payload: &[u8]) -> Result<ReplayEntry, StoreError> {
         let before = Self::checksum_placeholder(payload);
-        // Store plaintext for now; encryption gates will hook here in future commits.
+        #[cfg(feature = "encryption")]
+        if let (Some(enc), Some(kms)) = (&self.encrypter, &self.kms) {
+            let scope = crate::kms::KeyScope { repo_id: repo_id.to_string() };
+            let kh = kms.current(&scope).map_err(StoreError::Key)?;
+            let aad = format!("{}:{}", repo_id, kh.key_id);
+            let sealed = enc.seal(&kh, payload, aad.as_bytes()).map_err(StoreError::Encryption)?;
+            let mut guard = self.inner.lock().map_err(|e| StoreError::Io(e.to_string()))?;
+            guard.insert((repo_id.to_string(), key.to_string()), sealed);
+            let after = Self::checksum_placeholder(payload);
+            let seq = self.next_sequence.fetch_add(1, Ordering::SeqCst);
+            return Ok(build_replay_entry(seq, repo_id, &before, &after, "emitted"));
+        }
+        // Plaintext path
         {
             let mut guard = self.inner.lock().map_err(|e| StoreError::Io(e.to_string()))?;
             guard.insert((repo_id.to_string(), key.to_string()), payload.to_vec());
@@ -61,7 +86,17 @@ impl Store for VectorStore {
 
     fn get(&self, repo_id: &str, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
         let guard = self.inner.lock().map_err(|e| StoreError::Io(e.to_string()))?;
-        Ok(guard.get(&(repo_id.to_string(), key.to_string())).cloned())
+        let bytes = match guard.get(&(repo_id.to_string(), key.to_string())) { Some(b) => b.clone(), None => return Ok(None) };
+        #[cfg(feature = "encryption")]
+        if let (Some(enc), Some(kms)) = (&self.encrypter, &self.kms) {
+            if let Some(kid) = crate::encryption::peek_key_id(&bytes) {
+                let kh = kms.get(&kid).map_err(StoreError::Key)?;
+                let aad = format!("{}:{}", repo_id, kh.key_id);
+                let pt = enc.open(&kh, &bytes, aad.as_bytes()).map_err(StoreError::Encryption)?;
+                return Ok(Some(pt));
+            }
+        }
+        Ok(Some(bytes))
     }
 
     fn replay<I: IntoIterator<Item = ReplayEntry>>(&self, entries: I) -> Result<ReplayStats, StoreError> {
@@ -87,3 +122,18 @@ impl Store for VectorStore {
     }
 }
 
+#[cfg(feature = "encryption")]
+#[derive(Default)]
+pub struct VectorStoreBuilder {
+    encrypter: Option<Arc<dyn crate::encryption::Encrypter + Send + Sync>>, 
+    kms: Option<Arc<dyn crate::kms::KeyManager + Send + Sync>>, 
+}
+
+#[cfg(feature = "encryption")]
+impl VectorStoreBuilder {
+    pub fn with_encrypter(mut self, e: Arc<dyn crate::encryption::Encrypter + Send + Sync>) -> Self { self.encrypter = Some(e); self }
+    pub fn with_key_manager(mut self, k: Arc<dyn crate::kms::KeyManager + Send + Sync>) -> Self { self.kms = Some(k); self }
+    pub fn build(self) -> VectorStore {
+        VectorStore { inner: Arc::new(Mutex::new(HashMap::new())), next_sequence: AtomicU64::new(1), encrypter: self.encrypter, kms: self.kms }
+    }
+}
