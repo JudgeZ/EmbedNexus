@@ -40,6 +40,7 @@ pub enum ManifestError {
 
 #[derive(Debug)]
 pub struct ManifestEmitter<Q: ManifestQueue + ?Sized> {
+    #[allow(dead_code)]
     config: ManifestEmitterConfig,
     buffer: OfflineReplayBuffer,
     queue: Arc<Q>,

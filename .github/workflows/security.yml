@@ -59,7 +59,7 @@ jobs:
       - name: Install CycloneDX plugin
         run: cargo install cargo-cyclonedx --locked --version 0.6.2
       - name: Generate CycloneDX SBOM
-        run: cargo cyclonedx --all-features --format xml --output sbom.xml
+        run: cargo cyclonedx --all-features --format xml > sbom.xml
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
         with:
