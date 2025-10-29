@@ -60,7 +60,7 @@ pub struct FramingCodec {
 }
 
 impl FramingCodec {
-    pub(crate) fn new(max_frame_length: usize, signer: Arc<TokenSigner>) -> Self {
+    pub(crate) const fn new(max_frame_length: usize, signer: Arc<TokenSigner>) -> Self {
         Self {
             max_frame_length,
             signer,
@@ -143,7 +143,7 @@ impl FramingCodec {
 }
 
 /// STDIO telemetry event for testing purposes.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TelemetryEvent {
     pub kind: String,
     pub message: String,
@@ -165,7 +165,7 @@ impl TelemetrySink {
 }
 
 /// Errors exposed by the STDIO adapter.
-#[derive(Debug, Error, PartialEq)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum TransportError {
     #[error("configuration error: {0}")]
     Configuration(String),
@@ -178,9 +178,10 @@ pub enum TransportError {
 }
 
 impl TransportError {
-    pub fn router_status_code(&self) -> Option<u16> {
+    #[must_use]
+    pub const fn router_status_code(&self) -> Option<u16> {
         match self {
-            TransportError::Router(err) => Some(err.status_code()),
+            Self::Router(err) => Some(err.status_code()),
             _ => None,
         }
     }
@@ -195,7 +196,7 @@ pub struct StdioAdapter {
     codec: FramingCodec,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RetryPayload {
     pub sequence: u64,
     pub command: String,
@@ -211,19 +212,23 @@ pub struct RetryEntry {
 }
 
 impl RetryEntry {
-    pub fn attempts(&self) -> u32 {
+    #[must_use]
+    pub const fn attempts(&self) -> u32 {
         self.attempts
     }
 
-    pub fn enqueued_at(&self) -> SystemTime {
+    #[must_use]
+    pub const fn enqueued_at(&self) -> SystemTime {
         self.enqueued_at
     }
 
+    #[must_use]
     pub fn into_payload(self) -> RetryPayload {
         self.payload
     }
 
-    pub fn payload(&self) -> &RetryPayload {
+    #[must_use]
+    pub const fn payload(&self) -> &RetryPayload {
         &self.payload
     }
 }
@@ -237,7 +242,8 @@ pub struct RetryBuffer {
 }
 
 impl RetryBuffer {
-    pub fn new(max_entries: usize, max_age: Duration) -> Self {
+    #[must_use]
+    pub const fn new(max_entries: usize, max_age: Duration) -> Self {
         Self {
             max_entries,
             max_age,
@@ -415,10 +421,12 @@ impl StdioAdapter {
         )
     }
 
-    pub fn codec(&self) -> &FramingCodec {
+    #[must_use]
+    pub const fn codec(&self) -> &FramingCodec {
         &self.codec
     }
 
+    #[must_use]
     pub fn telemetry(&self) -> Arc<TelemetrySink> {
         Arc::clone(&self.telemetry)
     }
@@ -451,7 +459,7 @@ struct TokenSigner {
 }
 
 impl TokenSigner {
-    fn new(secret: String) -> Self {
+    const fn new(secret: String) -> Self {
         Self { secret }
     }
 

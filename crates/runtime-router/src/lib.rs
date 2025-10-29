@@ -62,7 +62,7 @@ impl RouterCommand {
 }
 
 /// Successful response emitted by the router.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RouterResponse {
     /// Status code aligned with transport-level status semantics.
     pub status_code: u16,
@@ -74,7 +74,8 @@ pub struct RouterResponse {
 
 impl RouterResponse {
     /// Convenience constructor for OK responses.
-    pub fn ok(payload: Value) -> Self {
+    #[must_use]
+    pub const fn ok(payload: Value) -> Self {
         Self {
             status_code: 200,
             payload,
@@ -84,7 +85,7 @@ impl RouterResponse {
 }
 
 /// Router errors mapped back to transport adapters.
-#[derive(Debug, Clone, Error, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Error, PartialEq, Eq, Serialize, Deserialize)]
 pub enum RouterError {
     /// The principal is not permitted to execute the requested command.
     #[error("unauthorized: {detail}")]
@@ -102,12 +103,13 @@ pub enum RouterError {
 
 impl RouterError {
     /// Map the error into an HTTP-like status code for adapter usage.
-    pub fn status_code(&self) -> u16 {
+    #[must_use]
+    pub const fn status_code(&self) -> u16 {
         match self {
-            RouterError::Unauthorized { .. } => 401,
-            RouterError::InvalidRequest { .. } => 400,
-            RouterError::NotFound { .. } => 404,
-            RouterError::Internal { .. } => 500,
+            Self::Unauthorized { .. } => 401,
+            Self::InvalidRequest { .. } => 400,
+            Self::NotFound { .. } => 404,
+            Self::Internal { .. } => 500,
         }
     }
 }
@@ -124,7 +126,7 @@ pub trait CommandRouter: Send + Sync {
 }
 
 /// Recorded invocation captured by [`RecordingRouter`].
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RouterCall {
     /// Session context forwarded by the adapter.
     pub context: SessionContext,
@@ -204,12 +206,14 @@ impl RoutingMatrix {
         Self::from_reader(file)
     }
 
+    #[must_use]
     pub fn weight(&self, from: &str, to: &str) -> Option<u64> {
         self.adjacency
             .get(from)
             .and_then(|edges| edges.get(to).copied())
     }
 
+    #[must_use]
     pub fn nodes(&self) -> HashSet<String> {
         let mut nodes: HashSet<String> = self.adjacency.keys().cloned().collect();
         for edges in self.adjacency.values() {
@@ -218,6 +222,7 @@ impl RoutingMatrix {
         nodes
     }
 
+    #[must_use]
     pub fn shortest_path(&self, start: &str, end: &str) -> Option<Vec<String>> {
         if start == end {
             return Some(vec![start.to_string()]);
@@ -261,15 +266,19 @@ impl RoutingMatrix {
             current = p;
             path.push(current.to_string());
         }
-        if path.last().map(|s| s.as_str()) != Some(start) {
+        if path.last().map(std::string::String::as_str) != Some(start) {
             return None;
         }
         path.reverse();
         Some(path)
     }
 
+    #[must_use]
     pub fn edge_count(&self) -> usize {
-        self.adjacency.values().map(|edges| edges.len()).sum()
+        self.adjacency
+            .values()
+            .map(std::collections::HashMap::len)
+            .sum()
     }
 }
 
@@ -310,8 +319,7 @@ mod tests {
         fn has_required(&self, command: &str, caps: &[String]) -> bool {
             self.required
                 .get(command)
-                .map(|req| req.iter().all(|cap| caps.contains(cap)))
-                .unwrap_or(false)
+                .is_some_and(|req| req.iter().all(|cap| caps.contains(cap)))
         }
     }
 

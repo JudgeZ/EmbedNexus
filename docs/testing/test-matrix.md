@@ -18,6 +18,19 @@ This matrix catalogues the intentionally failing tests that must be in place bef
   - **Unit** – key rotation helpers and encryption envelope edge cases.
   - **Integration** – encrypted round-trip search across sharded stores.
   - **Fuzz** – randomized key schedules and ciphertext tampering inputs.
+
+— Coverage added (2025-10-29) —
+
+- Unit
+  - Encrypted roundtrip (feature-gated): `crates/storage-vector/tests/roundtrip_encrypted.rs`
+  - Key rotation (feature-gated): `crates/storage-vector/tests/rotation.rs`
+  - Tamper detection (feature-gated): `crates/storage-vector/tests/tamper.rs`
+  - Plaintext baseline: `crates/storage-vector/tests/roundtrip_plain.rs`
+- Integration
+  - Replay ordering floor advanced by ledger entries: `crates/storage-vector/tests/replay_ordering.rs`
+
+Notes
+- Encryption tests run in matrix jobs that use `--all-features`; plaintext and replay tests run unconditionally. The envelope format and AAD semantics are documented in `docs/design/vector-store.md#encrypted-envelope-m3`.
   - **Performance** – latency guard on rotated index rebuild cycles.
 - **Coverage added (2025-10-28)** – Unit tests `capacity_eviction_removes_oldest_entry_fifo`, `purges_entries_exceeding_max_age`, and `requeue_preserves_original_age_for_expiration` in `crates/storage-ledger/src/lib.rs` validate offline replay buffer eviction and expiry semantics to support Phase 1 transport→ledger workflows.
 - **Coverage added (2025-10-29)** – Phase 2 tests `requeue_after_partial_flush_maintains_sequence` and `drain_ready_concurrent_push_preserves_order` assert replay ordering when partial flushes requeue entries and new pushes occur concurrently.

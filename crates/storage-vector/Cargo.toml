@@ -14,3 +14,43 @@ thiserror.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 uuid.workspace = true
+storage-ledger = { path = "../storage-ledger" }
+
+# Optional crypto deps, only compiled when `encryption` feature is enabled.
+[dependencies.aes-gcm]
+version = "0.10"
+optional = true
+default-features = true
+features = ["aes"]
+
+[dependencies.chacha20poly1305]
+version = "0.10"
+optional = true
+
+[dependencies.zeroize]
+version = "1"
+optional = true
+
+[dependencies.rand_core]
+version = "0.6"
+optional = true
+
+[dependencies.rand]
+version = "0.8"
+optional = true
+
+
+# Internal ledger crate for replay entry types
+
+
+[dev-dependencies]
+tempfile = "3"
+
+[features]
+default = []
+# Enable authenticated encryption envelope support (AES-GCM by default)
+encryption = ["dep:aes-gcm", "dep:zeroize", "dep:rand_core", "dep:rand"]
+# Future cipher option; implies `encryption`
+chacha20 = ["encryption", "dep:chacha20poly1305"]
+# Placeholder for Windows/WSL DPAPI integration; kept for API surface planning
+dpapi = ["encryption"]

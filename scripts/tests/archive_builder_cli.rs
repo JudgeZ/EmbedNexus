@@ -4,6 +4,7 @@ use std::path::Path;
 
 use tempfile::tempdir;
 
+#[allow(deprecated)]
 fn cargo_bin() -> assert_cmd::Command {
     assert_cmd::Command::cargo_bin("archive_builder").expect("binary not built")
 }
@@ -92,7 +93,7 @@ fn bulk_corpus_writes_index_and_manifests() {
         "README.md",
     ];
 
-    for file in expected_files.iter() {
+    for file in &expected_files {
         let path = dir.path().join(file);
         assert!(path.exists(), "missing {file}");
     }

@@ -16,7 +16,8 @@ pub struct PlannerConfig {
 }
 
 impl PlannerConfig {
-    pub fn new(target_chunk_bytes: usize, max_chunks_per_batch: usize) -> Self {
+    #[must_use]
+    pub const fn new(target_chunk_bytes: usize, max_chunks_per_batch: usize) -> Self {
         Self {
             target_chunk_bytes,
             max_chunks_per_batch,
@@ -67,10 +68,12 @@ impl PlannedChunk {
         }
     }
 
-    pub fn plan(&self) -> &ChunkPlan {
+    #[must_use]
+    pub const fn plan(&self) -> &ChunkPlan {
         &self.plan
     }
 
+    #[must_use]
     pub fn payload(&self) -> &str {
         &self.payload
     }
@@ -92,7 +95,8 @@ pub struct ChunkPlanner {
 }
 
 impl ChunkPlanner {
-    pub fn new(config: PlannerConfig) -> Self {
+    #[must_use]
+    pub const fn new(config: PlannerConfig) -> Self {
         Self { config }
     }
 
@@ -103,7 +107,7 @@ impl ChunkPlanner {
         files.sort_by(|a, b| a.path.cmp(&b.path));
         let mut plans = Vec::new();
         let mut global_index: usize = 0;
-        for file in files.iter() {
+        for file in &files {
             let bytes = file.content.as_bytes();
             if bytes.is_empty() {
                 let plan_id = format!("{}::{}::{}", workspace.repo_id, file.path, global_index);
@@ -164,7 +168,7 @@ impl ChunkPlanner {
             nesting_max: self.config.quota_nesting_max,
             latency_budget_ms: self.config.quota_latency_budget_ms,
         });
-        for archive in workspace.archives.iter() {
+        for archive in &workspace.archives {
             tracker.observe(&self.sample_for_archive(archive));
         }
         match tracker.check() {
@@ -175,7 +179,7 @@ impl ChunkPlanner {
         }
     }
 
-    fn sample_for_archive(&self, archive: &ArchiveDescriptor) -> ArchiveSample {
+    const fn sample_for_archive(&self, archive: &ArchiveDescriptor) -> ArchiveSample {
         ArchiveSample {
             bytes: archive.bytes,
             entries: archive.entries,

@@ -18,7 +18,8 @@ pub struct RegistrySnapshot {
 }
 
 impl RegistrySnapshot {
-    pub fn new(workspaces: Vec<WorkspaceRecord>) -> Self {
+    #[must_use]
+    pub const fn new(workspaces: Vec<WorkspaceRecord>) -> Self {
         Self { workspaces }
     }
 }
@@ -121,14 +122,17 @@ pub struct WorkspaceDescriptor {
 }
 
 impl WorkspaceDescriptor {
+    #[must_use]
     pub fn latency_windows(&self) -> &[LatencyWindow] {
         &self.latency_windows
     }
 
+    #[must_use]
     pub fn ignore_stack(&self) -> &[IgnoreRule] {
         &self.ignore_stack
     }
 
+    #[must_use]
     pub fn files(&self) -> &[WorkspaceFile] {
         &self.files
     }
@@ -146,7 +150,8 @@ pub struct WorkspaceEnumerator {
 }
 
 impl WorkspaceEnumerator {
-    pub fn new(config: EnumeratorConfig) -> Self {
+    #[must_use]
+    pub const fn new(config: EnumeratorConfig) -> Self {
         Self { config }
     }
 
@@ -155,7 +160,7 @@ impl WorkspaceEnumerator {
         snapshot: &RegistrySnapshot,
     ) -> Result<Vec<WorkspaceDescriptor>, WorkspaceError> {
         let mut descriptors = Vec::with_capacity(snapshot.workspaces.len());
-        for record in snapshot.workspaces.iter() {
+        for record in &snapshot.workspaces {
             let ignore_stack = self.merge_ignore_stack(&record.ignore_rules);
             let latency_windows = record
                 .latency_windows

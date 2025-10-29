@@ -75,3 +75,36 @@ Vector store hardening requires failing coverage from both the [Secure Storage &
 - **Compaction resilience hook** – Performance and integration tests from the secure storage matrix verifying rotation-aware compaction against `tests/golden/security/encryption-toggle.trace` does not leak plaintext diagnostics and respects encryption attestations.
 - **WSL DPAPI recovery hook** – Unit and integration tests targeting `tests/fixtures/security/dpapi-recovery/` with audit validation against `tests/golden/security/dpapi-recovery-audit.jsonl` to guarantee DPAPI-backed key handles are honored when shards migrate between Windows hosts and WSL distributions.
 - Register each hook as a failing test ahead of implementation and cross-reference `docs/process/pr-release-checklist.md` with the corresponding security checklist evidence.
+
+---
+
+## Encrypted Envelope (M3)
+
+The Vector Store uses an authenticated encryption envelope when the `encryption` feature is enabled. Milestone 3 implements an AES‑GCM envelope with a lightweight on‑wire format and AAD binding to repository context.
+
+Envelope layout (bytes, little‑endian length field):
+
+- Magic: `EVG1` (4 bytes)
+- `key_id_len`: `u16` length of `key_id`
+- `key_id`: UTF‑8 identifier for the active key (rotation friendly)
+- `nonce`: 12‑byte random nonce (GCM recommended size)
+- `tag`: 16‑byte GCM tag (detached, verified on open)
+- `ciphertext`: AES‑GCM ciphertext
+
+ AAD (associated data):
+
+ - `aad = encode(repo_id, key_id, record_key)` binds envelopes to repository scope, issuing key, and the specific logical record key. Encoding is length‑prefixed to avoid ambiguity: `u16|repo_len|repo|u16|key_id_len|key_id|u16|record_key_len|record_key`.
+
+ Key handling (M3 scope):
+
+ - An in‑memory key manager exposes `current(scope)` and `get(key_id)` so older records remain readable after rotation. The `KeyHandle` carries a 32‑byte secret provided by the key manager; there is no derivation from `key_id`. Tests can provision deterministic secrets for reproducibility.
+ - Rotation is simulated by switching the `key_id` (e.g., from `k1` to `k2`); reads query the key manager by `key_id` embedded in the envelope.
+
+Replay sequencing:
+
+- `ReplayEntry.sequence` remains the ordering primitive. M3 does not alter replay semantics; checksum fields are placeholders used for deterministic tests. Future work will upgrade checksums to real digests and couple them with envelope metadata.
+
+ Security notes:
+
+ - Tamper detection leverages AES‑GCM authentication; any change to the envelope payload (including the detached tag) causes decryption to fail. Tests flip the last byte of the stored envelope to validate this behavior, and AAD/key mismatches are also rejected.
+ - The envelope stores the real 16‑byte GCM tag (detached) and a 12‑byte nonce; decryption verifies the tag with the provided AAD.

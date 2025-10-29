@@ -117,7 +117,7 @@ fn emitter_flushes_offline_buffer_against_golden() {
     let batch = generator
         .encode(&[sanitized])
         .expect("encoding should succeed");
-    let mut emitter = ManifestEmitter::new(config, buffer.clone(), queue.clone());
+    let mut emitter = ManifestEmitter::new(config, buffer, queue.clone());
 
     let diff = ManifestDiff {
         repo_id: "repo-theta".into(),
@@ -135,7 +135,7 @@ fn emitter_flushes_offline_buffer_against_golden() {
 
     // Emit while queue is offline, forcing a buffer write.
     emitter
-        .emit(diff.clone(), batch.clone())
+        .emit(diff, batch)
         .expect_err("queue offline should error");
 
     // Bring the queue back online and flush.
@@ -315,7 +315,7 @@ fn flush_offline_handles_queue_failure_mid_flush() {
     };
 
     let generator = EmbeddingGenerator::new(EmbeddingConfig::new("encoder-z".into(), 6));
-    let mut emitter = ManifestEmitter::new(config, buffer.clone(), queue.clone());
+    let mut emitter = ManifestEmitter::new(config, buffer, queue.clone());
 
     let diff = ManifestDiff {
         repo_id: "repo-mid-flush".into(),
@@ -369,7 +369,7 @@ fn emit_during_active_flush_queues_follow_up() {
     };
 
     let generator = EmbeddingGenerator::new(EmbeddingConfig::new("encoder-z".into(), 6));
-    let mut emitter = ManifestEmitter::new(config, buffer.clone(), queue.clone());
+    let mut emitter = ManifestEmitter::new(config, buffer, queue.clone());
 
     emitter
         .flush_offline()

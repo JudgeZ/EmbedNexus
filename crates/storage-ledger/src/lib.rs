@@ -38,6 +38,7 @@ pub struct OfflineReplayBuffer {
 }
 
 impl OfflineReplayBuffer {
+    #[must_use]
     pub fn new(max_entries: usize, max_age: Duration) -> Self {
         Self {
             max_entries,
@@ -56,6 +57,7 @@ impl OfflineReplayBuffer {
         self.push_envelope(ready.entry, ready.inserted_at)
     }
 
+    #[must_use]
     pub fn drain_ready(&self) -> Vec<ReadyReplayEntry> {
         let mut guard = self.inner.lock().expect("buffer mutex poisoned");
         let now = SystemTime::now();
@@ -69,6 +71,7 @@ impl OfflineReplayBuffer {
             .collect()
     }
 
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.inner
             .lock()
@@ -76,6 +79,7 @@ impl OfflineReplayBuffer {
             .unwrap_or(true)
     }
 
+    #[must_use]
     pub fn max_sequence(&self) -> Option<u64> {
         *self.max_sequence_seen.lock().unwrap()
     }

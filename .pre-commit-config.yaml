@@ -28,4 +28,10 @@ repos:
         language: system
         pass_filenames: false
         stages: [manual]
-
+      - id: pre-pr-verify
+        name: pre-pr-verify
+        description: Run rustup info, cargo-deny, gitleaks, and generate SBOM locally
+        entry: bash scripts/pre_pr_check.sh
+        language: system
+        pass_filenames: false
+        stages: [manual, push]

@@ -26,7 +26,7 @@ fn load_quota_fixture() -> (ProfileSettings, ArchiveDescriptor) {
         .join("archives")
         .join("quota-latency.toml");
     let content = fs::read_to_string(path).expect("missing quota latency fixture");
-    let parsed: Value = content.parse().expect("invalid quota latency fixture");
+    let parsed: Value = toml::from_str(&content).expect("invalid quota latency fixture");
     let profile = parsed
         .get("profile")
         .and_then(|profile| profile.get("default"))
@@ -94,7 +94,7 @@ fn load_scenarios() -> Vec<Scenario> {
         .join("archives")
         .join("quota-scenarios.toml");
     let content = fs::read_to_string(path).expect("missing quota scenarios fixture");
-    let parsed: Value = content.parse().expect("invalid quota scenarios fixture");
+    let parsed: Value = toml::from_str(&content).expect("invalid quota scenarios fixture");
     parsed
         .get("scenarios")
         .and_then(Value::as_array)
@@ -137,7 +137,7 @@ fn archive_quota_violation_matches_fixture() {
         repo_type: RepoType::Archive,
         manifest_cursor: None,
         ignore_stack: vec![IgnoreRule::new(IgnoreSource::Global, "node_modules")],
-        archives: vec![archive.clone()],
+        archives: vec![archive],
         latency_windows: vec![],
         files: vec![WorkspaceFile::new("archive.tar", "placeholder")],
     };
@@ -159,10 +159,9 @@ fn archive_quota_violation_matches_fixture() {
             assert_eq!(diagnostics.entries_observed, 22);
             assert!(diagnostics
                 .latency_budget_ms
-                .map(|value| value >= profile.latency_budget_ms)
-                .unwrap_or(false));
+                .is_some_and(|value| value >= profile.latency_budget_ms));
         }
-        other => panic!("unexpected planner result: {:?}", other),
+        other => panic!("unexpected planner result: {other:?}"),
     }
 }
 

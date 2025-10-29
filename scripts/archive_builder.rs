@@ -159,7 +159,7 @@ fn emit_throughput_stream(mut writer: impl Write) -> Result<()> {
             window_seconds: 300,
             requests: 3_000 + (idx as u32) * 450,
             average_latency_ms: 120 + (idx as u32) * 15,
-            saturation_ratio: 0.78 + (idx as f32) * 0.07,
+            saturation_ratio: (idx as f32).mul_add(0.07, 0.78),
         };
         serde_json::to_writer(&mut writer, &record).context("serialising throughput record")?;
         writer
@@ -231,7 +231,7 @@ fn write_overflow_archive(path: &Path, profile: OverflowProfile) -> Result<()> {
                 .samples_ms
                 .iter()
                 .enumerate()
-                .map(|(idx, value)| format!("sample_{idx},{}\n", value))
+                .map(|(idx, value)| format!("sample_{idx},{value}\n"))
                 .collect::<String>();
             add_tar_entry(&mut builder, "latency.csv", csv.as_bytes())?;
             let json =
