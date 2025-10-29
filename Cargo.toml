@@ -101,4 +101,4 @@ tracing = "0.1"
 uuid = { version = "1.7", features = ["v4", "serde"] }
 toml = "0.8"
 zstd = { version = "0.13", features = ["zstdmt"] }
-base64 = "0.21"
+base64 = "0.22"
