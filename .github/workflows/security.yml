@@ -1,0 +1,72 @@
+name: Security Scans
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cargo-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+      - name: Run cargo audit
+        run: cargo audit --deny warnings
+
+  cargo-deny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-deny
+        run: cargo +stable install cargo-deny --locked
+      - name: Run cargo-deny (all checks)
+        run: |
+          cargo +stable deny check advisories
+          cargo +stable deny check bans
+          cargo +stable deny check sources
+          cargo +stable deny check licenses
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_LICENSE: community
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: detect --source . --no-git --redact --config .gitleaks.toml
+
+  sbom:
+    permissions:
+      contents: read
+      actions: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install CycloneDX plugin
+        run: cargo install cargo-cyclonedx --locked --version 0.5.7
+      - name: Generate per-crate CycloneDX JSONs
+        run: cargo cyclonedx --all-features -f json -a
+      - name: Merge SBOMs into single JSON
+        run: |
+          mkdir -p artifacts/sbom
+          python3 scripts/sbom_merge.py --out artifacts/sbom/zaevrynth.cdx.json
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyclonedx-sbom
+          path: artifacts/sbom/zaevrynth.cdx.json
+          if-no-files-found: error

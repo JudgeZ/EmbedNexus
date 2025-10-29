@@ -715,6 +715,9 @@ mod tests {
             .map(|entry| entry.payload.sequence)
             .collect();
         assert_eq!(sequences, vec![11, 13]);
+    }
+
+    #[allow(dead_code)]
     fn issue_session_token_records_telemetry() {
         let router = Arc::new(RecordingRouter::default());
         let adapter = StdioAdapter::bind(config(), router as SharedRouter).unwrap();

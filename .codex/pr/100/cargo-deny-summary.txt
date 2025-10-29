@@ -1,0 +1,4 @@
+cargo-deny summary (head: 355b41c1b3ee006c338501b69c9a0308895c1a48)
+Advisories: none found in log
+Licenses: none found in log
+Bans: none found in log

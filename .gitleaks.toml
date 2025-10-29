@@ -1,0 +1,29 @@
+title = "Zaevrynth – Gitleaks Config"
+
+# Keep this allowlist narrowly scoped to test artifacts and example data.
+[allowlist]
+description = "Ignore known non-secret fixtures and golden transcripts"
+paths = [
+  '''tests/fixtures/.*''',
+  '''tests/golden/.*''',
+  '''docs/integration/transcripts/.*''',
+  '''scripts/transcripts/.*''',
+]
+# Common markers for intentionally fake values
+stopwords = [
+  "FAKE",
+  "DUMMY",
+  "PLACEHOLDER",
+  "EXAMPLE",
+  "SAMPLE",
+  "MOCK",
+  "TEST_ONLY",
+  "NOT_A_SECRET",
+]
+regexes = [
+  '''(?i)fake(_|-)?(secret|key|token|password)''',
+  '''(?i)(example|sample|dummy|placeholder)[-_]?(api|secret|token|password|key)''',
+  '''(?i)not[-_]?a[-_]?secret''',
+  '''(?i)for[-_]?testing[-_]?only''',
+]
+

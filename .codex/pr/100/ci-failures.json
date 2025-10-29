@@ -1,0 +1,13 @@
+{
+  "pr": {
+    "number": 100,
+    "head_sha": "355b41c1b3ee006c338501b69c9a0308895c1a48"
+  },
+  "runs_total": 0,
+  "results": [],
+  "counts": {
+    "failing_runs": 0,
+    "failing_jobs": 0,
+    "failing_steps": 0
+  }
+}

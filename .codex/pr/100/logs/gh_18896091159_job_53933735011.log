@@ -1,0 +1,749 @@
+lint-and-test	Set up job	﻿2025-10-29T03:24:50.6882171Z Current runner version: '2.328.0'
+lint-and-test	Set up job	2025-10-29T03:24:50.6913335Z ##[group]Runner Image Provisioner
+lint-and-test	Set up job	2025-10-29T03:24:50.6914469Z Hosted Compute Agent
+lint-and-test	Set up job	2025-10-29T03:24:50.6915292Z Version: 20250912.392
+lint-and-test	Set up job	2025-10-29T03:24:50.6916357Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
+lint-and-test	Set up job	2025-10-29T03:24:50.6917386Z Build Date: 2025-09-12T15:23:14Z
+lint-and-test	Set up job	2025-10-29T03:24:50.6918404Z ##[endgroup]
+lint-and-test	Set up job	2025-10-29T03:24:50.6919487Z ##[group]Operating System
+lint-and-test	Set up job	2025-10-29T03:24:50.6920379Z Ubuntu
+lint-and-test	Set up job	2025-10-29T03:24:50.6921186Z 24.04.3
+lint-and-test	Set up job	2025-10-29T03:24:50.6922010Z LTS
+lint-and-test	Set up job	2025-10-29T03:24:50.6922745Z ##[endgroup]
+lint-and-test	Set up job	2025-10-29T03:24:50.6923430Z ##[group]Runner Image
+lint-and-test	Set up job	2025-10-29T03:24:50.6924433Z Image: ubuntu-24.04
+lint-and-test	Set up job	2025-10-29T03:24:50.6925234Z Version: 20250929.60.1
+lint-and-test	Set up job	2025-10-29T03:24:50.6926872Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
+lint-and-test	Set up job	2025-10-29T03:24:50.6929397Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
+lint-and-test	Set up job	2025-10-29T03:24:50.6931309Z ##[endgroup]
+lint-and-test	Set up job	2025-10-29T03:24:50.6933010Z ##[group]GITHUB_TOKEN Permissions
+lint-and-test	Set up job	2025-10-29T03:24:50.6935498Z Contents: read
+lint-and-test	Set up job	2025-10-29T03:24:50.6936356Z Metadata: read
+lint-and-test	Set up job	2025-10-29T03:24:50.6937078Z Packages: read
+lint-and-test	Set up job	2025-10-29T03:24:50.6937885Z ##[endgroup]
+lint-and-test	Set up job	2025-10-29T03:24:50.6940894Z Secret source: Actions
+lint-and-test	Set up job	2025-10-29T03:24:50.6941922Z Prepare workflow directory
+lint-and-test	Set up job	2025-10-29T03:24:50.7381004Z Prepare all required actions
+lint-and-test	Set up job	2025-10-29T03:24:50.7437419Z Getting action download info
+lint-and-test	Set up job	2025-10-29T03:24:51.0300134Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+lint-and-test	Set up job	2025-10-29T03:24:51.2244513Z Download action repository 'dtolnay/rust-toolchain@master' (SHA:6d653acede28d24f02e3cd41383119e8b1b35921)
+lint-and-test	Set up job	2025-10-29T03:24:51.4966153Z Complete job name: lint-and-test
+lint-and-test	Checkout repository	﻿2025-10-29T03:24:51.5655205Z ##[group]Run actions/checkout@v4
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5656344Z with:
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5656956Z   repository: JudgeZ/Zaevrynth
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5657888Z   token: ***
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5658493Z   ssh-strict: true
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5659310Z   ssh-user: git
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5659937Z   persist-credentials: true
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5660627Z   clean: true
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5661251Z   sparse-checkout-cone-mode: true
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5661997Z   fetch-depth: 1
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5662605Z   fetch-tags: false
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5663219Z   show-progress: true
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5663845Z   lfs: false
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5664406Z   submodules: false
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5665036Z   set-safe-directory: true
+lint-and-test	Checkout repository	2025-10-29T03:24:51.5666061Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6724750Z Syncing repository: JudgeZ/Zaevrynth
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6727206Z ##[group]Getting Git version info
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6728364Z Working directory is '/home/runner/work/Zaevrynth/Zaevrynth'
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6730251Z [command]/usr/bin/git version
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6808095Z git version 2.51.0
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6834074Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6847517Z Temporarily overriding HOME='/home/runner/work/_temp/0a7853d8-b082-4bd2-bf34-75a9f72d3c66' before making global git config changes
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6850115Z Adding repository directory to the temporary git global config as a safe directory
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6853817Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Zaevrynth/Zaevrynth
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6892568Z Deleting the contents of '/home/runner/work/Zaevrynth/Zaevrynth'
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6896501Z ##[group]Initializing the repository
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6901309Z [command]/usr/bin/git init /home/runner/work/Zaevrynth/Zaevrynth
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6993191Z hint: Using 'master' as the name for the initial branch. This default branch name
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6994927Z hint: is subject to change. To configure the initial branch name to use in all
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6996465Z hint: of your new repositories, which will suppress this warning, call:
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6997602Z hint:
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6998334Z hint: 	git config --global init.defaultBranch <name>
+lint-and-test	Checkout repository	2025-10-29T03:24:51.6999777Z hint:
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7000884Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7002466Z hint: 'development'. The just-created branch can be renamed via this command:
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7003729Z hint:
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7004420Z hint: 	git branch -m <name>
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7005212Z hint:
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7006303Z hint: Disable this message with "git config set advice.defaultBranchName false"
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7008055Z Initialized empty Git repository in /home/runner/work/Zaevrynth/Zaevrynth/.git/
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7013050Z [command]/usr/bin/git remote add origin https://github.com/JudgeZ/Zaevrynth
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7050469Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7051761Z ##[group]Disabling automatic garbage collection
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7053027Z [command]/usr/bin/git config --local gc.auto 0
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7084054Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7085273Z ##[group]Setting up auth
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7091360Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7130226Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7449412Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7477265Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7709834Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7751351Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7753042Z ##[group]Fetching the repository
+lint-and-test	Checkout repository	2025-10-29T03:24:51.7760418Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0b0d490e8100947b6a88bcf986822055a6d0e836:refs/remotes/pull/100/merge
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9799672Z From https://github.com/JudgeZ/Zaevrynth
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9800510Z  * [new ref]         0b0d490e8100947b6a88bcf986822055a6d0e836 -> pull/100/merge
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9832058Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9832772Z ##[group]Determining the checkout info
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9833750Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9838482Z [command]/usr/bin/git sparse-checkout disable
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9876150Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9904469Z ##[group]Checking out the ref
+lint-and-test	Checkout repository	2025-10-29T03:24:51.9908620Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/100/merge
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0097623Z Note: switching to 'refs/remotes/pull/100/merge'.
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0098163Z 
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0098514Z You are in 'detached HEAD' state. You can look around, make experimental
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0099663Z changes and commit them, and you can discard any commits you make in this
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0100515Z state without impacting any branches by switching back to a branch.
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0100997Z 
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0101319Z If you want to create a new branch to retain commits you create, you may
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0102229Z do so (now or later) by using -c with the switch command. Example:
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0103064Z 
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0103433Z   git switch -c <new-branch-name>
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0104035Z 
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0104405Z Or undo this operation with:
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0104969Z 
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0105436Z   git switch -
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0105890Z 
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0106553Z Turn off this advice by setting config variable advice.detachedHead to false
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0107505Z 
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0108565Z HEAD is now at 0b0d490 Merge 5f317a55d23e82fc13e4ea423a9d18a46f193677 into 0f397dec735c5b9075813bdf7348ae7f02f6e479
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0111962Z ##[endgroup]
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0141690Z [command]/usr/bin/git log -1 --format=%H
+lint-and-test	Checkout repository	2025-10-29T03:24:52.0162781Z 0b0d490e8100947b6a88bcf986822055a6d0e836
+lint-and-test	Install system dependencies	﻿2025-10-29T03:24:52.0353153Z ##[group]Run sudo apt-get update
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.0353753Z sudo apt-get update
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.0354459Z sudo apt-get install -y build-essential pkg-config libssl-dev libzstd-dev
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.0390300Z shell: /usr/bin/bash -e {0}
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.0390796Z ##[endgroup]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.1881694Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.2052329Z Get:6 https://packages.microsoft.com/repos/azure-cli noble InRelease [3564 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.2299143Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.2301538Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.2362320Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.2424893Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.2481398Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.3391258Z Get:8 https://packages.microsoft.com/repos/azure-cli noble/main amd64 Packages [1629 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.4553530Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [48.3 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.4592849Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [11.0 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.4626596Z Get:11 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [66.1 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5031825Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1545 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5123661Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [294 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5150821Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [175 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5168391Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [15.4 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5175442Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1498 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5251585Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [303 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5276053Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [378 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5301611Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [31.4 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5310926Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2175 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5438201Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [490 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5920976Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5929843Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 c-n-f Metadata [516 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5944105Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [30.3 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5955760Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [5564 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5965340Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5974254Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 c-n-f Metadata [484 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5985710Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7148 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.5997949Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [11.0 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6004569Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6013077Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6195587Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [1270 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6273095Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [211 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6285191Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.5 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6295591Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 c-n-f Metadata [9008 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6714941Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [905 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6765654Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [203 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6817565Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [52.2 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6828474Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 c-n-f Metadata [19.4 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6839011Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2080 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6930277Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [470 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6958507Z Get:42 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [208 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6966019Z Get:43 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 c-n-f Metadata [500 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6973067Z Get:44 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [27.4 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6983043Z Get:45 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [5708 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6989137Z Get:46 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [208 B]
+lint-and-test	Install system dependencies	2025-10-29T03:24:52.6996324Z Get:47 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 c-n-f Metadata [384 B]
+lint-and-test	Install system dependencies	2025-10-29T03:25:03.5356480Z Fetched 12.7 MB in 2s (7957 kB/s)
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.2525747Z Reading package lists...
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.2848486Z Reading package lists...
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.4410044Z Building dependency tree...
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.4418199Z Reading state information...
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.5919353Z pkg-config is already the newest version (1.8.1-2build1).
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.5920619Z libzstd-dev is already the newest version (1.5.5+dfsg2-2build1.1).
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.5921422Z libzstd-dev set to manually installed.
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.5921928Z Suggested packages:
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.5922339Z   libssl-doc
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6290108Z The following NEW packages will be installed:
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6297931Z   build-essential
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6305426Z The following packages will be upgraded:
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6308000Z   libssl-dev libssl3t64 openssl
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6472946Z 3 upgraded, 1 newly installed, 0 to remove and 40 not upgraded.
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6473662Z Need to get 5356 kB of archives.
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6474259Z After this operation, 17.4 kB of additional disk space will be used.
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6475060Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.6821567Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libssl-dev amd64 3.0.13-0ubuntu3.6 [2408 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.7059127Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 libssl3t64 amd64 3.0.13-0ubuntu3.6 [1940 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.7256899Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 openssl amd64 3.0.13-0ubuntu3.6 [1003 kB]
+lint-and-test	Install system dependencies	2025-10-29T03:25:04.7369677Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 build-essential amd64 12.10ubuntu1 [4928 B]
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.0004520Z Fetched 5356 kB in 0s (53.5 MB/s)
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1757036Z (Reading database ... 
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1757769Z (Reading database ... 5%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1758244Z (Reading database ... 10%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1758698Z (Reading database ... 15%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1759357Z (Reading database ... 20%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1760150Z (Reading database ... 25%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1760509Z (Reading database ... 30%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1761319Z (Reading database ... 35%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1761787Z (Reading database ... 40%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1762256Z (Reading database ... 45%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.1762666Z (Reading database ... 50%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.2656021Z (Reading database ... 55%
+lint-and-test	Install system dependencies	2025-10-29T03:25:05.8174731Z (Reading database ... 60%
+lint-and-test	Install system dependencies	2025-10-29T03:25:06.3417373Z (Reading database ... 65%
+lint-and-test	Install system dependencies	2025-10-29T03:25:06.8226052Z (Reading database ... 70%
+lint-and-test	Install system dependencies	2025-10-29T03:25:07.2997862Z (Reading database ... 75%
+lint-and-test	Install system dependencies	2025-10-29T03:25:07.8113893Z (Reading database ... 80%
+lint-and-test	Install system dependencies	2025-10-29T03:25:08.4116427Z (Reading database ... 85%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.0265357Z (Reading database ... 90%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.6361737Z (Reading database ... 95%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.6362255Z (Reading database ... 100%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.6362812Z (Reading database ... 214596 files and directories currently installed.)
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.6425098Z Preparing to unpack .../libssl-dev_3.0.13-0ubuntu3.6_amd64.deb ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.6469861Z Unpacking libssl-dev:amd64 (3.0.13-0ubuntu3.6) over (3.0.13-0ubuntu3.5) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.7856472Z Preparing to unpack .../libssl3t64_3.0.13-0ubuntu3.6_amd64.deb ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.7962781Z Unpacking libssl3t64:amd64 (3.0.13-0ubuntu3.6) over (3.0.13-0ubuntu3.5) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.8910290Z Setting up libssl3t64:amd64 (3.0.13-0ubuntu3.6) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9241494Z (Reading database ... 
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9241874Z (Reading database ... 5%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9242220Z (Reading database ... 10%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9242568Z (Reading database ... 15%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9242898Z (Reading database ... 20%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9243224Z (Reading database ... 25%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9243539Z (Reading database ... 30%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9243866Z (Reading database ... 35%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9244186Z (Reading database ... 40%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9244511Z (Reading database ... 45%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9244846Z (Reading database ... 50%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9255750Z (Reading database ... 55%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9358428Z (Reading database ... 60%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9381289Z (Reading database ... 65%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9398965Z (Reading database ... 70%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9421077Z (Reading database ... 75%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9481558Z (Reading database ... 80%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9628584Z (Reading database ... 85%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9826819Z (Reading database ... 90%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9896956Z (Reading database ... 95%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9897362Z (Reading database ... 100%
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9897774Z (Reading database ... 214596 files and directories currently installed.)
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9934305Z Preparing to unpack .../openssl_3.0.13-0ubuntu3.6_amd64.deb ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:09.9966675Z Unpacking openssl (3.0.13-0ubuntu3.6) over (3.0.13-0ubuntu3.5) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:10.9278526Z Selecting previously unselected package build-essential.
+lint-and-test	Install system dependencies	2025-10-29T03:25:10.9411083Z Preparing to unpack .../build-essential_12.10ubuntu1_amd64.deb ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:10.9420845Z Unpacking build-essential (12.10ubuntu1) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:10.9785232Z Setting up libssl-dev:amd64 (3.0.13-0ubuntu3.6) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:10.9811739Z Setting up build-essential (12.10ubuntu1) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:10.9836074Z Setting up openssl (3.0.13-0ubuntu3.6) ...
+lint-and-test	Install system dependencies	2025-10-29T03:25:10.9884326Z Processing triggers for man-db (2.12.0-4build2) ...
+lint-and-test	Install system dependencies	2025-10-29T03:26:26.0331086Z Processing triggers for libc-bin (2.39-0ubuntu8.6) ...
+lint-and-test	Install system dependencies	2025-10-29T03:26:28.5875588Z 
+lint-and-test	Install system dependencies	2025-10-29T03:26:28.5876048Z Running kernel seems to be up-to-date.
+lint-and-test	Install system dependencies	2025-10-29T03:26:28.5876405Z 
+lint-and-test	Install system dependencies	2025-10-29T03:26:28.5876530Z Restarting services...
+lint-and-test	Install system dependencies	2025-10-29T03:26:28.6295678Z  /etc/needrestart/restart.d/systemd-manager
+lint-and-test	Install system dependencies	2025-10-29T03:26:28.9911363Z  systemctl restart packagekit.service php8.3-fpm.service systemd-journald.service systemd-networkd.service systemd-resolved.service systemd-udevd.service udisks2.service walinuxagent.service
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1943149Z 
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1944465Z Service restarts being deferred:
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1945187Z  systemctl restart hosted-compute-agent.service
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1946155Z  systemctl restart systemd-logind.service
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1946630Z 
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1946941Z No containers need to be restarted.
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1947379Z 
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1947635Z User sessions running outdated binaries:
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.1948213Z  runner @ user manager service: systemd[933]
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.2069516Z 
+lint-and-test	Install system dependencies	2025-10-29T03:26:29.2073016Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+lint-and-test	Set up Rust toolchain 1.82.0	﻿2025-10-29T03:26:30.0536719Z ##[group]Run dtolnay/rust-toolchain@master
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0537030Z with:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0537193Z   toolchain: 1.82.0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0537382Z   components: clippy, rustfmt
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0537598Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0643526Z ##[group]Run : parse toolchain version
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0643837Z : parse toolchain version
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0644083Z if [[ -z $toolchain ]]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0644569Z   # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0645076Z   echo "'toolchain' is a required input" >&2
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0645334Z   exit 1
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0645628Z elif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0645993Z   if [[ Linux == macOS ]]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0646445Z     echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0646908Z   else
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0647257Z     echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0647650Z   fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0647903Z elif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0648381Z   echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0648941Z elif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0649405Z   echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0649830Z else
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0650041Z   echo "toolchain=$toolchain" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0650291Z fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0684131Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0684455Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0684618Z   toolchain: 1.82.0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0684796Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0801640Z ##[group]Run : construct rustup command line
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0801940Z : construct rustup command line
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0802345Z echo "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0802918Z echo "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0803347Z echo "downgrade=" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0832670Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0832988Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0833142Z   targets: 
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0833323Z   components: clippy, rustfmt
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0833534Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0912251Z ##[group]Run : set $CARGO_HOME
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0912490Z : set $CARGO_HOME
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0912788Z echo CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0942077Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.0942391Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1019188Z ##[group]Run : install rustup if needed
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1019644Z : install rustup if needed
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1020272Z if ! command -v rustup &>/dev/null; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1021384Z   curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1022514Z   echo "$CARGO_HOME/bin" >> $GITHUB_PATH
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1022943Z fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1064061Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1064589Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1064886Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1065263Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1143405Z ##[group]Run rustup toolchain install 1.82.0 --component clippy --component rustfmt --profile minimal --no-self-update
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1144131Z rustup toolchain install 1.82.0 --component clippy --component rustfmt --profile minimal --no-self-update
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1173635Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1173953Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1174125Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.1174344Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.2471374Z info: syncing channel updates for '1.82.0-x86_64-unknown-linux-gnu'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.4973284Z info: latest update on 2024-10-17, rust version 1.82.0 (f6e511eec 2024-10-15)
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.4973955Z info: downloading component 'cargo'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.6521665Z info: downloading component 'clippy'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:30.7524924Z info: downloading component 'rust-std'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:31.0432618Z info: downloading component 'rustc'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:31.7034055Z info: downloading component 'rustfmt'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:31.7998587Z info: installing component 'cargo'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:32.3930347Z info: installing component 'clippy'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:32.6563749Z info: installing component 'rust-std'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:34.4175055Z info: installing component 'rustc'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.6239694Z info: installing component 'rustfmt'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9163036Z 
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9268121Z   1.82.0-x86_64-unknown-linux-gnu installed - rustc 1.82.0 (f6e511eec 2024-10-15)
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9268480Z 
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9324869Z ##[group]Run rustup default 1.82.0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9325139Z rustup default 1.82.0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9357865Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9358179Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9358344Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9358563Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9458517Z info: using existing install for '1.82.0-x86_64-unknown-linux-gnu'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9747135Z info: default toolchain set to '1.82.0-x86_64-unknown-linux-gnu'
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9747898Z 
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9845928Z   1.82.0-x86_64-unknown-linux-gnu unchanged - rustc 1.82.0 (f6e511eec 2024-10-15)
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9846453Z 
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9847132Z info: note that the toolchain '1.82.0-x86_64-unknown-linux-gnu' is currently in use (overridden by '/home/runner/work/Zaevrynth/Zaevrynth/rust-toolchain.toml')
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9892995Z ##[group]Run : create cachekey
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9893250Z : create cachekey
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9893672Z DATE=$(rustc +1.82.0 --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9894247Z HASH=$(rustc +1.82.0 --version --verbose | sed -ne 's/^commit-hash: //p')
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9894692Z echo "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9928083Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9928417Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9928605Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:38.9929039Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0342631Z ##[group]Run : disable incremental compilation
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0342959Z : disable incremental compilation
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0343249Z if [ -z "${CARGO_INCREMENTAL+set}" ]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0343541Z   echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0343957Z fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0376680Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0376986Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0377154Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0377377Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0470885Z ##[group]Run : enable colors in Cargo output
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0471195Z : enable colors in Cargo output
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0471485Z if [ -z "${CARGO_TERM_COLOR+set}" ]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0471787Z   echo CARGO_TERM_COLOR=always >> $GITHUB_ENV
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0472196Z fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0503056Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0503348Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0503513Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0503745Z   CARGO_INCREMENTAL: 0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0503927Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0576998Z ##[group]Run : enable Cargo sparse registry
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0577298Z : enable Cargo sparse registry
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0577624Z # implemented in 1.66, stabilized in 1.68, made default in 1.70
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0578266Z if [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0579143Z   if rustc +1.82.0 --version --verbose | grep -q '^release: 1\.6[89]\.'; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0579653Z     touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0580132Z     echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0580581Z   elif rustc +1.82.0 --version --verbose | grep -q '^release: 1\.6[67]\.'; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0581074Z     touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0581533Z     echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0581841Z   fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0582007Z fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0612958Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0613264Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0613432Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0613652Z   CARGO_INCREMENTAL: 0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0613841Z   CARGO_TERM_COLOR: always
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0614036Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0995160Z ##[group]Run : work around spurious network errors in curl 8.0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0995558Z : work around spurious network errors in curl 8.0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0996085Z # https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0996640Z if rustc +1.82.0 --version --verbose | grep -q '^release: 1\.7[01]\.'; then
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0997036Z   echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.0997309Z fi
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1031790Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1032093Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1032307Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1032607Z   CARGO_INCREMENTAL: 0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1032800Z   CARGO_TERM_COLOR: always
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1032988Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1269017Z ##[group]Run rustc +1.82.0 --version --verbose
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1269353Z rustc +1.82.0 --version --verbose
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1303100Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1303412Z env:
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1303597Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1303820Z   CARGO_INCREMENTAL: 0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1304010Z   CARGO_TERM_COLOR: always
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1304197Z ##[endgroup]
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1486889Z rustc 1.82.0 (f6e511eec 2024-10-15)
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1487389Z binary: rustc
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1487822Z commit-hash: f6e511eec7342f59a25f7c0534f1dbea00d01b14
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1488901Z commit-date: 2024-10-15
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1489276Z host: x86_64-unknown-linux-gnu
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1489663Z release: 1.82.0
+lint-and-test	Set up Rust toolchain 1.82.0	2025-10-29T03:26:39.1489967Z LLVM version: 19.1.1
+lint-and-test	Cargo fmt	﻿2025-10-29T03:26:39.1564003Z ##[group]Run cargo fmt --all -- --check
+lint-and-test	Cargo fmt	2025-10-29T03:26:39.1564324Z cargo fmt --all -- --check
+lint-and-test	Cargo fmt	2025-10-29T03:26:39.1597571Z shell: /usr/bin/bash -e {0}
+lint-and-test	Cargo fmt	2025-10-29T03:26:39.1597793Z env:
+lint-and-test	Cargo fmt	2025-10-29T03:26:39.1597965Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Cargo fmt	2025-10-29T03:26:39.1598190Z   CARGO_INCREMENTAL: 0
+lint-and-test	Cargo fmt	2025-10-29T03:26:39.1598384Z   CARGO_TERM_COLOR: always
+lint-and-test	Cargo fmt	2025-10-29T03:26:39.1598575Z ##[endgroup]
+lint-and-test	Cargo clippy	﻿2025-10-29T03:26:39.3547893Z ##[group]Run cargo clippy --all-targets --all-features -- -D warnings
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.3548378Z cargo clippy --all-targets --all-features -- -D warnings
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.3582746Z shell: /usr/bin/bash -e {0}
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.3582968Z env:
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.3583131Z   CARGO_HOME: /home/runner/.cargo
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.3583366Z   CARGO_INCREMENTAL: 0
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.3583568Z   CARGO_TERM_COLOR: always
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.3583756Z ##[endgroup]
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4820870Z error: failed to run `rustc` to learn about target-specific information
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4821427Z 
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4821524Z Caused by:
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4825261Z   process didn't exit successfully: `/home/runner/.rustup/toolchains/1.82.0-x86_64-unknown-linux-gnu/bin/clippy-driver /home/runner/.rustup/toolchains/1.82.0-x86_64-unknown-linux-gnu/bin/rustc - --crate-name ___ --print=file-names --crate-type bin --crate-type rlib --crate-type dylib --crate-type cdylib --crate-type staticlib --crate-type proc-macro --print=sysroot --print=split-debuginfo --print=crate-name --print=cfg` (exit status: 1)
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4828257Z   --- stdout
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4828564Z   ___
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4829134Z   lib___.rlib
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4829435Z   lib___.so
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4829714Z   lib___.so
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4829975Z   lib___.a
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4830259Z   lib___.so
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4830706Z   /home/runner/.rustup/toolchains/1.82.0-x86_64-unknown-linux-gnu
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4831260Z   off
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4831526Z   packed
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4831799Z   unpacked
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4832059Z   ___
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4832296Z   clippy
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4832566Z   debug_assertions
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4832879Z   feature="cargo-clippy"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4833215Z   panic="unwind"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4833507Z   proc_macro
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4833795Z   target_abi=""
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4834093Z   target_arch="x86_64"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4834434Z   target_endian="little"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4834781Z   target_env="gnu"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4835092Z   target_family="unix"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4835404Z   target_feature="fxsr"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4835732Z   target_feature="sse"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4836050Z   target_feature="sse2"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4836371Z   target_has_atomic="16"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4836710Z   target_has_atomic="32"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4837045Z   target_has_atomic="64"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4837381Z   target_has_atomic="8"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4837717Z   target_has_atomic="ptr"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4838148Z   target_os="linux"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4838460Z   target_pointer_width="64"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4839052Z   target_vendor="unknown"
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4839387Z   unix
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4839548Z 
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4839660Z   --- stderr
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4840270Z   error: error reading Clippy's configuration file: unknown field `warns`, expected one of
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4841025Z              absolute-paths-allowed-crates
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4841506Z              absolute-paths-max-segments
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4841966Z              accept-comment-above-attributes
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4842408Z              accept-comment-above-statement
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4842838Z              allow-comparison-to-zero
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4843257Z              allow-dbg-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4843637Z              allow-expect-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4844413Z              allow-mixed-uninlined-format-args
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4844886Z              allow-one-hash-in-raw-strings
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4845323Z              allow-panic-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4845716Z              allow-print-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4846130Z              allow-private-module-inception
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4846578Z              allow-renamed-params-for
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4846998Z              allow-unwrap-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4847412Z              allow-useless-vec-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4847825Z              allowed-dotfiles
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4848211Z              allowed-duplicate-crates
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4849165Z              allowed-idents-below-min-chars
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4849621Z              allowed-prefixes
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4850036Z              allowed-scripts
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4850410Z              allowed-wildcard-imports
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4850853Z              arithmetic-side-effects-allowed
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4851344Z              arithmetic-side-effects-allowed-binary
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4851873Z              arithmetic-side-effects-allowed-unary
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4852352Z              array-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4852775Z              avoid-breaking-exported-api
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4853224Z              await-holding-invalid-types
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4853657Z              blacklisted-names
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4854030Z              cargo-ignore-publish
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4854474Z              check-private-items
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4854811Z              cognitive-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4855085Z              cyclomatic-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4855353Z              disallowed-macros
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4855559Z              disallowed-methods
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4855769Z              disallowed-names
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4855966Z              disallowed-types
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4856164Z              doc-valid-idents
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4856386Z              enable-raw-pointer-heuristic-for-send
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4856662Z              enforce-iter-loop-reborrow
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4856903Z              enforced-import-renames
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4857140Z              enum-variant-name-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4857386Z              enum-variant-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4857621Z              excessive-nesting-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4857857Z              future-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4858080Z              ignore-interior-mutability
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4858315Z              large-error-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4858547Z              literal-representation-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4859043Z              matches-for-let-else
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4859282Z              max-fn-params-bools
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4859496Z              max-include-file-size
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4859711Z              max-struct-bools
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4859934Z              max-suggested-slice-pattern-length
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4860183Z              max-trait-bounds
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4860393Z              min-ident-chars-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4860633Z              missing-docs-in-crate-items
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4860854Z              msrv
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4861042Z              pass-by-value-size-limit
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4861281Z              pub-underscore-fields-behavior
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4861570Z              semicolon-inside-block-ignore-singleline
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4861867Z              semicolon-outside-block-ignore-multiline
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4862140Z              single-char-binding-names-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4862393Z              stack-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4862613Z              standard-macro-braces
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4862837Z              struct-field-name-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4863087Z              suppress-restriction-lint-in-const
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4863335Z              third-party
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4863527Z              too-large-for-stack
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4863749Z              too-many-arguments-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4864197Z              too-many-lines-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4864427Z              trivial-copy-size-limit
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4864663Z              type-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4864888Z              unnecessary-box-size
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4865126Z              unreadable-literal-lint-fractions
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4865383Z              upper-case-acronyms-aggressive
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4865641Z              vec-box-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4865867Z              verbose-bit-mask-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4866111Z              warn-on-all-wildcard-imports
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4866389Z              warn-unsafe-macro-metavars-in-private-macros
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4866887Z    --> /home/runner/work/Zaevrynth/Zaevrynth/clippy.toml:1:1
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4867176Z     |
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4867320Z   1 | warns = [
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4867516Z     | ^^^^^ help: perhaps you meant: `msrv`
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4867707Z 
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4867947Z   error: error reading Clippy's configuration file: unknown field `allow`, expected one of
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4868366Z              absolute-paths-allowed-crates
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4868627Z              absolute-paths-max-segments
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4869052Z              accept-comment-above-attributes
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4869323Z              accept-comment-above-statement
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4869573Z              allow-comparison-to-zero
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4869801Z              allow-dbg-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4870012Z              allow-expect-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4870248Z              allow-mixed-uninlined-format-args
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4870516Z              allow-one-hash-in-raw-strings
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4870751Z              allow-panic-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4870974Z              allow-print-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4871202Z              allow-private-module-inception
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4871461Z              allow-renamed-params-for
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4871700Z              allow-unwrap-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4871927Z              allow-useless-vec-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4872164Z              allowed-dotfiles
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4872391Z              allowed-duplicate-crates
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4872630Z              allowed-idents-below-min-chars
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4872869Z              allowed-prefixes
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4873064Z              allowed-scripts
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4873277Z              allowed-wildcard-imports
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4873519Z              arithmetic-side-effects-allowed
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4873795Z              arithmetic-side-effects-allowed-binary
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4874085Z              arithmetic-side-effects-allowed-unary
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4874340Z              array-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4874569Z              avoid-breaking-exported-api
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4874808Z              await-holding-invalid-types
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4875044Z              blacklisted-names
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4875248Z              cargo-ignore-publish
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4875470Z              check-private-items
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4875690Z              cognitive-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4875951Z              cyclomatic-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4876191Z              disallowed-macros
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4876390Z              disallowed-methods
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4876593Z              disallowed-names
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4876790Z              disallowed-types
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4876983Z              doc-valid-idents
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4877202Z              enable-raw-pointer-heuristic-for-send
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4877468Z              enforce-iter-loop-reborrow
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4877703Z              enforced-import-renames
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4877948Z              enum-variant-name-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4878184Z              enum-variant-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4878431Z              excessive-nesting-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4878661Z              future-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4879187Z              ignore-interior-mutability
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4879424Z              large-error-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4879656Z              literal-representation-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4879901Z              matches-for-let-else
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4880112Z              max-fn-params-bools
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4880323Z              max-include-file-size
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4880530Z              max-struct-bools
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4880753Z              max-suggested-slice-pattern-length
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4881004Z              max-trait-bounds
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4881207Z              min-ident-chars-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4881558Z              missing-docs-in-crate-items
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4881778Z              msrv
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4881965Z              pass-by-value-size-limit
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4882202Z              pub-underscore-fields-behavior
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4882478Z              semicolon-inside-block-ignore-singleline
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4882768Z              semicolon-outside-block-ignore-multiline
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4883052Z              single-char-binding-names-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4883304Z              stack-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4883514Z              standard-macro-braces
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4883739Z              struct-field-name-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4883988Z              suppress-restriction-lint-in-const
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4884237Z              third-party
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4884428Z              too-large-for-stack
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4884648Z              too-many-arguments-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4884886Z              too-many-lines-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4885122Z              trivial-copy-size-limit
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4885349Z              type-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4885591Z              unnecessary-box-size
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4885824Z              unreadable-literal-lint-fractions
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4886080Z              upper-case-acronyms-aggressive
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4886326Z              vec-box-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4886550Z              verbose-bit-mask-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4886794Z              warn-on-all-wildcard-imports
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4887072Z              warn-unsafe-macro-metavars-in-private-macros
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4887429Z    --> /home/runner/work/Zaevrynth/Zaevrynth/clippy.toml:7:1
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4887715Z     |
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4887856Z   7 | allow = [
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4888008Z     | ^^^^^
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4888094Z 
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4888317Z   error: error reading Clippy's configuration file: unknown field `deny`, expected one of
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4888728Z              absolute-paths-allowed-crates
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4889140Z              absolute-paths-max-segments
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4889399Z              accept-comment-above-attributes
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4889653Z              accept-comment-above-statement
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4889897Z              allow-comparison-to-zero
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4890120Z              allow-dbg-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4890333Z              allow-expect-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4890570Z              allow-mixed-uninlined-format-args
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4890822Z              allow-one-hash-in-raw-strings
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4891060Z              allow-panic-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4891271Z              allow-print-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4891497Z              allow-private-module-inception
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4891738Z              allow-renamed-params-for
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4891967Z              allow-unwrap-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4892185Z              allow-useless-vec-in-tests
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4892411Z              allowed-dotfiles
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4892631Z              allowed-duplicate-crates
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4892873Z              allowed-idents-below-min-chars
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4893108Z              allowed-prefixes
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4893304Z              allowed-scripts
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4893510Z              allowed-wildcard-imports
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4893864Z              arithmetic-side-effects-allowed
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4894132Z              arithmetic-side-effects-allowed-binary
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4894414Z              arithmetic-side-effects-allowed-unary
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4894675Z              array-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4894892Z              avoid-breaking-exported-api
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4895137Z              await-holding-invalid-types
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4895366Z              blacklisted-names
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4895566Z              cargo-ignore-publish
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4895780Z              check-private-items
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4896002Z              cognitive-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4896363Z              cyclomatic-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4896597Z              disallowed-macros
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4896801Z              disallowed-methods
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4896998Z              disallowed-names
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4897193Z              disallowed-types
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4897388Z              doc-valid-idents
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4897612Z              enable-raw-pointer-heuristic-for-send
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4897873Z              enforce-iter-loop-reborrow
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4898107Z              enforced-import-renames
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4898336Z              enum-variant-name-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4898570Z              enum-variant-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4899003Z              excessive-nesting-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4899239Z              future-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4899460Z              ignore-interior-mutability
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4899689Z              large-error-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4899927Z              literal-representation-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4900172Z              matches-for-let-else
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4900390Z              max-fn-params-bools
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4900604Z              max-include-file-size
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4900806Z              max-struct-bools
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4901029Z              max-suggested-slice-pattern-length
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4901276Z              max-trait-bounds
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4901483Z              min-ident-chars-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4901737Z              missing-docs-in-crate-items
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4901962Z              msrv
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4902142Z              pass-by-value-size-limit
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4902388Z              pub-underscore-fields-behavior
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4902678Z              semicolon-inside-block-ignore-singleline
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4902974Z              semicolon-outside-block-ignore-multiline
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4903262Z              single-char-binding-names-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4903513Z              stack-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4903731Z              standard-macro-braces
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4903953Z              struct-field-name-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4904211Z              suppress-restriction-lint-in-const
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4904457Z              third-party
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4904650Z              too-large-for-stack
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4904874Z              too-many-arguments-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4905114Z              too-many-lines-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4905344Z              trivial-copy-size-limit
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4905571Z              type-complexity-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4905803Z              unnecessary-box-size
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4906033Z              unreadable-literal-lint-fractions
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4906297Z              upper-case-acronyms-aggressive
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4906535Z              vec-box-size-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4906767Z              verbose-bit-mask-threshold
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4907012Z              warn-on-all-wildcard-imports
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4907301Z              warn-unsafe-macro-metavars-in-private-macros
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4907658Z     --> /home/runner/work/Zaevrynth/Zaevrynth/clippy.toml:11:1
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4907941Z      |
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4908086Z   11 | deny = [
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4908265Z      | ^^^^ help: perhaps you meant: `msrv`
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4908557Z 
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4908648Z   error: aborting due to 3 previous errors
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4909022Z 
+lint-and-test	Cargo clippy	2025-10-29T03:26:39.4917272Z ##[error]Process completed with exit code 101.
+lint-and-test	Post Checkout repository	﻿2025-10-29T03:26:39.5063472Z Post job cleanup.
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.5980938Z [command]/usr/bin/git version
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6021904Z git version 2.51.0
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6064227Z Temporarily overriding HOME='/home/runner/work/_temp/c19bc318-ad7d-4362-91b2-7f0c99d18271' before making global git config changes
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6065546Z Adding repository directory to the temporary git global config as a safe directory
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6070331Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Zaevrynth/Zaevrynth
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6103744Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6135014Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6357546Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6377103Z http.https://github.com/.extraheader
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6388963Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+lint-and-test	Post Checkout repository	2025-10-29T03:26:39.6417836Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+lint-and-test	Complete job	﻿2025-10-29T03:26:39.6731677Z Cleaning up orphan processes

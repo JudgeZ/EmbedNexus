@@ -12,6 +12,9 @@ on:
         required: false
         default: 'false'
 
+permissions:
+  contents: read
+
 jobs:
   goldens-windows:
     name: Generate Windows security goldens
@@ -222,4 +225,3 @@ jobs:
             tests/golden/security/**
             tests/golden/routing/fanout-throughput.jsonl.sha256
             tests/golden/routing/multi-repo-latency.transcript.sha256
-

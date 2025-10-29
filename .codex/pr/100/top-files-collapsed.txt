@@ -1,0 +1,11 @@
+     92	+92	-0	plan.md
+     81	+73	-8	.github/workflows/security.yml
+     40	+40	-0	.github/workflows/ci-matrix.yml
+     38	+38	-0	deny.toml
+     32	+32	-0	.github/workflows/codeql.yml
+     31	+31	-0	.pre-commit-config.yaml
+     29	+29	-0	.gitleaks.toml
+     20	+20	-0	.github/dependabot.yml
+     20	+20	-0	.editorconfig
+     14	+14	-0	CONTRIBUTING.md
+      1	+1	-0	.gitignore

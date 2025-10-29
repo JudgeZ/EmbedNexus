@@ -12,6 +12,9 @@ on:
         required: false
         default: 'false'
 
+permissions:
+  contents: read
+
 jobs:
   fixtures-windows:
     name: Generate Windows security captures
@@ -201,4 +204,3 @@ jobs:
             tests/golden/archives/fuzzed-manifests.jsonl
             tests/golden/transport/offline-buffer-replay.transcript
             tests/golden/ingestion/manifest-replay.log
-

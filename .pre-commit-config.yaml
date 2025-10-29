@@ -1,0 +1,31 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+      - id: check-yaml
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        args: ["-x"]
+
+  - repo: local
+    hooks:
+      - id: rustfmt
+        name: rustfmt
+        entry: bash -lc 'cargo fmt --all'
+        language: system
+        pass_filenames: false
+        stages: [commit, push, manual]
+      - id: clippy
+        name: clippy
+        entry: bash -lc 'cargo clippy --all-targets --all-features -- -D warnings'
+        language: system
+        pass_filenames: false
+        stages: [manual]
+
