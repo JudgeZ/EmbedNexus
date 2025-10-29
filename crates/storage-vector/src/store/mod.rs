@@ -133,7 +133,9 @@ impl Store for VectorStore {
             guard.insert((repo_id.to_string(), key.to_string()), payload.to_vec());
         }
         let seq = self.next_sequence.fetch_add(1, Ordering::SeqCst);
-        Ok(build_replay_entry(seq, repo_id, &before, &before, "emitted"))
+        Ok(build_replay_entry(
+            seq, repo_id, &before, &before, "emitted",
+        ))
     }
 
     fn get(&self, repo_id: &str, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
