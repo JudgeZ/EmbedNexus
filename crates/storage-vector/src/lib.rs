@@ -1,4 +1,5 @@
-//! Vector store abstractions focused on archive quota tracking.
+//! Vector store abstractions focused on archive quota tracking and (optionally)
+//! encrypted persistence with ledger replay integration.
 
 use thiserror::Error;
 
@@ -123,3 +124,18 @@ impl QuotaDiagnostics {
         self
     }
 }
+
+// Public API surface for Milestone 3 skeleton
+pub mod error;
+pub mod config;
+pub mod ledger;
+pub mod store;
+
+#[cfg(feature = "encryption")]
+pub mod encryption;
+
+#[cfg(feature = "encryption")]
+pub mod kms;
+
+pub use crate::error::StoreError;
+pub use crate::store::{ReplayStats, VectorStore, Store};
