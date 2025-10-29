@@ -1,6 +1,7 @@
 //! Feature-gated encryption interfaces for the vector store.
 //! Provides trait definitions and small helpers for encoding/decoding
 //! minimal envelopes used by AES‑GCM.
+use zeroize::Zeroizing;
 
 #[cfg(feature = "encryption")]
 pub mod aes_gcm;
@@ -12,9 +13,20 @@ pub enum CipherSuite {
     ChaCha20Poly1305,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct KeyHandle {
     pub key_id: String,
+    // 32-byte secret key material (AES-256). Kept in memory only.
+    pub key_bytes: Zeroizing<[u8; 32]>,
+}
+
+impl core::fmt::Debug for KeyHandle {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("KeyHandle")
+            .field("key_id", &self.key_id)
+            .field("key_bytes", &"<redacted>")
+            .finish()
+    }
 }
 
 pub trait Encrypter: Send + Sync {

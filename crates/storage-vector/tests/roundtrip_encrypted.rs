@@ -9,7 +9,9 @@ use storage_vector::store::{Store, VectorStore};
 fn roundtrip_encrypted_upsert_get() {
     let store = VectorStore::builder()
         .with_encrypter(Arc::new(AesGcmEncrypter::new()))
-        .with_key_manager(Arc::new(InMemoryKeyManager::new("k1")))
+        .with_key_manager(Arc::new(InMemoryKeyManager::new_with_secret(
+            "k1", [7u8; 32],
+        )))
         .build();
 
     let repo = "repo-alpha";

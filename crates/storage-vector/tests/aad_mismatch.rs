@@ -2,6 +2,7 @@
 use storage_vector::encryption::{aes_gcm::AesGcmEncrypter, Encrypter, KeyHandle};
 use storage_vector::store::fs as vs_fs;
 use tempfile::tempdir;
+use zeroize::Zeroizing;
 
 #[test]
 fn aad_mismatch_fails_decrypt() {
@@ -14,6 +15,7 @@ fn aad_mismatch_fails_decrypt() {
     let enc = AesGcmEncrypter::new();
     let kh = KeyHandle {
         key_id: "k1".into(),
+        key_bytes: Zeroizing::new([3u8; 32]),
     };
     let good_aad = format!("{}:{}", repo, kh.key_id);
     let env = enc.seal(&kh, &payload, good_aad.as_bytes()).expect("seal");

@@ -95,16 +95,16 @@ AAD (associated data):
 
 - `aad = format!("{repo_id}:{key_id}")` binds envelopes to repository scope and the issuing key; decryption fails if AAD does not match.
 
-Key handling (M3 scope):
+ Key handling (M3 scope):
 
-- An in‑memory key manager exposes `current(scope)` and `get(key_id)` so older records remain readable after rotation. For tests, a deterministic 32‑byte key is derived via `SHA‑256(key_id)`; this is not a production derivation.
-- Rotation is simulated by switching the `key_id` (e.g., from `k1` to `k2`); reads query the key manager by `key_id` embedded in the envelope.
+ - An in‑memory key manager exposes `current(scope)` and `get(key_id)` so older records remain readable after rotation. The `KeyHandle` carries a 32‑byte secret provided by the key manager; there is no derivation from `key_id`. Tests can provision deterministic secrets for reproducibility.
+ - Rotation is simulated by switching the `key_id` (e.g., from `k1` to `k2`); reads query the key manager by `key_id` embedded in the envelope.
 
 Replay sequencing:
 
 - `ReplayEntry.sequence` remains the ordering primitive. M3 does not alter replay semantics; checksum fields are placeholders used for deterministic tests. Future work will upgrade checksums to real digests and couple them with envelope metadata.
 
-Security notes:
+ Security notes:
 
-- Tamper detection leverages AES‑GCM authentication; any change to the envelope payload causes decryption to fail. Tests flip the last byte of the stored envelope to validate this behavior.
-- The current tag field is reserved; the AEAD verifies tags internally from the ciphertext. A later revision may split and expose the tag explicitly in the envelope for tooling purposes.
+ - Tamper detection leverages AES‑GCM authentication; any change to the envelope payload (including the detached tag) causes decryption to fail. Tests flip the last byte of the stored envelope to validate this behavior, and AAD/key mismatches are also rejected.
+ - The envelope stores the real 16‑byte GCM tag (detached) and a 12‑byte nonce; decryption verifies the tag with the provided AAD.

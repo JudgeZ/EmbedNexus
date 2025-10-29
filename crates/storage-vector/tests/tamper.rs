@@ -15,7 +15,9 @@ fn detects_tampered_envelope() {
     let store = VectorStore::builder()
         .with_fs_root(&root)
         .with_encrypter(Arc::new(AesGcmEncrypter::new()))
-        .with_key_manager(Arc::new(InMemoryKeyManager::new("k1")))
+        .with_key_manager(Arc::new(InMemoryKeyManager::new_with_secret(
+            "k1", [9u8; 32],
+        )))
         .build();
 
     let repo = "repo-tamper";

@@ -7,7 +7,7 @@ use storage_vector::store::{Store, VectorStore};
 
 #[test]
 fn rotates_keys_and_reads_old_records() {
-    let kms = Arc::new(InMemoryKeyManager::new("k1"));
+    let kms = Arc::new(InMemoryKeyManager::new_with_secret("k1", [1u8; 32]));
     let store = VectorStore::builder()
         .with_encrypter(Arc::new(AesGcmEncrypter::new()))
         .with_key_manager(kms.clone())
@@ -20,7 +20,7 @@ fn rotates_keys_and_reads_old_records() {
     store.upsert(repo, "a", &p1).expect("upsert a");
 
     // Rotate to K2
-    kms.set_current_id("k2");
+    kms.set_current("k2", [2u8; 32]);
 
     // Write under K2
     let p2 = b"beta".to_vec();

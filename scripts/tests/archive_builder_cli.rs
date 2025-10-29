@@ -4,6 +4,7 @@ use std::path::Path;
 
 use tempfile::tempdir;
 
+#[allow(deprecated)]
 fn cargo_bin() -> assert_cmd::Command {
     assert_cmd::Command::cargo_bin("archive_builder").expect("binary not built")
 }
