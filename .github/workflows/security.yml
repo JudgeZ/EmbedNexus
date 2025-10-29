@@ -65,7 +65,7 @@ jobs:
           mkdir -p artifacts/sbom
           python3 scripts/sbom_merge.py --out artifacts/sbom/zaevrynth.cdx.json
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cyclonedx-sbom
           path: artifacts/sbom/zaevrynth.cdx.json

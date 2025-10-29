@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload Windows fixture captures
         if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: windows-security-fixtures
           if-no-files-found: warn
@@ -192,7 +192,7 @@ jobs:
 
       - name: Upload fixture artifacts
         if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: fixture-regeneration-output
           if-no-files-found: warn
