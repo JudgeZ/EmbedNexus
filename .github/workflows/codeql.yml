@@ -11,22 +11,25 @@ permissions:
   security-events: write
   actions: read
 
+concurrency:
+  group: codeql-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
+        uses: github/codeql-action/init@4e94bd11f71e507f7f87df81788dff88d1dacbfb
         with:
           languages: rust
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v4
+        uses: github/codeql-action/autobuild@4e94bd11f71e507f7f87df81788dff88d1dacbfb
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
-
+        uses: github/codeql-action/analyze@4e94bd11f71e507f7f87df81788dff88d1dacbfb
