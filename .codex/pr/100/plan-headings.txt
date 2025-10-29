@@ -1,0 +1,7 @@
+# Phased Delivery Plan — Zævrynth
+## Guiding References
+## Milestone 1 — CI Hardening & Security Baseline (this PR)
+## Milestone 2 — Transport Spine & Offline Resilience
+## Milestone 3 — Encrypted Storage & Ledger Replay
+## Milestone 4 — Ingestion Pipeline & Routing Federation
+## Milestone 5 — Packaging & Client Matrix

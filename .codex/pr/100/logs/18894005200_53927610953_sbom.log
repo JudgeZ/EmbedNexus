@@ -1,0 +1,517 @@
+sbom	Set up job	﻿2025-10-29T01:16:18.0286795Z Current runner version: '2.328.0'
+sbom	Set up job	2025-10-29T01:16:18.0315545Z ##[group]Runner Image Provisioner
+sbom	Set up job	2025-10-29T01:16:18.0316388Z Hosted Compute Agent
+sbom	Set up job	2025-10-29T01:16:18.0316899Z Version: 20250912.392
+sbom	Set up job	2025-10-29T01:16:18.0317577Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
+sbom	Set up job	2025-10-29T01:16:18.0318236Z Build Date: 2025-09-12T15:23:14Z
+sbom	Set up job	2025-10-29T01:16:18.0318828Z ##[endgroup]
+sbom	Set up job	2025-10-29T01:16:18.0319697Z ##[group]Operating System
+sbom	Set up job	2025-10-29T01:16:18.0320701Z Ubuntu
+sbom	Set up job	2025-10-29T01:16:18.0321427Z 24.04.3
+sbom	Set up job	2025-10-29T01:16:18.0322151Z LTS
+sbom	Set up job	2025-10-29T01:16:18.0322875Z ##[endgroup]
+sbom	Set up job	2025-10-29T01:16:18.0323576Z ##[group]Runner Image
+sbom	Set up job	2025-10-29T01:16:18.0324498Z Image: ubuntu-24.04
+sbom	Set up job	2025-10-29T01:16:18.0325259Z Version: 20250929.60.1
+sbom	Set up job	2025-10-29T01:16:18.0326399Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
+sbom	Set up job	2025-10-29T01:16:18.0328155Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
+sbom	Set up job	2025-10-29T01:16:18.0329856Z ##[endgroup]
+sbom	Set up job	2025-10-29T01:16:18.0331841Z ##[group]GITHUB_TOKEN Permissions
+sbom	Set up job	2025-10-29T01:16:18.0333901Z Actions: write
+sbom	Set up job	2025-10-29T01:16:18.0334461Z Contents: read
+sbom	Set up job	2025-10-29T01:16:18.0335078Z Metadata: read
+sbom	Set up job	2025-10-29T01:16:18.0335535Z ##[endgroup]
+sbom	Set up job	2025-10-29T01:16:18.0337685Z Secret source: Actions
+sbom	Set up job	2025-10-29T01:16:18.0338691Z Prepare workflow directory
+sbom	Set up job	2025-10-29T01:16:18.0755153Z Prepare all required actions
+sbom	Set up job	2025-10-29T01:16:18.0794782Z Getting action download info
+sbom	Set up job	2025-10-29T01:16:18.5397868Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+sbom	Set up job	2025-10-29T01:16:18.6991913Z Download action repository 'dtolnay/rust-toolchain@stable' (SHA:5d458579430fc14a04a08a1e7d3694f545e91ce6)
+sbom	Set up job	2025-10-29T01:16:19.0831495Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+sbom	Set up job	2025-10-29T01:16:19.3719575Z Complete job name: sbom
+sbom	Run actions/checkout@v4	﻿2025-10-29T01:16:19.4503274Z ##[group]Run actions/checkout@v4
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4504517Z with:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4505216Z   repository: JudgeZ/Zaevrynth
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4506338Z   token: ***
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4507009Z   ssh-strict: true
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4507719Z   ssh-user: git
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4508488Z   persist-credentials: true
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4509309Z   clean: true
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4510026Z   sparse-checkout-cone-mode: true
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4511061Z   fetch-depth: 1
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4511758Z   fetch-tags: false
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4512492Z   show-progress: true
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4513220Z   lfs: false
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4513877Z   submodules: false
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4514618Z   set-safe-directory: true
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.4515718Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5588199Z Syncing repository: JudgeZ/Zaevrynth
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5590933Z ##[group]Getting Git version info
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5592289Z Working directory is '/home/runner/work/Zaevrynth/Zaevrynth'
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5594025Z [command]/usr/bin/git version
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5656102Z git version 2.51.0
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5683005Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5699388Z Temporarily overriding HOME='/home/runner/work/_temp/2e6ca167-5062-47a1-b9c5-137f26d22d4a' before making global git config changes
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5704178Z Adding repository directory to the temporary git global config as a safe directory
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5707820Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Zaevrynth/Zaevrynth
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5742458Z Deleting the contents of '/home/runner/work/Zaevrynth/Zaevrynth'
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5746273Z ##[group]Initializing the repository
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5751551Z [command]/usr/bin/git init /home/runner/work/Zaevrynth/Zaevrynth
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5851663Z hint: Using 'master' as the name for the initial branch. This default branch name
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5853831Z hint: is subject to change. To configure the initial branch name to use in all
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5856434Z hint: of your new repositories, which will suppress this warning, call:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5859039Z hint:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5860951Z hint: 	git config --global init.defaultBranch <name>
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5862864Z hint:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5864572Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5867546Z hint: 'development'. The just-created branch can be renamed via this command:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5869934Z hint:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5871277Z hint: 	git branch -m <name>
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5872584Z hint:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5874390Z hint: Disable this message with "git config set advice.defaultBranchName false"
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5876434Z Initialized empty Git repository in /home/runner/work/Zaevrynth/Zaevrynth/.git/
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5879287Z [command]/usr/bin/git remote add origin https://github.com/JudgeZ/Zaevrynth
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5908324Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5910737Z ##[group]Disabling automatic garbage collection
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5912848Z [command]/usr/bin/git config --local gc.auto 0
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5942657Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5944821Z ##[group]Setting up auth
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5950591Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.5982768Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.6325851Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.6359004Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.6580797Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.6616653Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.6619261Z ##[group]Fetching the repository
+sbom	Run actions/checkout@v4	2025-10-29T01:16:19.6629723Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +5ebc2be37ea72477a2f61c63c15649ae0870237e:refs/remotes/pull/100/merge
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1330015Z From https://github.com/JudgeZ/Zaevrynth
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1332184Z  * [new ref]         5ebc2be37ea72477a2f61c63c15649ae0870237e -> pull/100/merge
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1369301Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1371063Z ##[group]Determining the checkout info
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1373023Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1379573Z [command]/usr/bin/git sparse-checkout disable
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1427326Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1456290Z ##[group]Checking out the ref
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1459406Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/100/merge
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1648028Z Note: switching to 'refs/remotes/pull/100/merge'.
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1649135Z 
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1649823Z You are in 'detached HEAD' state. You can look around, make experimental
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1652848Z changes and commit them, and you can discard any commits you make in this
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1655476Z state without impacting any branches by switching back to a branch.
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1657263Z 
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1658369Z If you want to create a new branch to retain commits you create, you may
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1661206Z do so (now or later) by using -c with the switch command. Example:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1662864Z 
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1663571Z   git switch -c <new-branch-name>
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1664516Z 
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1665075Z Or undo this operation with:
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1665956Z 
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1666423Z   git switch -
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1667131Z 
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1668354Z Turn off this advice by setting config variable advice.detachedHead to false
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1669997Z 
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1671474Z HEAD is now at 5ebc2be Merge bf35949ffc87d13554013b7401b9099e7701238d into 0f397dec735c5b9075813bdf7348ae7f02f6e479
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1675733Z ##[endgroup]
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1698819Z [command]/usr/bin/git log -1 --format=%H
+sbom	Run actions/checkout@v4	2025-10-29T01:16:20.1722309Z 5ebc2be37ea72477a2f61c63c15649ae0870237e
+sbom	Run dtolnay/rust-toolchain@stable	﻿2025-10-29T01:16:20.2163415Z ##[group]Run dtolnay/rust-toolchain@stable
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2164518Z with:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2165236Z   toolchain: stable
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2166011Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2322136Z ##[group]Run : parse toolchain version
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2323289Z [36;1m: parse toolchain version[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2324286Z [36;1mif [[ -z $toolchain ]]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2325955Z [36;1m  # GitHub does not enforce `required: true` inputs itself. https://github.com/actions/runner/issues/1070[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2327746Z [36;1m  echo "'toolchain' is a required input" >&2[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2328787Z [36;1m  exit 1[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2329886Z [36;1melif [[ $toolchain =~ ^stable' '[0-9]+' '(year|month|week|day)s?' 'ago$ ]]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2331420Z [36;1m  if [[ Linux == macOS ]]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2333058Z [36;1m    echo "toolchain=1.$((($(date -v-$(sed 's/stable \([0-9]*\) \(.\).*/\1\2/' <<< $toolchain) +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2404088Z [36;1m  else[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2405906Z [36;1m    echo "toolchain=1.$((($(date --date "${toolchain#stable }" +%s)/60/60/24-16569)/7/6))" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2407472Z [36;1m  fi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2408508Z [36;1melif [[ $toolchain =~ ^stable' 'minus' '[0-9]+' 'releases?$ ]]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2410523Z [36;1m  echo "toolchain=1.$((($(date +%s)/60/60/24-16569)/7/6-${toolchain//[^0-9]/}))" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2412158Z [36;1melif [[ $toolchain =~ ^1\.[0-9]+$ ]]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2413873Z [36;1m  echo "toolchain=1.$((i=${toolchain#1.}, c=($(date +%s)/60/60/24-16569)/7/6, i+9*i*(10*i<=c)+90*i*(100*i<=c)))" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2415495Z [36;1melse[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2416371Z [36;1m  echo "toolchain=$toolchain" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2417426Z [36;1mfi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2457837Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2459048Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2459731Z   toolchain: stable
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2460755Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2641770Z ##[group]Run : construct rustup command line
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2642907Z [36;1m: construct rustup command line[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2644354Z [36;1mecho "targets=$(for t in ${targets//,/ }; do echo -n ' --target' $t; done)" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2646365Z [36;1mecho "components=$(for c in ${components//,/ }; do echo -n ' --component' $c; done)" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2647967Z [36;1mecho "downgrade=" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2681705Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2682823Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2683476Z   targets: 
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2684198Z   components: 
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2684910Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2796485Z ##[group]Run : set $CARGO_HOME
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2797368Z [36;1m: set $CARGO_HOME[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2798456Z [36;1mecho CARGO_HOME=${CARGO_HOME:-"$HOME/.cargo"} >> $GITHUB_ENV[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2830081Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2831412Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2945724Z ##[group]Run : install rustup if needed
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2946743Z [36;1m: install rustup if needed[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2947730Z [36;1mif ! command -v rustup &>/dev/null; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2950051Z [36;1m  curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --location --silent --show-error --fail https://sh.rustup.rs | sh -s -- --default-toolchain none -y[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2952449Z [36;1m  echo "$CARGO_HOME/bin" >> $GITHUB_PATH[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2953422Z [36;1mfi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2984608Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2985885Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2986570Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.2987428Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.3103078Z ##[group]Run rustup toolchain install stable --profile minimal --no-self-update
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.3105043Z [36;1mrustup toolchain install stable --profile minimal --no-self-update[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.3137336Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.3138438Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.3139112Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:20.3139966Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.8709199Z info: syncing channel updates for 'stable-x86_64-unknown-linux-gnu'
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9515737Z 
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9614341Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.90.0 (1159e78c4 2025-09-14)
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9614949Z 
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9675326Z ##[group]Run rustup default stable
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9675664Z [36;1mrustup default stable[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9710436Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9710825Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9711045Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9711336Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:21.9817177Z info: using existing install for 'stable-x86_64-unknown-linux-gnu'
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0201289Z info: default toolchain set to 'stable-x86_64-unknown-linux-gnu'
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0201757Z 
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0296866Z   stable-x86_64-unknown-linux-gnu unchanged - rustc 1.90.0 (1159e78c4 2025-09-14)
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0297571Z 
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0299587Z info: note that the toolchain '1.82.0-x86_64-unknown-linux-gnu' is currently in use (overridden by '/home/runner/work/Zaevrynth/Zaevrynth/rust-toolchain.toml')
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0349552Z ##[group]Run : create cachekey
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0349878Z [36;1m: create cachekey[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0350629Z [36;1mDATE=$(rustc +stable --version --verbose | sed -ne 's/^commit-date: \(20[0-9][0-9]\)-\([01][0-9]\)-\([0-3][0-9]\)$/\1\2\3/p')[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0351314Z [36;1mHASH=$(rustc +stable --version --verbose | sed -ne 's/^commit-hash: //p')[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0351827Z [36;1mecho "cachekey=$(echo $DATE$HASH | head -c12)" >> $GITHUB_OUTPUT[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0386159Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0386536Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0386765Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.0387033Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1185126Z ##[group]Run : disable incremental compilation
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1185549Z [36;1m: disable incremental compilation[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1185911Z [36;1mif [ -z "${CARGO_INCREMENTAL+set}" ]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1186277Z [36;1m  echo CARGO_INCREMENTAL=0 >> $GITHUB_ENV[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1186585Z [36;1mfi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1221123Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1221522Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1221750Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1222044Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1306747Z ##[group]Run : enable colors in Cargo output
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1307168Z [36;1m: enable colors in Cargo output[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1307518Z [36;1mif [ -z "${CARGO_TERM_COLOR+set}" ]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1307922Z [36;1m  echo CARGO_TERM_COLOR=always >> $GITHUB_ENV[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1308237Z [36;1mfi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1342037Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1342438Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1342669Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1342966Z   CARGO_INCREMENTAL: 0
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1343208Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1431838Z ##[group]Run : enable Cargo sparse registry
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1432233Z [36;1m: enable Cargo sparse registry[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1432622Z [36;1m# implemented in 1.66, stabilized in 1.68, made default in 1.70[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1433344Z [36;1mif [ -z "${CARGO_REGISTRIES_CRATES_IO_PROTOCOL+set}" -o -f "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol ]; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1434372Z [36;1m  if rustc +stable --version --verbose | grep -q '^release: 1\.6[89]\.'; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1434957Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1435689Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse >> $GITHUB_ENV[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1436199Z [36;1m  elif rustc +stable --version --verbose | grep -q '^release: 1\.6[67]\.'; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1436781Z [36;1m    touch "/home/runner/work/_temp"/.implicit_cargo_registries_crates_io_protocol || true[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1437309Z [36;1m    echo CARGO_REGISTRIES_CRATES_IO_PROTOCOL=git >> $GITHUB_ENV[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1437675Z [36;1m  fi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1437895Z [36;1mfi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1472637Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1473021Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1473247Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1473539Z   CARGO_INCREMENTAL: 0
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1473790Z   CARGO_TERM_COLOR: always
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1474035Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1864320Z ##[group]Run : work around spurious network errors in curl 8.0
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1864846Z [36;1m: work around spurious network errors in curl 8.0[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1865443Z [36;1m# https://rust-lang.zulipchat.com/#narrow/stream/246057-t-cargo/topic/timeout.20investigation[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1866108Z [36;1mif rustc +stable --version --verbose | grep -q '^release: 1\.7[01]\.'; then[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1866585Z [36;1m  echo CARGO_HTTP_MULTIPLEXING=false >> $GITHUB_ENV[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1866931Z [36;1mfi[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1903549Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1903933Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1904185Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1904475Z   CARGO_INCREMENTAL: 0
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1904734Z   CARGO_TERM_COLOR: always
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.1905008Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2172048Z ##[group]Run rustc +stable --version --verbose
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2172455Z [36;1mrustc +stable --version --verbose[0m
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2208554Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2208950Z env:
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2209187Z   CARGO_HOME: /home/runner/.cargo
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2209474Z   CARGO_INCREMENTAL: 0
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2209732Z   CARGO_TERM_COLOR: always
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2209992Z ##[endgroup]
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2395139Z rustc 1.90.0 (1159e78c4 2025-09-14)
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2396013Z binary: rustc
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2396641Z commit-hash: 1159e78c4747b02ef996e55082b704c09b970588
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2397176Z commit-date: 2025-09-14
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2397480Z host: x86_64-unknown-linux-gnu
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2397775Z release: 1.90.0
+sbom	Run dtolnay/rust-toolchain@stable	2025-10-29T01:16:22.2398066Z LLVM version: 20.1.8
+sbom	Install CycloneDX plugin	﻿2025-10-29T01:16:22.2484776Z ##[group]Run cargo install cargo-cyclonedx --locked
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2485279Z [36;1mcargo install cargo-cyclonedx --locked[0m
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2522390Z shell: /usr/bin/bash -e {0}
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2522678Z env:
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2522912Z   CARGO_HOME: /home/runner/.cargo
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2523199Z   CARGO_INCREMENTAL: 0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2523466Z   CARGO_TERM_COLOR: always
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2523729Z ##[endgroup]
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.2631570Z info: syncing channel updates for '1.82.0-x86_64-unknown-linux-gnu'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.3252088Z info: latest update on 2024-10-17, rust version 1.82.0 (f6e511eec 2024-10-15)
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.3252920Z info: downloading component 'cargo'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.3843462Z info: downloading component 'clippy'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.4074148Z info: downloading component 'rust-std'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.5483702Z info: downloading component 'rustc'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.8525748Z info: downloading component 'rustfmt'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:22.8737908Z info: installing component 'cargo'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:23.5113738Z info: installing component 'clippy'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:23.7757012Z info: installing component 'rust-std'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:25.5579947Z info: installing component 'rustc'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:29.9069425Z info: installing component 'rustfmt'
+sbom	Install CycloneDX plugin	2025-10-29T01:16:30.2221761Z [1m[32m    Updating[0m crates.io index
+sbom	Install CycloneDX plugin	2025-10-29T01:16:30.3360020Z [1m[32m Downloading[0m crates ...
+sbom	Install CycloneDX plugin	2025-10-29T01:16:30.5382215Z [1m[32m  Downloaded[0m cargo-cyclonedx v0.5.7
+sbom	Install CycloneDX plugin	2025-10-29T01:16:30.5579193Z [1m[32m  Installing[0m cargo-cyclonedx v0.5.7
+sbom	Install CycloneDX plugin	2025-10-29T01:16:30.5601402Z [1m[32m    Updating[0m crates.io index
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.0881061Z [1m[32m    Updating[0m crates.io index
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2011425Z [1m[32m Downloading[0m crates ...
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2736430Z [1m[32m  Downloaded[0m cyclonedx-bom-macros v0.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2762508Z [1m[32m  Downloaded[0m heck v0.4.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2784365Z [1m[32m  Downloaded[0m anstyle-query v1.0.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2827977Z [1m[32m  Downloaded[0m log v0.4.20
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2857043Z [1m[32m  Downloaded[0m unicode-bidi v0.3.13
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2884136Z [1m[32m  Downloaded[0m camino v1.1.6
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2906385Z [1m[32m  Downloaded[0m clap_builder v4.4.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.2984530Z [1m[32m  Downloaded[0m regex v1.10.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3137801Z [1m[32m  Downloaded[0m thiserror v1.0.57
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3194033Z [1m[32m  Downloaded[0m anstyle v1.0.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3208444Z [1m[32m  Downloaded[0m anstream v0.6.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3228200Z [1m[32m  Downloaded[0m regex-syntax v0.8.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3313038Z [1m[32m  Downloaded[0m idna v0.4.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3457160Z [1m[32m  Downloaded[0m autocfg v1.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3478291Z [1m[32m  Downloaded[0m bitflags v2.4.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3639898Z [1m[32m  Downloaded[0m cfg-if v1.0.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3770817Z [1m[32m  Downloaded[0m aho-corasick v1.1.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3836810Z [1m[32m  Downloaded[0m base64 v0.21.5
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3893974Z [1m[32m  Downloaded[0m anstyle-parse v0.2.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3962472Z [1m[32m  Downloaded[0m clap_lex v0.6.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.3993285Z [1m[32m  Downloaded[0m colorchoice v1.0.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4002050Z [1m[32m  Downloaded[0m clap v4.4.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4103045Z [1m[32m  Downloaded[0m lazy_static v1.4.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4118365Z [1m[32m  Downloaded[0m form_urlencoded v1.2.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4127199Z [1m[32m  Downloaded[0m errno v0.3.6
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4141800Z [1m[32m  Downloaded[0m env_logger v0.10.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4176132Z [1m[32m  Downloaded[0m equivalent v1.0.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4187675Z [1m[32m  Downloaded[0m percent-encoding v2.3.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4196297Z [1m[32m  Downloaded[0m once_cell v1.18.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4225963Z [1m[32m  Downloaded[0m semver v1.0.23
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4253598Z [1m[32m  Downloaded[0m quote v1.0.35
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4284854Z [1m[32m  Downloaded[0m memchr v2.6.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4348177Z [1m[32m  Downloaded[0m num-conv v0.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4356801Z [1m[32m  Downloaded[0m deranged v0.3.9
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4372302Z [1m[32m  Downloaded[0m ryu v1.0.15
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4405287Z [1m[32m  Downloaded[0m is-terminal v0.4.9
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4418063Z [1m[32m  Downloaded[0m num-traits v0.2.19
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4446795Z [1m[32m  Downloaded[0m hashbrown v0.14.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4511550Z [1m[32m  Downloaded[0m rand_core v0.6.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4526484Z [1m[32m  Downloaded[0m purl v0.1.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4545269Z [1m[32m  Downloaded[0m rustversion v1.0.15
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4576831Z [1m[32m  Downloaded[0m phf v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4590005Z [1m[32m  Downloaded[0m ordered-float v4.2.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4609591Z [1m[32m  Downloaded[0m tinyvec_macros v0.1.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4618436Z [1m[32m  Downloaded[0m serde_derive v1.0.210
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4649935Z [1m[32m  Downloaded[0m humantime v2.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4665407Z [1m[32m  Downloaded[0m powerfmt v0.2.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4677371Z [1m[32m  Downloaded[0m phf_generator v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4692745Z [1m[32m  Downloaded[0m time-core v0.1.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4701881Z [1m[32m  Downloaded[0m strum v0.26.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4712943Z [1m[32m  Downloaded[0m version_check v0.9.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4726444Z [1m[32m  Downloaded[0m rand v0.8.5
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4772047Z [1m[32m  Downloaded[0m uuid v1.6.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4824860Z [1m[32m  Downloaded[0m url v2.5.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4859558Z [1m[32m  Downloaded[0m xml-rs v0.8.19
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4898994Z [1m[32m  Downloaded[0m idna v0.5.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.4976412Z [1m[32m  Downloaded[0m toml v0.8.19
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5017829Z [1m[32m  Downloaded[0m toml_edit v0.22.20
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5300942Z [1m[32m  Downloaded[0m unicode-normalization v0.1.22
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5344339Z [1m[32m  Downloaded[0m time v0.3.36
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5424935Z [1m[32m  Downloaded[0m winnow v0.6.20
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5523634Z [1m[32m  Downloaded[0m serde_json v1.0.108
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5613901Z [1m[32m  Downloaded[0m unicode-ident v1.0.12
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5645764Z [1m[32m  Downloaded[0m rustix v0.38.21
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.5920818Z [1m[32m  Downloaded[0m syn v2.0.50
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6034922Z [1m[32m  Downloaded[0m tinyvec v1.6.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6068082Z [1m[32m  Downloaded[0m termcolor v1.3.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6083244Z [1m[32m  Downloaded[0m strum_macros v0.26.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6109046Z [1m[32m  Downloaded[0m smallvec v1.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6133993Z [1m[32m  Downloaded[0m utf8parse v0.2.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6145614Z [1m[32m  Downloaded[0m unicase v2.7.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6161933Z [1m[32m  Downloaded[0m spdx v0.10.6
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6799545Z [1m[32m  Downloaded[0m toml_datetime v0.6.8
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6811928Z [1m[32m  Downloaded[0m time-macros v0.2.18
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6836393Z [1m[32m  Downloaded[0m serde v1.0.210
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6872229Z [1m[32m  Downloaded[0m thiserror-impl v1.0.57
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.6886529Z [1m[32m  Downloaded[0m regex-automata v0.4.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7074515Z [1m[32m  Downloaded[0m strsim v0.10.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7088789Z [1m[32m  Downloaded[0m siphasher v0.3.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7101886Z [1m[32m  Downloaded[0m libc v0.2.150
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7423220Z [1m[32m  Downloaded[0m serde_spanned v0.6.8
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7434608Z [1m[32m  Downloaded[0m phf_shared v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7444527Z [1m[32m  Downloaded[0m cyclonedx-bom v0.8.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7601722Z [1m[32m  Downloaded[0m proc-macro2 v1.0.78
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7630517Z [1m[32m  Downloaded[0m validator v0.16.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7649155Z [1m[32m  Downloaded[0m phf_macros v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7656800Z [1m[32m  Downloaded[0m itoa v1.0.9
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7670583Z [1m[32m  Downloaded[0m hex v0.4.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7686503Z [1m[32m  Downloaded[0m pathdiff v0.2.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7696131Z [1m[32m  Downloaded[0m indexmap v2.2.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7739125Z [1m[32m  Downloaded[0m fluent-uri v0.1.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7764021Z [1m[32m  Downloaded[0m clap_derive v4.4.7
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7785523Z [1m[32m  Downloaded[0m cargo_metadata v0.18.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7805207Z [1m[32m  Downloaded[0m cargo-platform v0.1.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7817179Z [1m[32m  Downloaded[0m cargo-lock v10.0.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7846109Z [1m[32m  Downloaded[0m bitflags v1.3.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7879527Z [1m[32m  Downloaded[0m anyhow v1.0.80
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7920709Z [1m[32m  Downloaded[0m getrandom v0.2.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.7955025Z [1m[32m  Downloaded[0m linux-raw-sys v0.4.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.8623670Z [1m[32m   Compiling[0m proc-macro2 v1.0.78
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.8624367Z [1m[32m   Compiling[0m unicode-ident v1.0.12
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.8624916Z [1m[32m   Compiling[0m serde v1.0.210
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.8625457Z [1m[32m   Compiling[0m version_check v0.9.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.9187801Z [1m[32m   Compiling[0m tinyvec_macros v0.1.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:31.9464532Z [1m[32m   Compiling[0m tinyvec v1.6.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.0674905Z [1m[32m   Compiling[0m unicase v2.7.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.2738622Z [1m[32m   Compiling[0m rand_core v0.6.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.3660476Z [1m[32m   Compiling[0m siphasher v0.3.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.4406914Z [1m[32m   Compiling[0m percent-encoding v2.3.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.5015228Z [1m[32m   Compiling[0m memchr v2.6.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.5795031Z [1m[32m   Compiling[0m phf_shared v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.6965915Z [1m[32m   Compiling[0m quote v1.0.35
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.7173399Z [1m[32m   Compiling[0m unicode-normalization v0.1.22
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.8862847Z [1m[32m   Compiling[0m syn v2.0.50
+sbom	Install CycloneDX plugin	2025-10-29T01:16:32.9120418Z [1m[32m   Compiling[0m rand v0.8.5
+sbom	Install CycloneDX plugin	2025-10-29T01:16:33.2530740Z [1m[32m   Compiling[0m aho-corasick v1.1.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:33.4033160Z [1m[32m   Compiling[0m rustversion v1.0.15
+sbom	Install CycloneDX plugin	2025-10-29T01:16:33.4286112Z [1m[32m   Compiling[0m heck v0.4.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:33.5770527Z [1m[32m   Compiling[0m hashbrown v0.14.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:33.6364697Z [1m[32m   Compiling[0m regex-syntax v0.8.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:34.2258007Z [1m[32m   Compiling[0m itoa v1.0.9
+sbom	Install CycloneDX plugin	2025-10-29T01:16:34.3091561Z [1m[32m   Compiling[0m unicode-bidi v0.3.13
+sbom	Install CycloneDX plugin	2025-10-29T01:16:35.2320574Z [1m[32m   Compiling[0m serde_json v1.0.108
+sbom	Install CycloneDX plugin	2025-10-29T01:16:35.3619217Z [1m[32m   Compiling[0m autocfg v1.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:35.6378518Z [1m[32m   Compiling[0m equivalent v1.0.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:35.7036122Z [1m[32m   Compiling[0m libc v0.2.150
+sbom	Install CycloneDX plugin	2025-10-29T01:16:35.9604320Z [1m[32m   Compiling[0m thiserror v1.0.57
+sbom	Install CycloneDX plugin	2025-10-29T01:16:36.2080752Z [1m[32m   Compiling[0m indexmap v2.2.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:36.6914278Z [1m[32m   Compiling[0m num-traits v0.2.19
+sbom	Install CycloneDX plugin	2025-10-29T01:16:36.8221224Z [1m[32m   Compiling[0m regex-automata v0.4.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.0521644Z [1m[32m   Compiling[0m phf_generator v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.2456917Z [1m[32m   Compiling[0m ryu v1.0.15
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.4200050Z [1m[32m   Compiling[0m semver v1.0.23
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.6024647Z [1m[32m   Compiling[0m rustix v0.38.21
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.8672931Z [1m[32m   Compiling[0m utf8parse v0.2.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.9181166Z [1m[32m   Compiling[0m camino v1.1.6
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.9369011Z [1m[32m   Compiling[0m anstyle-parse v0.2.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:37.9842530Z [1m[32m   Compiling[0m serde_derive v1.0.210
+sbom	Install CycloneDX plugin	2025-10-29T01:16:38.0634202Z [1m[32m   Compiling[0m thiserror-impl v1.0.57
+sbom	Install CycloneDX plugin	2025-10-29T01:16:38.1455123Z [1m[32m   Compiling[0m phf_macros v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:39.0926622Z [1m[32m   Compiling[0m regex v1.10.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:39.9438403Z [1m[32m   Compiling[0m idna v0.5.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:40.4113389Z [1m[32m   Compiling[0m form_urlencoded v1.2.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:40.5948858Z [1m[32m   Compiling[0m winnow v0.6.20
+sbom	Install CycloneDX plugin	2025-10-29T01:16:40.9941397Z [1m[32m   Compiling[0m anstyle-query v1.0.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:41.0377961Z [1m[32m   Compiling[0m anstyle v1.0.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:41.1974746Z [1m[32m   Compiling[0m colorchoice v1.0.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:41.2376369Z [1m[32m   Compiling[0m bitflags v2.4.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:41.3810761Z [1m[32m   Compiling[0m linux-raw-sys v0.4.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:41.7856435Z [1m[32m   Compiling[0m powerfmt v0.2.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:41.9372992Z [1m[32m   Compiling[0m cfg-if v1.0.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:41.9923654Z [1m[32m   Compiling[0m getrandom v0.2.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:42.1613578Z [1m[32m   Compiling[0m deranged v0.3.9
+sbom	Install CycloneDX plugin	2025-10-29T01:16:43.0410454Z [1m[32m   Compiling[0m anstream v0.6.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:43.3472777Z [1m[32m   Compiling[0m url v2.5.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:43.7073502Z [1m[32m   Compiling[0m strum_macros v0.26.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:44.1657392Z [1m[32m   Compiling[0m phf v0.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:44.2936765Z [1m[32m   Compiling[0m toml_datetime v0.6.8
+sbom	Install CycloneDX plugin	2025-10-29T01:16:44.3781517Z [1m[32m   Compiling[0m serde_spanned v0.6.8
+sbom	Install CycloneDX plugin	2025-10-29T01:16:44.4934353Z [1m[32m   Compiling[0m toml_edit v0.22.20
+sbom	Install CycloneDX plugin	2025-10-29T01:16:45.8501741Z [1m[32m   Compiling[0m time-core v0.1.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:45.8965173Z [1m[32m   Compiling[0m bitflags v1.3.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:45.9061381Z [1m[32m   Compiling[0m strsim v0.10.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:45.9295919Z [1m[32m   Compiling[0m smallvec v1.11.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:46.1241570Z [1m[32m   Compiling[0m hex v0.4.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:46.2859202Z [1m[32m   Compiling[0m clap_lex v0.6.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:46.3702135Z [1m[32m   Compiling[0m anyhow v1.0.80
+sbom	Install CycloneDX plugin	2025-10-29T01:16:46.4394241Z [1m[32m   Compiling[0m num-conv v0.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:46.4937972Z [1m[32m   Compiling[0m clap_builder v4.4.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:46.5439463Z [1m[32m   Compiling[0m time v0.3.36
+sbom	Install CycloneDX plugin	2025-10-29T01:16:46.6185897Z [1m[32m   Compiling[0m purl v0.1.3
+sbom	Install CycloneDX plugin	2025-10-29T01:16:47.7213491Z [1m[32m   Compiling[0m toml v0.8.19
+sbom	Install CycloneDX plugin	2025-10-29T01:16:49.3340991Z [1m[32m   Compiling[0m spdx v0.10.6
+sbom	Install CycloneDX plugin	2025-10-29T01:16:49.8363377Z [1m[32m   Compiling[0m fluent-uri v0.1.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:50.0168071Z [1m[32m   Compiling[0m strum v0.26.2
+sbom	Install CycloneDX plugin	2025-10-29T01:16:50.0717162Z [1m[32m   Compiling[0m cargo-platform v0.1.4
+sbom	Install CycloneDX plugin	2025-10-29T01:16:50.2737990Z [1m[32m   Compiling[0m ordered-float v4.2.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:50.3655890Z [1m[32m   Compiling[0m is-terminal v0.4.9
+sbom	Install CycloneDX plugin	2025-10-29T01:16:50.3990161Z [1m[32m   Compiling[0m uuid v1.6.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:50.5078282Z [1m[32m   Compiling[0m clap_derive v4.4.7
+sbom	Install CycloneDX plugin	2025-10-29T01:16:50.7266229Z [1m[32m   Compiling[0m cyclonedx-bom-macros v0.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:51.0133696Z [1m[32m   Compiling[0m idna v0.4.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.0590799Z [1m[32m   Compiling[0m log v0.4.20
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.1967690Z [1m[32m   Compiling[0m base64 v0.21.5
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.2266306Z [1m[32m   Compiling[0m termcolor v1.3.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.5368466Z [1m[32m   Compiling[0m once_cell v1.18.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.5589275Z [1m[32m   Compiling[0m humantime v2.1.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.6090480Z [1m[32m   Compiling[0m lazy_static v1.4.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.6487306Z [1m[32m   Compiling[0m xml-rs v0.8.19
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.6857819Z [1m[32m   Compiling[0m env_logger v0.10.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:52.7941899Z [1m[32m   Compiling[0m validator v0.16.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:53.0329138Z [1m[32m   Compiling[0m clap v4.4.11
+sbom	Install CycloneDX plugin	2025-10-29T01:16:53.0707897Z [1m[32m   Compiling[0m cargo_metadata v0.18.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:53.6942261Z [1m[32m   Compiling[0m cyclonedx-bom v0.8.0
+sbom	Install CycloneDX plugin	2025-10-29T01:16:53.9225285Z [1m[32m   Compiling[0m cargo-lock v10.0.1
+sbom	Install CycloneDX plugin	2025-10-29T01:16:54.8012880Z [1m[32m   Compiling[0m pathdiff v0.2.1
+sbom	Install CycloneDX plugin	2025-10-29T01:17:00.7616552Z [1m[32m   Compiling[0m cargo-cyclonedx v0.5.7
+sbom	Install CycloneDX plugin	2025-10-29T01:17:31.8192738Z [1m[32m    Finished[0m `release` profile [optimized] target(s) in 1m 01s
+sbom	Install CycloneDX plugin	2025-10-29T01:17:31.8271447Z [1m[32m  Installing[0m /home/runner/.cargo/bin/cargo-cyclonedx
+sbom	Install CycloneDX plugin	2025-10-29T01:17:31.8275277Z [1m[32m   Installed[0m package `cargo-cyclonedx v0.5.7` (executable `cargo-cyclonedx`)
+sbom	Generate CycloneDX SBOM	﻿2025-10-29T01:17:31.9031846Z ##[group]Run cargo +stable cyclonedx --workspace --all-features --output sbom.xml
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:31.9032429Z [36;1mcargo +stable cyclonedx --workspace --all-features --output sbom.xml[0m
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:31.9063708Z shell: /usr/bin/bash -e {0}
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:31.9063944Z env:
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:31.9064130Z   CARGO_HOME: /home/runner/.cargo
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:31.9064380Z   CARGO_INCREMENTAL: 0
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:31.9064580Z   CARGO_TERM_COLOR: always
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:31.9064787Z ##[endgroup]
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:32.5011343Z error: unexpected argument '--workspace' found
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:32.5011807Z 
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:32.5011941Z Usage: cargo cyclonedx [OPTIONS]
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:32.5012137Z 
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:32.5012250Z For more information, try '--help'.
+sbom	Generate CycloneDX SBOM	2025-10-29T01:17:32.5026109Z ##[error]Process completed with exit code 2.
+sbom	Post Run actions/checkout@v4	﻿2025-10-29T01:17:32.5119712Z Post job cleanup.
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6054946Z [command]/usr/bin/git version
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6097162Z git version 2.51.0
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6140564Z Temporarily overriding HOME='/home/runner/work/_temp/e1df8a72-bc7a-4465-9c3c-f26db56c283a' before making global git config changes
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6142212Z Adding repository directory to the temporary git global config as a safe directory
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6146751Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Zaevrynth/Zaevrynth
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6180882Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6213235Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6442952Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6464364Z http.https://github.com/.extraheader
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6476899Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+sbom	Post Run actions/checkout@v4	2025-10-29T01:17:32.6506847Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+sbom	Complete job	﻿2025-10-29T01:17:32.6828698Z Cleaning up orphan processes

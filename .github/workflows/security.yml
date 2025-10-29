@@ -49,6 +49,9 @@ jobs:
           args: detect --source . --no-git --redact --config .gitleaks.toml
 
   sbom:
+    permissions:
+      contents: read
+      actions: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -56,7 +59,7 @@ jobs:
       - name: Install CycloneDX plugin
         run: cargo install cargo-cyclonedx --locked --version 0.6.2
       - name: Generate CycloneDX SBOM
-        run: cargo cyclonedx --workspace --all-features --format xml --output sbom.xml
+        run: cargo cyclonedx --all-features --format xml --output sbom.xml
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
         with:

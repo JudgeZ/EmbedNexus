@@ -1,0 +1,20 @@
+{
+  "number": 100,
+  "title": "Milestone 1 \u2014 CI/Security Baseline",
+  "state": "OPEN",
+  "draft": false,
+  "head": "feat/m1-ci-security-baseline",
+  "base": "main",
+  "url": "https://github.com/JudgeZ/Zaevrynth/pull/100",
+  "meta": {
+    "files": 11,
+    "additions": 382,
+    "deletions": 0
+  },
+  "diff": {
+    "files": 16,
+    "additions": 2814,
+    "deletions": 2432
+  },
+  "generated_at": "2025-10-29T01:12:51.228493Z"
+}
