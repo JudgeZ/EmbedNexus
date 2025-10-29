@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
@@ -26,7 +29,6 @@ jobs:
 
       - name: Cargo fmt
         if: runner.os == 'Linux'
-        continue-on-error: true
         run: cargo fmt --all -- --check
 
       - name: Cargo clippy

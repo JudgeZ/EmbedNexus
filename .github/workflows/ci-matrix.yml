@@ -34,7 +34,6 @@ jobs:
 
       - name: cargo fmt (check)
         if: runner.os == 'Linux'
-        continue-on-error: true
         run: cargo fmt --all -- --check
 
       - name: cargo clippy (deny warnings)

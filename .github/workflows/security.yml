@@ -58,11 +58,15 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Install CycloneDX plugin
         run: cargo install cargo-cyclonedx --locked --version 0.5.7
-      - name: Generate CycloneDX SBOM
-        run: cargo cyclonedx --all-features --format xml > sbom.xml
+      - name: Generate per-crate CycloneDX JSONs
+        run: cargo cyclonedx --all-features -f json -a
+      - name: Merge SBOMs into single JSON
+        run: |
+          mkdir -p artifacts/sbom
+          python3 scripts/sbom_merge.py --out artifacts/sbom/zaevrynth.cdx.json
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
         with:
           name: cyclonedx-sbom
-          path: sbom.xml
+          path: artifacts/sbom/zaevrynth.cdx.json
           if-no-files-found: error
