@@ -35,6 +35,6 @@ fn detects_tampered_envelope() {
     let res = store.get(repo, key);
     match res {
         Err(StoreError::Encryption(_)) => {}
-        other => panic!("expected encryption error, got: {:?}", other),
+        other => panic!("expected encryption error, got: {other:?}"),
     }
 }

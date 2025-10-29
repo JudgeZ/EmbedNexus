@@ -68,7 +68,8 @@ pub struct UdsRequest {
 }
 
 impl UdsRequest {
-    pub fn new(peer: PeerCredentials, token: String, payload: Value) -> Self {
+    #[must_use]
+    pub const fn new(peer: PeerCredentials, token: String, payload: Value) -> Self {
         Self {
             peer,
             token,
@@ -78,7 +79,7 @@ impl UdsRequest {
 }
 
 /// Telemetry event captured for auditing.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TelemetryEvent {
     pub kind: String,
     pub message: String,
@@ -101,7 +102,7 @@ impl TelemetrySink {
 }
 
 /// Errors produced by the adapter.
-#[derive(Debug, Error, PartialEq)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum TransportError {
     #[error("configuration error: {0}")]
     Configuration(String),
@@ -112,9 +113,10 @@ pub enum TransportError {
 }
 
 impl TransportError {
-    pub fn router_status_code(&self) -> Option<u16> {
+    #[must_use]
+    pub const fn router_status_code(&self) -> Option<u16> {
         match self {
-            TransportError::Router(err) => Some(err.status_code()),
+            Self::Router(err) => Some(err.status_code()),
             _ => None,
         }
     }
@@ -291,7 +293,7 @@ struct TokenSigner {
 }
 
 impl TokenSigner {
-    fn new(secret: String) -> Self {
+    const fn new(secret: String) -> Self {
         Self { secret }
     }
 

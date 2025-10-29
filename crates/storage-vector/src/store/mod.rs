@@ -132,9 +132,8 @@ impl Store for VectorStore {
                 .map_err(|e| StoreError::Io(e.to_string()))?;
             guard.insert((repo_id.to_string(), key.to_string()), payload.to_vec());
         }
-        let after = before.clone();
         let seq = self.next_sequence.fetch_add(1, Ordering::SeqCst);
-        Ok(build_replay_entry(seq, repo_id, &before, &after, "emitted"))
+        Ok(build_replay_entry(seq, repo_id, &before, &before, "emitted"))
     }
 
     fn get(&self, repo_id: &str, key: &str) -> Result<Option<Vec<u8>>, StoreError> {
@@ -174,13 +173,12 @@ impl Store for VectorStore {
                     .open(&kh, &bytes, &aad)
                     .map_err(StoreError::Encryption)?;
                 return Ok(Some(pt));
-            } else {
-                // Encryption is configured but the stored bytes are not a valid envelope.
-                // Treat as corruption/tampering rather than passing plaintext through.
-                return Err(StoreError::Encryption(
-                    "missing or invalid envelope".to_string(),
-                ));
             }
+            // Encryption is configured but the stored bytes are not a valid envelope.
+            // Treat as corruption/tampering rather than passing plaintext through.
+            return Err(StoreError::Encryption(
+                "missing or invalid envelope".to_string(),
+            ));
         }
         Ok(Some(bytes))
     }

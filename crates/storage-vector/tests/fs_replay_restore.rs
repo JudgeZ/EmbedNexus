@@ -16,7 +16,7 @@ fn fs_replay_restores_payloads_from_disk_and_advances_sequence() {
     // New instance with same root (simulates fresh process)
     let store2 = VectorStore::with_fs_root(&root);
     // Replay to restore sequence floor
-    let stats = store2.replay(vec![e2.clone(), e1.clone()]).unwrap();
+    let stats = store2.replay(vec![e2.clone(), e1]).unwrap();
     assert_eq!(stats.max_sequence, Some(e2.sequence));
 
     // Payloads should already be readable from disk

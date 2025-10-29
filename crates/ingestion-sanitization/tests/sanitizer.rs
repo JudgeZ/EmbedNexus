@@ -46,7 +46,7 @@ fn sanitizer_redacts_secret_tokens() {
 #[test]
 fn sanitizer_flags_script_with_shebang() {
     let plan = build_plan();
-    let chunk = PlannedChunk::new(plan.clone(), "#!/bin/bash\necho SECRET");
+    let chunk = PlannedChunk::new(plan, "#!/bin/bash\necho SECRET");
     let sanitizer = Sanitizer::new(SanitizationConfig::default());
     let sanitized = sanitizer
         .apply(&chunk)

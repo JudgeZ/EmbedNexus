@@ -137,7 +137,7 @@ fn archive_quota_violation_matches_fixture() {
         repo_type: RepoType::Archive,
         manifest_cursor: None,
         ignore_stack: vec![IgnoreRule::new(IgnoreSource::Global, "node_modules")],
-        archives: vec![archive.clone()],
+        archives: vec![archive],
         latency_windows: vec![],
         files: vec![WorkspaceFile::new("archive.tar", "placeholder")],
     };
@@ -159,10 +159,9 @@ fn archive_quota_violation_matches_fixture() {
             assert_eq!(diagnostics.entries_observed, 22);
             assert!(diagnostics
                 .latency_budget_ms
-                .map(|value| value >= profile.latency_budget_ms)
-                .unwrap_or(false));
+                .is_some_and(|value| value >= profile.latency_budget_ms));
         }
-        other => panic!("unexpected planner result: {:?}", other),
+        other => panic!("unexpected planner result: {other:?}"),
     }
 }
 

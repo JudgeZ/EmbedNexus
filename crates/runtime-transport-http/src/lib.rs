@@ -97,7 +97,7 @@ impl HttpRequest {
 }
 
 /// Canonical HTTP response returned by the adapter.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HttpResponse {
     /// HTTP status code.
     pub status: u16,
@@ -108,7 +108,7 @@ pub struct HttpResponse {
 }
 
 /// Telemetry event emitted by the adapter lifecycle.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TelemetryEvent {
     /// Event type (e.g., `http.request`, `http.auth.failure`).
     pub kind: String,
@@ -137,7 +137,7 @@ impl TelemetrySink {
 }
 
 /// Errors surfaced by the HTTP adapter.
-#[derive(Debug, Error, PartialEq)]
+#[derive(Debug, Error, PartialEq, Eq)]
 pub enum TransportError {
     /// Configuration validation failure.
     #[error("configuration error: {0}")]
@@ -158,9 +158,10 @@ pub enum TransportError {
 
 impl TransportError {
     /// Return the status code associated with a router error, if available.
-    pub fn router_status_code(&self) -> Option<u16> {
+    #[must_use]
+    pub const fn router_status_code(&self) -> Option<u16> {
         match self {
-            TransportError::Router(err) => Some(err.status_code()),
+            Self::Router(err) => Some(err.status_code()),
             _ => None,
         }
     }
@@ -318,6 +319,7 @@ impl HttpAdapter {
     }
 
     /// Access the telemetry sink for testing.
+    #[must_use]
     pub fn telemetry(&self) -> Arc<TelemetrySink> {
         Arc::clone(&self.telemetry)
     }
@@ -366,7 +368,7 @@ struct TokenSigner {
 }
 
 impl TokenSigner {
-    fn new(secret: String) -> Self {
+    const fn new(secret: String) -> Self {
         Self { secret }
     }
 
@@ -537,7 +539,7 @@ mod tests {
             "/commands/ingest",
             json!({ "command": "ingest", "payload": {"doc": 1} }),
         )
-        .with_header("Authorization", format!("Bearer {}", token))
+        .with_header("Authorization", format!("Bearer {token}"))
         .with_header("X-Csrf-Token", envelope.csrf_nonce.clone());
 
         let err = adapter

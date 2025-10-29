@@ -95,7 +95,7 @@ fn watcher_latency_budget_matches_golden() {
         latency_windows: fixture
             .latency_windows
             .iter()
-            .map(|window| window.to_latency_window())
+            .map(LatencyWindowFixture::to_latency_window)
             .collect(),
         files: vec![],
     };
@@ -110,7 +110,7 @@ fn watcher_latency_budget_matches_golden() {
         .expect("workspace enumeration should succeed");
     assert_eq!(descriptors.len(), 1);
     let descriptor = &descriptors[0];
-    for fixture_window in fixture.latency_windows.iter() {
+    for fixture_window in &fixture.latency_windows {
         let actual = descriptor
             .latency_windows()
             .iter()

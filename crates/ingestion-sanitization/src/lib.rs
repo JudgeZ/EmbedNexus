@@ -45,7 +45,8 @@ pub struct Sanitizer {
 }
 
 impl Sanitizer {
-    pub fn new(config: SanitizationConfig) -> Self {
+    #[must_use]
+    pub const fn new(config: SanitizationConfig) -> Self {
         Self { config }
     }
 

@@ -2,7 +2,7 @@
 use std::sync::Arc;
 
 use storage_vector::encryption::aes_gcm::AesGcmEncrypter;
-use storage_vector::kms::{InMemoryKeyManager, KeyManager, KeyScope};
+use storage_vector::kms::InMemoryKeyManager;
 use storage_vector::store::{fs as vs_fs, Store, VectorStore};
 use tempfile::tempdir;
 
@@ -27,7 +27,7 @@ fn invalid_envelope_is_error_when_encryption_enabled() {
 
     // Tamper the magic so peek_key_id() no longer recognizes the envelope
     let mut raw = vs_fs::read_bytes(&root, repo, key).expect("raw present");
-    assert!(raw.len() > 0);
+    assert!(!raw.is_empty());
     raw[0] ^= 0xFF; // flip first byte of magic 'EVG1'
     vs_fs::atomic_write_bytes(&root, repo, key, &raw).expect("write tampered");
 
@@ -35,6 +35,6 @@ fn invalid_envelope_is_error_when_encryption_enabled() {
     let err = store.get(repo, key).unwrap_err();
     match err {
         storage_vector::StoreError::Encryption(_) => {}
-        other => panic!("expected encryption error, got {:?}", other),
+        other => panic!("expected encryption error, got {other:?}"),
     }
 }
