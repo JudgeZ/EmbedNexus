@@ -1,6 +1,6 @@
 //! AES‑GCM encrypter for the storage‑vector crate.
 
-use aes_gcm::{Aes256Gcm, KeyInit, aead::{Aead, Payload}};
+use aes_gcm::{Aes256Gcm, KeyInit, aead::{AeadInPlace, Payload, generic_array::GenericArray}};
 use rand::{rngs::OsRng, RngCore};
 use sha2::{Digest, Sha256};
 
@@ -28,24 +28,26 @@ impl Encrypter for AesGcmEncrypter {
         let cipher = Aes256Gcm::new_from_slice(&key_bytes).map_err(|e| e.to_string())?;
         let mut nonce = [0u8; 12];
         OsRng.fill_bytes(&mut nonce);
-        let ct = cipher
-            .encrypt(aes_gcm::Nonce::from_slice(&nonce), Payload { msg: plaintext, aad })
+        // Encrypt in-place to obtain a detached tag we can store in the envelope.
+        let mut buf = plaintext.to_vec();
+        let tag = cipher
+            .encrypt_in_place_detached(aes_gcm::Nonce::from_slice(&nonce), aad, &mut buf)
             .map_err(|e| e.to_string())?;
-        // Last 16 bytes are tag in AES‑GCM's output? In aes-gcm crate, tag is appended implicitly?
-        // The encrypt() output is ciphertext without explicit tag separation; tag is authenticated inside.
-        // We store entire ct as envelope payload and set a zero tag placeholder to keep envelope structure simple.
-        // For clarity in M3, we don't split tag; aes-gcm manages it internally.
-        let tag = [0u8; 16];
-        Ok(encode_envelope(&key.key_id, &nonce, &tag, &ct))
+        let mut tag_bytes = [0u8; 16];
+        tag_bytes.copy_from_slice(tag.as_slice());
+        Ok(encode_envelope(&key.key_id, &nonce, &tag_bytes, &buf))
     }
 
     fn open(&self, key: &KeyHandle, envelope_bytes: &[u8], aad: &[u8]) -> Result<Vec<u8>, String> {
-        let (kid, nonce, _tag, ct) = decode_envelope(envelope_bytes)?;
+        let (kid, nonce, tag, ct) = decode_envelope(envelope_bytes)?;
         if kid != key.key_id { return Err("key id mismatch".into()); }
         let key_bytes = derive_key(&key.key_id);
         let cipher = Aes256Gcm::new_from_slice(&key_bytes).map_err(|e| e.to_string())?;
+        let mut buf = ct.clone();
+        let tag_ga = GenericArray::from_slice(&tag);
         cipher
-            .decrypt(aes_gcm::Nonce::from_slice(&nonce), Payload { msg: &ct, aad })
-            .map_err(|e| e.to_string())
+            .decrypt_in_place_detached(aes_gcm::Nonce::from_slice(&nonce), aad, &mut buf, tag_ga)
+            .map_err(|e| e.to_string())?;
+        Ok(buf)
     }
 }

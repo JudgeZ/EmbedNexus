@@ -88,8 +88,8 @@ Envelope layout (bytes, little‑endian length field):
 - `key_id_len`: `u16` length of `key_id`
 - `key_id`: UTF‑8 identifier for the active key (rotation friendly)
 - `nonce`: 12‑byte random nonce (GCM recommended size)
-- `tag`: 16‑byte field reserved for explicit tags (present for forward‑compatibility)
-- `ciphertext`: AES‑GCM output; tag verification is performed by the AEAD during open
+- `tag`: 16‑byte GCM tag (detached, verified on open)
+- `ciphertext`: AES‑GCM ciphertext
 
 AAD (associated data):
 

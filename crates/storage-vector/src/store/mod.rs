@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use crate::error::StoreError;
 use crate::ledger::build_replay_entry;
 use storage_ledger::ReplayEntry;
-mod fs;
+pub mod fs;
 
 #[derive(Debug, Default, Clone)]
 pub struct ReplayStats {
@@ -165,6 +165,17 @@ impl VectorStore {
             }
         }
         false
+    }
+
+    /// Test-only helper: return raw stored bytes for (repo_id, key), from FS or memory.
+    pub fn test_dump_raw(&self, repo_id: &str, key: &str) -> Option<Vec<u8>> {
+        if let Some(root) = &self.fs_root {
+            if let Ok(b) = fs::read_bytes(root, repo_id, key) { return Some(b); }
+        }
+        if let Ok(guard) = self.inner.lock() {
+            return guard.get(&(repo_id.to_string(), key.to_string())).cloned();
+        }
+        None
     }
 }
 

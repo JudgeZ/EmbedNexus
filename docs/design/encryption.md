@@ -25,7 +25,7 @@ This document extends the encrypted storage flows in the [architecture overview]
 
 Milestone 3 introduces an AES‑GCM envelope for the Vector Store (`storage-vector`) guarded by the `encryption` feature flag:
 
-- Envelope: magic `EVG1`, `key_id` (UTF‑8), 12‑byte nonce, reserved 16‑byte tag field, and ciphertext. Tag verification occurs within the AEAD during decryption.
+- Envelope: magic `EVG1`, `key_id` (UTF‑8), 12‑byte nonce, 16‑byte GCM tag (detached), and ciphertext. Decryption verifies the detached tag with the provided AAD.
 - AAD: `"{repo_id}:{key_id}"` binds envelopes to repository scope and the issuing key; mismatched AAD rejects decryption.
 - Keys: an in‑memory key manager supports basic rotation by updating `key_id`, while keeping prior keys available for reads. Tests derive a 32‑byte key from `SHA‑256(key_id)`; production deployments must use a proper KMS and key derivation.
 

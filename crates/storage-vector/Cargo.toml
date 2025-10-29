@@ -45,6 +45,9 @@ optional = true
 # Internal ledger crate for replay entry types
 storage-ledger = { path = "../storage-ledger" }
 
+[dev-dependencies]
+tempfile = "3"
+
 [features]
 default = []
 # Enable authenticated encryption envelope support (AES-GCM by default)
