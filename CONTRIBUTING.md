@@ -31,7 +31,7 @@ For substantial or security-sensitive changes, involve the release manager early
 
 Run the local verification suite before opening a PR to surface policy and secret-scan issues early and to generate an SBOM for review:
 
-- Manual run (recommended): `pre-commit run pre-pr-check -a`
+- Manual run (recommended): `pre-commit run pre-pr-verify -a`
 - Direct script: `bash scripts/pre_pr_check.sh`
 
 What it does:
@@ -42,7 +42,7 @@ What it does:
 
 Enable hooks:
 - `pre-commit install` (commit-time hooks)
-- `pre-commit install --hook-type pre-push` (to run on `git push`; the `pre-pr-check` hook is configured for the `push` stage and can also be run manually)
+- `pre-commit install --hook-type pre-push` (to run on `git push`; the `pre-pr-verify` hook is configured for the `push` stage and can also be run manually)
 - Notes
   - Keep any new fake/test secrets clearly marked (e.g., `FAKE_...`, `NOT_A_SECRET`) so they remain covered by the gitleaks allowlist.
   - If a scan requires an exception, document rationale in the PR and scope the allowlist narrowly.
