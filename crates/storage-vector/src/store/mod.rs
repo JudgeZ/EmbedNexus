@@ -122,6 +122,23 @@ impl Store for VectorStore {
     }
 }
 
+#[cfg(test)]
+impl VectorStore {
+    /// Test-only helper: flip the last byte of the stored value for (repo_id, key).
+    /// Returns true on success.
+    pub fn tamper_flip_last_byte(&self, repo_id: &str, key: &str) -> bool {
+        if let Ok(mut guard) = self.inner.lock() {
+            if let Some(v) = guard.get_mut(&(repo_id.to_string(), key.to_string())) {
+                if let Some(last) = v.last_mut() {
+                    *last ^= 0xFF;
+                    return true;
+                }
+            }
+        }
+        false
+    }
+}
+
 #[cfg(feature = "encryption")]
 #[derive(Default)]
 pub struct VectorStoreBuilder {
