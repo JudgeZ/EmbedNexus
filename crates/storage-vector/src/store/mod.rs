@@ -174,6 +174,12 @@ impl Store for VectorStore {
                     .open(&kh, &bytes, &aad)
                     .map_err(StoreError::Encryption)?;
                 return Ok(Some(pt));
+            } else {
+                // Encryption is configured but the stored bytes are not a valid envelope.
+                // Treat as corruption/tampering rather than passing plaintext through.
+                return Err(StoreError::Encryption(
+                    "missing or invalid envelope".to_string(),
+                ));
             }
         }
         Ok(Some(bytes))
