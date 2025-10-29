@@ -73,7 +73,7 @@ jobs:
 
       - name: Upload Windows security goldens
         if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: windows-security-goldens
           if-no-files-found: warn
@@ -215,7 +215,7 @@ jobs:
 
       - name: Upload golden artifacts
         if: inputs.dry_run != 'true' && inputs.skip_artifact_upload != 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: golden-regeneration-output
           if-no-files-found: warn
