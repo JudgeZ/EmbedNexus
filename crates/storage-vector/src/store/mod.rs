@@ -10,6 +10,21 @@ use storage_ledger::ReplayEntry;
 type RepoKey = (String, String);
 type Blob = Vec<u8>;
 pub mod fs;
+/// Build AEAD associated data binding: (repo_id, key_id, record_key).
+/// Encoding: u16 be repo_len | repo_bytes | u16 be key_id_len | key_id_bytes | u16 be record_key_len | record_key_bytes.
+pub fn build_aad(repo_id: &str, key_id: &str, record_key: &str) -> Vec<u8> {
+    let mut out = Vec::with_capacity(2 + repo_id.len() + 2 + key_id.len() + 2 + record_key.len());
+    let rlen = repo_id.len() as u16;
+    out.extend_from_slice(&rlen.to_be_bytes());
+    out.extend_from_slice(repo_id.as_bytes());
+    let klen = key_id.len() as u16;
+    out.extend_from_slice(&klen.to_be_bytes());
+    out.extend_from_slice(key_id.as_bytes());
+    let slen = record_key.len() as u16;
+    out.extend_from_slice(&slen.to_be_bytes());
+    out.extend_from_slice(record_key.as_bytes());
+    out
+}
 
 #[derive(Debug, Default, Clone)]
 pub struct ReplayStats {
@@ -88,9 +103,9 @@ impl Store for VectorStore {
                 repo_id: repo_id.to_string(),
             };
             let kh = kms.current(&scope).map_err(StoreError::Key)?;
-            let aad = format!("{}:{}", repo_id, kh.key_id);
+            let aad = build_aad(repo_id, &kh.key_id, key);
             let sealed = enc
-                .seal(&kh, payload, aad.as_bytes())
+                .seal(&kh, payload, &aad)
                 .map_err(StoreError::Encryption)?;
             if let Some(root) = &self.fs_root {
                 fs::atomic_write_bytes(root, repo_id, key, &sealed)
@@ -154,9 +169,9 @@ impl Store for VectorStore {
         if let (Some(enc), Some(kms)) = (&self.encrypter, &self.kms) {
             if let Some(kid) = crate::encryption::peek_key_id(&bytes) {
                 let kh = kms.get(&kid).map_err(StoreError::Key)?;
-                let aad = format!("{}:{}", repo_id, kh.key_id);
+                let aad = build_aad(repo_id, &kh.key_id, key);
                 let pt = enc
-                    .open(&kh, &bytes, aad.as_bytes())
+                    .open(&kh, &bytes, &aad)
                     .map_err(StoreError::Encryption)?;
                 return Ok(Some(pt));
             }

@@ -39,9 +39,6 @@ optional = true
 version = "0.8"
 optional = true
 
-[dependencies.sha2]
-version = "0.10"
-optional = true
 
 # Internal ledger crate for replay entry types
 
@@ -52,7 +49,7 @@ tempfile = "3"
 [features]
 default = []
 # Enable authenticated encryption envelope support (AES-GCM by default)
-encryption = ["dep:aes-gcm", "dep:zeroize", "dep:rand_core", "dep:rand", "dep:sha2"]
+encryption = ["dep:aes-gcm", "dep:zeroize", "dep:rand_core", "dep:rand"]
 # Future cipher option; implies `encryption`
 chacha20 = ["encryption", "dep:chacha20poly1305"]
 # Placeholder for Windows/WSL DPAPI integration; kept for API surface planning

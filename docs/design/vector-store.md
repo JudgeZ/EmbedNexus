@@ -91,9 +91,9 @@ Envelope layout (bytes, little‑endian length field):
 - `tag`: 16‑byte GCM tag (detached, verified on open)
 - `ciphertext`: AES‑GCM ciphertext
 
-AAD (associated data):
+ AAD (associated data):
 
-- `aad = format!("{repo_id}:{key_id}")` binds envelopes to repository scope and the issuing key; decryption fails if AAD does not match.
+ - `aad = encode(repo_id, key_id, record_key)` binds envelopes to repository scope, issuing key, and the specific logical record key. Encoding is length‑prefixed to avoid ambiguity: `u16|repo_len|repo|u16|key_id_len|key_id|u16|record_key_len|record_key`.
 
  Key handling (M3 scope):
 
