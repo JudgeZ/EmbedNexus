@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - name: Install CycloneDX plugin
-        run: cargo install cargo-cyclonedx --locked --version 0.6.2
+        run: cargo install cargo-cyclonedx --locked --version 0.5.7
       - name: Generate CycloneDX SBOM
         run: cargo cyclonedx --all-features --format xml > sbom.xml
       - name: Upload SBOM artifact

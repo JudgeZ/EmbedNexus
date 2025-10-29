@@ -25,6 +25,7 @@ jobs:
           components: clippy, rustfmt
 
       - name: Cargo fmt
+        if: runner.os == 'Linux'
         run: cargo fmt --all -- --check
 
       - name: Cargo clippy
