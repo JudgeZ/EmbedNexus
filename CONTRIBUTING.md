@@ -18,6 +18,9 @@ For substantial or security-sensitive changes, involve the release manager early
 - Pre-commit hooks
   - Install and run once locally: `pipx install pre-commit && pre-commit install && pre-commit run -a`.
   - Hooks include whitespace/YAML hygiene, ShellCheck, and Rust `rustfmt`. Clippy is available via the `manual` stage: `pre-commit run clippy -a`.
+- EditorConfig
+  - The repo includes `.editorconfig` to keep indentation, line endings, and trailing whitespace consistent across editors.
+  - Most IDEs auto-detect it; if not, install the EditorConfig plugin for your editor. CI enforces consistent formatting via `cargo fmt`.
 - CI security scans
   - CI runs `cargo-audit`, `cargo-deny` (advisories, bans, sources, licenses), `gitleaks` (with allowlist in `.gitleaks.toml` scoped to fixtures/goldens), and publishes a CycloneDX SBOM.
   - To run locally: `cargo audit`, `cargo deny check advisories bans sources licenses`, and `gitleaks detect --source . --config-path .gitleaks.toml --redact`.
