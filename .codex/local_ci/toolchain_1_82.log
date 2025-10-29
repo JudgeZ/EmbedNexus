@@ -1,8 +1,0 @@
-info: syncing channel updates for '1.82.0-x86_64-unknown-linux-gnu'
-info: latest update on 2024-10-17, rust version 1.82.0 (f6e511eec 2024-10-15)
-info: component 'clippy' for target 'x86_64-unknown-linux-gnu' is up to date
-info: component 'rustfmt' for target 'x86_64-unknown-linux-gnu' is up to date
-
-  1.82.0-x86_64-unknown-linux-gnu unchanged - rustc 1.82.0 (f6e511eec 2024-10-15)
-
-info: checking for self-update
