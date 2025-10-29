@@ -1,5 +1,5 @@
-use storage_vector::store::{Store, VectorStore};
 use std::fs;
+use storage_vector::store::{Store, VectorStore};
 
 #[test]
 fn fs_roundtrip_plaintext() {
@@ -22,4 +22,3 @@ fn fs_roundtrip_plaintext() {
     let got = store.get(repo, key).unwrap().unwrap();
     assert_eq!(got, payload);
 }
-

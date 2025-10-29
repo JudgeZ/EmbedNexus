@@ -43,26 +43,42 @@ pub fn encode_envelope(key_id: &str, nonce: &[u8; 12], tag: &[u8; 16], ct: &[u8]
 }
 
 pub fn decode_envelope(bytes: &[u8]) -> Result<(String, [u8; 12], [u8; 16], Vec<u8>), String> {
-    if bytes.len() < 4 + 2 + 12 + 16 { return Err("envelope too short".into()); }
-    if &bytes[0..4] != ENVELOPE_MAGIC { return Err("bad envelope magic".into()); }
+    if bytes.len() < 4 + 2 + 12 + 16 {
+        return Err("envelope too short".into());
+    }
+    if &bytes[0..4] != ENVELOPE_MAGIC {
+        return Err("bad envelope magic".into());
+    }
     let key_len = u16::from_be_bytes([bytes[4], bytes[5]]) as usize;
     let min = 4 + 2 + key_len + 12 + 16;
-    if bytes.len() < min { return Err("envelope truncated".into()); }
+    if bytes.len() < min {
+        return Err("envelope truncated".into());
+    }
     let key_start = 6;
     let key_end = key_start + key_len;
-    let key_id = std::str::from_utf8(&bytes[key_start..key_end]).map_err(|_| "key id not utf8")?.to_string();
+    let key_id = std::str::from_utf8(&bytes[key_start..key_end])
+        .map_err(|_| "key id not utf8")?
+        .to_string();
     let mut nonce = [0u8; 12];
-    nonce.copy_from_slice(&bytes[key_end..key_end+12]);
+    nonce.copy_from_slice(&bytes[key_end..key_end + 12]);
     let mut tag = [0u8; 16];
-    tag.copy_from_slice(&bytes[key_end+12..key_end+12+16]);
-    let ct = bytes[key_end+12+16..].to_vec();
+    tag.copy_from_slice(&bytes[key_end + 12..key_end + 12 + 16]);
+    let ct = bytes[key_end + 12 + 16..].to_vec();
     Ok((key_id, nonce, tag, ct))
 }
 
 pub fn peek_key_id(bytes: &[u8]) -> Option<String> {
-    if bytes.len() < 6 { return None; }
-    if &bytes[0..4] != ENVELOPE_MAGIC { return None; }
+    if bytes.len() < 6 {
+        return None;
+    }
+    if &bytes[0..4] != ENVELOPE_MAGIC {
+        return None;
+    }
     let key_len = u16::from_be_bytes([bytes[4], bytes[5]]) as usize;
-    if bytes.len() < 6 + key_len { return None; }
-    std::str::from_utf8(&bytes[6..6+key_len]).ok().map(|s| s.to_string())
+    if bytes.len() < 6 + key_len {
+        return None;
+    }
+    std::str::from_utf8(&bytes[6..6 + key_len])
+        .ok()
+        .map(|s| s.to_string())
 }

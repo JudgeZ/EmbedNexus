@@ -126,8 +126,8 @@ impl QuotaDiagnostics {
 }
 
 // Public API surface for Milestone 3 skeleton
-pub mod error;
 pub mod config;
+pub mod error;
 pub mod ledger;
 pub mod store;
 
@@ -138,4 +138,4 @@ pub mod encryption;
 pub mod kms;
 
 pub use crate::error::StoreError;
-pub use crate::store::{ReplayStats, VectorStore, Store};
+pub use crate::store::{ReplayStats, Store, VectorStore};

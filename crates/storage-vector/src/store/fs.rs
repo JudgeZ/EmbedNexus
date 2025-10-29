@@ -14,12 +14,20 @@ fn encode_component(s: &str) -> String {
 }
 
 pub fn make_path(root: &Path, repo_id: &str, key: &str) -> PathBuf {
-    root.join(encode_component(repo_id)).join(encode_component(key))
+    root.join(encode_component(repo_id))
+        .join(encode_component(key))
 }
 
-pub fn atomic_write_bytes(root: &Path, repo_id: &str, key: &str, bytes: &[u8]) -> std::io::Result<()> {
+pub fn atomic_write_bytes(
+    root: &Path,
+    repo_id: &str,
+    key: &str,
+    bytes: &[u8],
+) -> std::io::Result<()> {
     let path = make_path(root, repo_id, key);
-    if let Some(parent) = path.parent() { fs::create_dir_all(parent)?; }
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
     let tmp = path.with_extension("tmp");
     {
         let mut f = File::create(&tmp)?;
@@ -37,4 +45,3 @@ pub fn read_bytes(root: &Path, repo_id: &str, key: &str) -> std::io::Result<Vec<
     f.read_to_end(&mut buf)?;
     Ok(buf)
 }
-

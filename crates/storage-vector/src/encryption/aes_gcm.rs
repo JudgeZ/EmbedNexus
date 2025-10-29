@@ -1,14 +1,27 @@
 //! AES‑GCM encrypter for the storage‑vector crate.
 
-use aes_gcm::{Aes256Gcm, KeyInit, aead::{AeadInPlace, Payload, generic_array::GenericArray}};
+use aes_gcm::{
+    aead::{AeadInPlace, Tag},
+    Aes256Gcm, KeyInit,
+};
 use rand::{rngs::OsRng, RngCore};
 use sha2::{Digest, Sha256};
 
-use super::{CipherSuite, Encrypter, KeyHandle, encode_envelope, decode_envelope};
+use super::{decode_envelope, encode_envelope, CipherSuite, Encrypter, KeyHandle};
 
 pub struct AesGcmEncrypter;
 
-impl AesGcmEncrypter { pub fn new() -> Self { Self } }
+impl AesGcmEncrypter {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
+impl Default for AesGcmEncrypter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 fn derive_key(key_id: &str) -> [u8; 32] {
     // Deterministic 32‑byte key from key_id (test‑only derivation for M3).
@@ -21,7 +34,9 @@ fn derive_key(key_id: &str) -> [u8; 32] {
 }
 
 impl Encrypter for AesGcmEncrypter {
-    fn algorithm(&self) -> CipherSuite { CipherSuite::AesGcm256 }
+    fn algorithm(&self) -> CipherSuite {
+        CipherSuite::AesGcm256
+    }
 
     fn seal(&self, key: &KeyHandle, plaintext: &[u8], aad: &[u8]) -> Result<Vec<u8>, String> {
         let key_bytes = derive_key(&key.key_id);
@@ -34,19 +49,21 @@ impl Encrypter for AesGcmEncrypter {
             .encrypt_in_place_detached(aes_gcm::Nonce::from_slice(&nonce), aad, &mut buf)
             .map_err(|e| e.to_string())?;
         let mut tag_bytes = [0u8; 16];
-        tag_bytes.copy_from_slice(tag.as_slice());
+        tag_bytes.copy_from_slice(<Tag<Aes256Gcm> as AsRef<[u8; 16]>>::as_ref(&tag));
         Ok(encode_envelope(&key.key_id, &nonce, &tag_bytes, &buf))
     }
 
     fn open(&self, key: &KeyHandle, envelope_bytes: &[u8], aad: &[u8]) -> Result<Vec<u8>, String> {
         let (kid, nonce, tag, ct) = decode_envelope(envelope_bytes)?;
-        if kid != key.key_id { return Err("key id mismatch".into()); }
+        if kid != key.key_id {
+            return Err("key id mismatch".into());
+        }
         let key_bytes = derive_key(&key.key_id);
         let cipher = Aes256Gcm::new_from_slice(&key_bytes).map_err(|e| e.to_string())?;
         let mut buf = ct.clone();
-        let tag_ga = GenericArray::from_slice(&tag);
+        let tag_ref = Tag::<Aes256Gcm>::from_slice(&tag);
         cipher
-            .decrypt_in_place_detached(aes_gcm::Nonce::from_slice(&nonce), aad, &mut buf, tag_ga)
+            .decrypt_in_place_detached(aes_gcm::Nonce::from_slice(&nonce), aad, &mut buf, tag_ref)
             .map_err(|e| e.to_string())?;
         Ok(buf)
     }

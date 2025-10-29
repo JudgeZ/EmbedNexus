@@ -27,4 +27,3 @@ fn fs_replay_restores_payloads_from_disk_and_advances_sequence() {
     let e3 = store2.upsert(repo, "c", b"gamma").unwrap();
     assert_eq!(e3.sequence, e2.sequence + 1);
 }
-

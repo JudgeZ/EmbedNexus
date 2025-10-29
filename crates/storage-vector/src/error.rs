@@ -19,4 +19,3 @@ pub enum StoreError {
     #[error("unsupported operation: {0}")]
     Unsupported(String),
 }
-

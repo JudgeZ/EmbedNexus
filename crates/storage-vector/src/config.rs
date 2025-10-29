@@ -11,4 +11,3 @@ pub struct RotationPolicy {
     pub max_uses: Option<u64>,
     pub rotate_after_seconds: Option<u64>,
 }
-

@@ -14,4 +14,3 @@ fn roundtrip_plaintext_upsert_get() {
     let got = store.get(repo, key).expect("get ok").expect("present");
     assert_eq!(got, payload);
 }
-

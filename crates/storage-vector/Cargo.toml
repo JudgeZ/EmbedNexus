@@ -14,6 +14,7 @@ thiserror.workspace = true
 tokio.workspace = true
 tracing.workspace = true
 uuid.workspace = true
+storage-ledger = { path = "../storage-ledger" }
 
 # Optional crypto deps, only compiled when `encryption` feature is enabled.
 [dependencies.aes-gcm]
@@ -43,7 +44,7 @@ version = "0.10"
 optional = true
 
 # Internal ledger crate for replay entry types
-storage-ledger = { path = "../storage-ledger" }
+
 
 [dev-dependencies]
 tempfile = "3"
