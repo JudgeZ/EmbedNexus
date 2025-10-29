@@ -19,6 +19,18 @@ This document extends the encrypted storage flows in the [architecture overview]
 | `EncryptionEngine::open(blob, key_handle)` | Decrypt and verify payloads | Ciphertext blob, key handle | Plaintext payload, verification report |
 | `Attestor::stamp(event)` | Generate attestation artifacts for compliance | Event metadata, hash chain pointer | Signed attestation record |
 
+---
+
+### VectorStore Envelope & AAD (M3)
+
+Milestone 3 introduces an AES‑GCM envelope for the Vector Store (`storage-vector`) guarded by the `encryption` feature flag:
+
+- Envelope: magic `EVG1`, `key_id` (UTF‑8), 12‑byte nonce, reserved 16‑byte tag field, and ciphertext. Tag verification occurs within the AEAD during decryption.
+- AAD: `"{repo_id}:{key_id}"` binds envelopes to repository scope and the issuing key; mismatched AAD rejects decryption.
+- Keys: an in‑memory key manager supports basic rotation by updating `key_id`, while keeping prior keys available for reads. Tests derive a 32‑byte key from `SHA‑256(key_id)`; production deployments must use a proper KMS and key derivation.
+
+See also: [Vector Store – Encrypted Envelope (M3)](./vector-store.md#encrypted-envelope-m3).
+
 ## Data Models
 - **`KeyHandle`**: `{ key_id, repo_id, version, sealed_reference, expiry, policy }`.
 - **`CiphertextBlob`**: `{ payload, nonce, tag, manifest_pointer, rotation_epoch }`.
