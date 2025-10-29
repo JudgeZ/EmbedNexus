@@ -110,7 +110,7 @@ jobs:
 
       - name: Download Windows security goldens
         if: inputs.dry_run != 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: windows-security-goldens
           path: .
