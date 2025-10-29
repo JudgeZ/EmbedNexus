@@ -1,10 +1,32 @@
 #![cfg(feature = "encryption")]
 
-#[test]
-#[ignore = "M3 key rotation pending"]
-fn rotates_keys_and_reads_old_records() {
-    // TODO: create InMemoryKeyManager with K1, write, rotate to K2, write.
-    // Ensure old records readable via K1, new via K2.
-    todo!("implement rotation behavior tests");
-}
+use std::sync::Arc;
+use storage_vector::encryption::aes_gcm::AesGcmEncrypter;
+use storage_vector::kms::InMemoryKeyManager;
+use storage_vector::store::{Store, VectorStore};
 
+#[test]
+fn rotates_keys_and_reads_old_records() {
+    let kms = Arc::new(InMemoryKeyManager::new("k1"));
+    let store = VectorStore::builder()
+        .with_encrypter(Arc::new(AesGcmEncrypter::new()))
+        .with_key_manager(kms.clone())
+        .build();
+
+    let repo = "repo-rot";
+
+    // Write under K1
+    let p1 = b"alpha".to_vec();
+    store.upsert(repo, "a", &p1).expect("upsert a");
+
+    // Rotate to K2
+    kms.set_current_id("k2");
+
+    // Write under K2
+    let p2 = b"beta".to_vec();
+    store.upsert(repo, "b", &p2).expect("upsert b");
+
+    // Both records should be readable
+    assert_eq!(store.get(repo, "a").unwrap().unwrap(), p1);
+    assert_eq!(store.get(repo, "b").unwrap().unwrap(), p2);
+}
