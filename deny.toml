@@ -1,6 +1,9 @@
 [advisories]
 vulnerability = "deny"
-unmaintained = "warn"
+# cargo-deny ≥0.18 expects a target set for `unmaintained` (one of
+# "all", "workspace", "transitive", or "none"). Using "workspace" scopes
+# the check to this workspace and fixes the v0.18 config schema error.
+unmaintained = "workspace"
 yanked = "warn"
 unsound = "deny"
 ignore = []
@@ -35,4 +38,3 @@ deny = []
 unknown-registry = "deny"
 unknown-git = "deny"
 allow-registry = ["https://github.com/rust-lang/crates.io-index"]
-
