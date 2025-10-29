@@ -26,13 +26,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - name: Install cargo-deny
-        run: cargo install cargo-deny --locked
+        run: cargo +stable install cargo-deny --locked
       - name: Run cargo-deny (all checks)
         run: |
-          cargo deny check advisories
-          cargo deny check bans
-          cargo deny check sources
-          cargo deny check licenses
+          cargo +stable deny check advisories
+          cargo +stable deny check bans
+          cargo +stable deny check sources
+          cargo +stable deny check licenses
 
   gitleaks:
     runs-on: ubuntu-latest
@@ -44,6 +44,7 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITLEAKS_LICENSE: community
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: detect --source . --no-git --redact --config .gitleaks.toml
 
@@ -53,7 +54,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - name: Install CycloneDX plugin
-        run: cargo install cyclonedx-bom --locked
+        run: cargo install cargo-cyclonedx --locked
       - name: Generate CycloneDX SBOM
         run: cargo cyclonedx -o sbom.xml
       - name: Upload SBOM artifact
