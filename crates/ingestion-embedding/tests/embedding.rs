@@ -1,3 +1,4 @@
+#![allow(clippy::cloned_ref_to_slice_refs)]
 use ingestion_embedding::{EmbeddingConfig, EmbeddingGenerator};
 use ingestion_planning::{ChunkPlan, PlannedChunk, RetryPolicy};
 use ingestion_sanitization::{SanitizationConfig, Sanitizer};

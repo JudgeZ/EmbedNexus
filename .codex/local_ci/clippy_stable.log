@@ -1,0 +1,200 @@
+== clippy (stable, -D warnings) ==
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded doc-comment v0.3.3
+  Downloaded fastrand v2.3.0
+  Downloaded constant_time_eq v0.3.1
+  Downloaded is_terminal_polyfill v1.70.1
+  Downloaded colorchoice v1.0.4
+  Downloaded async-trait v0.1.89
+  Downloaded wait-timeout v0.2.1
+  Downloaded tokio-macros v2.6.0
+  Downloaded base64 v0.21.7
+  Downloaded anyhow v1.0.100
+  Downloaded tracing-attributes v0.1.30
+  Downloaded clap v4.5.50
+  Downloaded unsafe-libyaml v0.2.11
+  Downloaded cc v1.2.41
+  Downloaded toml_edit v0.22.27
+  Downloaded find-msvc-tools v0.1.4
+  Downloaded equivalent v1.0.2
+  Downloaded anstyle-query v1.1.4
+  Downloaded strsim v0.11.1
+  Downloaded heck v0.5.0
+  Downloaded arrayref v0.3.9
+  Downloaded anstyle-parse v0.2.7
+  Downloaded proc-macro2 v1.0.101
+  Downloaded arrayvec v0.7.6
+  Downloaded anstream v0.6.21
+  Downloaded difflib v0.4.0
+  Downloaded clap_derive v4.5.49
+  Downloaded xattr v1.6.1
+  Downloaded termtree v0.5.1
+  Downloaded shlex v1.3.0
+  Downloaded serde_spanned v0.6.9
+  Downloaded humantime v2.3.0
+  Downloaded getrandom v0.3.4
+  Downloaded bitflags v2.10.0
+  Downloaded clap_builder v4.5.50
+  Downloaded toml_datetime v0.6.11
+  Downloaded unicode-ident v1.0.19
+  Downloaded ryu v1.0.20
+  Downloaded pkg-config v0.3.32
+  Downloaded predicates-tree v1.0.12
+  Downloaded errno v0.3.14
+  Downloaded clap_lex v0.7.6
+  Downloaded cfg-if v1.0.4
+  Downloaded assert_cmd v2.0.17
+  Downloaded anstyle v1.0.13
+  Downloaded aho-corasick v1.1.3
+  Downloaded quote v1.0.41
+  Downloaded filetime v0.2.26
+  Downloaded zstd-safe v7.2.4
+  Downloaded serde_derive v1.0.228
+  Downloaded indexmap v2.12.0
+  Downloaded utf8parse v0.2.2
+  Downloaded zstd v0.13.3
+  Downloaded serde v1.0.228
+  Downloaded pin-project-lite v0.2.16
+  Downloaded once_cell v1.21.3
+  Downloaded tar v0.4.44
+  Downloaded serde_yaml v0.9.34+deprecated
+  Downloaded jobserver v0.1.34
+  Downloaded uuid v1.18.1
+  Downloaded tracing-core v0.1.34
+  Downloaded toml v0.8.23
+  Downloaded thiserror-impl v1.0.69
+  Downloaded tempfile v3.23.0
+  Downloaded serde_core v1.0.228
+  Downloaded hashbrown v0.16.0
+  Downloaded serde_json v1.0.145
+  Downloaded bstr v1.12.0
+  Downloaded tracing v0.1.41
+  Downloaded winnow v0.7.13
+  Downloaded blake3 v1.8.2
+  Downloaded regex v1.12.2
+  Downloaded syn v2.0.107
+  Downloaded rustix v1.1.2
+  Downloaded regex-syntax v0.8.8
+  Downloaded memchr v2.7.6
+  Downloaded predicates-core v1.0.9
+  Downloaded predicates v3.1.3
+  Downloaded itoa v1.0.15
+  Downloaded toml_write v0.1.2
+  Downloaded thiserror v1.0.69
+  Downloaded regex-automata v0.4.13
+  Downloaded libc v0.2.177
+  Downloaded zstd-sys v2.0.16+zstd.1.5.7
+  Downloaded tokio v1.48.0
+  Downloaded linux-raw-sys v0.11.0
+   Compiling proc-macro2 v1.0.101
+   Compiling libc v0.2.177
+   Compiling unicode-ident v1.0.19
+   Compiling quote v1.0.41
+   Compiling serde_core v1.0.228
+   Compiling serde v1.0.228
+    Checking memchr v2.7.6
+    Checking cfg-if v1.0.4
+    Checking ryu v1.0.20
+   Compiling serde_json v1.0.145
+   Compiling anyhow v1.0.100
+    Checking itoa v1.0.15
+   Compiling getrandom v0.3.4
+    Checking once_cell v1.21.3
+    Checking pin-project-lite v0.2.16
+   Compiling thiserror v1.0.69
+   Compiling find-msvc-tools v0.1.4
+   Compiling shlex v1.3.0
+    Checking arrayref v0.3.9
+    Checking arrayvec v0.7.6
+    Checking constant_time_eq v0.3.1
+    Checking equivalent v1.0.2
+    Checking hashbrown v0.16.0
+    Checking tracing-core v0.1.34
+    Checking regex-syntax v0.8.8
+   Compiling pkg-config v0.3.32
+   Compiling rustix v1.1.2
+    Checking unsafe-libyaml v0.2.11
+    Checking linux-raw-sys v0.11.0
+    Checking winnow v0.7.13
+    Checking toml_write v0.1.2
+    Checking bitflags v2.10.0
+    Checking anstyle v1.0.13
+   Compiling zstd-safe v7.2.4
+    Checking aho-corasick v1.1.3
+    Checking base64 v0.21.7
+    Checking utf8parse v0.2.2
+    Checking colorchoice v1.0.4
+    Checking is_terminal_polyfill v1.70.1
+    Checking anstyle-parse v0.2.7
+    Checking anstyle-query v1.1.4
+    Checking clap_lex v0.7.6
+    Checking strsim v0.11.1
+   Compiling heck v0.5.0
+    Checking anstream v0.6.21
+   Compiling doc-comment v0.3.3
+    Checking predicates-core v1.0.9
+    Checking indexmap v2.12.0
+    Checking termtree v0.5.1
+   Compiling assert_cmd v2.0.17
+    Checking humantime v2.3.0
+    Checking difflib v0.4.0
+    Checking predicates-tree v1.0.12
+    Checking clap_builder v4.5.50
+    Checking fastrand v2.3.0
+    Checking runtime-transport-tests v0.0.0 (/home/judge/Zaevrynth/tests/runtime_transport)
+    Checking predicates v3.1.3
+   Compiling syn v2.0.107
+    Checking filetime v0.2.26
+    Checking wait-timeout v0.2.1
+   Compiling jobserver v0.1.34
+   Compiling cc v1.2.41
+    Checking regex-automata v0.4.13
+    Checking xattr v1.6.1
+    Checking tempfile v3.23.0
+    Checking tar v0.4.44
+   Compiling blake3 v1.8.2
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+    Checking regex v1.12.2
+    Checking bstr v1.12.0
+   Compiling serde_derive v1.0.228
+   Compiling tracing-attributes v0.1.30
+   Compiling tokio-macros v2.6.0
+   Compiling thiserror-impl v1.0.69
+   Compiling async-trait v0.1.89
+   Compiling clap_derive v4.5.49
+    Checking tokio v1.48.0
+    Checking tracing v0.1.41
+    Checking zstd v0.13.3
+    Checking clap v4.5.50
+    Checking uuid v1.18.1
+    Checking toml_datetime v0.6.11
+    Checking serde_spanned v0.6.9
+    Checking serde_yaml v0.9.34+deprecated
+    Checking toml_edit v0.22.27
+    Checking ingestion-workspace v0.0.0 (/home/judge/Zaevrynth/crates/ingestion-workspace)
+    Checking storage-vector v0.0.0 (/home/judge/Zaevrynth/crates/storage-vector)
+    Checking runtime-router v0.0.0 (/home/judge/Zaevrynth/crates/runtime-router)
+    Checking storage-ledger v0.0.0 (/home/judge/Zaevrynth/crates/storage-ledger)
+    Checking runtime-policy v0.0.0 (/home/judge/Zaevrynth/crates/runtime-policy)
+    Checking governance-traceability v0.0.0 (/home/judge/Zaevrynth/crates/governance-traceability)
+    Checking governance-audit v0.0.0 (/home/judge/Zaevrynth/crates/governance-audit)
+    Checking ingestion-planning v0.0.0 (/home/judge/Zaevrynth/crates/ingestion-planning)
+    Checking runtime-transport-stdio v0.0.0 (/home/judge/Zaevrynth/crates/runtime-transport-stdio)
+    Checking runtime-transport-http v0.0.0 (/home/judge/Zaevrynth/crates/runtime-transport-http)
+    Checking runtime-transport-uds v0.0.0 (/home/judge/Zaevrynth/crates/runtime-transport-uds)
+    Checking ingestion-sanitization v0.0.0 (/home/judge/Zaevrynth/crates/ingestion-sanitization)
+    Checking ingestion-embedding v0.0.0 (/home/judge/Zaevrynth/crates/ingestion-embedding)
+    Checking ingestion-manifest v0.0.0 (/home/judge/Zaevrynth/crates/ingestion-manifest)
+error: this call to `clone` can be replaced with `std::slice::from_ref`
+  --> crates/ingestion-embedding/tests/embedding.rs:27:17
+   |
+27 |         .encode(&[chunk.clone()])
+   |                 ^^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(&chunk)`
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#cloned_ref_to_slice_refs
+   = note: `-D clippy::cloned-ref-to-slice-refs` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(clippy::cloned_ref_to_slice_refs)]`
+
+error: could not compile `ingestion-embedding` (test "embedding") due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

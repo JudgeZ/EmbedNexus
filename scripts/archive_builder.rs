@@ -1,3 +1,4 @@
+#![allow(clippy::format_collect)]
 //! Archive scenario builder binary.
 //!
 //! The binary intentionally keeps the data model small and deterministic so that

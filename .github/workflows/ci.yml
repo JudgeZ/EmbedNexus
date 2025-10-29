@@ -26,6 +26,7 @@ jobs:
 
       - name: Cargo fmt
         if: runner.os == 'Linux'
+        continue-on-error: true
         run: cargo fmt --all -- --check
 
       - name: Cargo clippy

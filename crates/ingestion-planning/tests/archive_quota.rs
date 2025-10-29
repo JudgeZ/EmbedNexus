@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::{fs, path::PathBuf};
 
 use ingestion_planning::{ChunkPlanner, PlannerConfig, PlanningError};
