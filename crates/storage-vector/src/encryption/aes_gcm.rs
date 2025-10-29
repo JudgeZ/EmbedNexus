@@ -45,6 +45,7 @@ impl Encrypter for AesGcmEncrypter {
         OsRng.fill_bytes(&mut nonce);
         // Encrypt in-place to obtain a detached tag we can store in the envelope.
         let mut buf = plaintext.to_vec();
+        #[allow(deprecated)]
         let tag = cipher
             .encrypt_in_place_detached(aes_gcm::Nonce::from_slice(&nonce), aad, &mut buf)
             .map_err(|e| e.to_string())?;
@@ -61,7 +62,9 @@ impl Encrypter for AesGcmEncrypter {
         let key_bytes = derive_key(&key.key_id);
         let cipher = Aes256Gcm::new_from_slice(&key_bytes).map_err(|e| e.to_string())?;
         let mut buf = ct.clone();
+        #[allow(deprecated)]
         let tag_ref = Tag::<Aes256Gcm>::from_slice(&tag);
+        #[allow(deprecated)]
         cipher
             .decrypt_in_place_detached(aes_gcm::Nonce::from_slice(&nonce), aad, &mut buf, tag_ref)
             .map_err(|e| e.to_string())?;

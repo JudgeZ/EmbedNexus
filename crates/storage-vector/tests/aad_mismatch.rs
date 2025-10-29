@@ -1,6 +1,4 @@
 #![cfg(feature = "encryption")]
-
-use std::sync::Arc;
 use storage_vector::encryption::{aes_gcm::AesGcmEncrypter, Encrypter, KeyHandle};
 use storage_vector::store::fs as vs_fs;
 use tempfile::tempdir;

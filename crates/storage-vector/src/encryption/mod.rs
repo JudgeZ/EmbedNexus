@@ -42,6 +42,7 @@ pub fn encode_envelope(key_id: &str, nonce: &[u8; 12], tag: &[u8; 16], ct: &[u8]
     out
 }
 
+#[allow(clippy::type_complexity)]
 pub fn decode_envelope(bytes: &[u8]) -> Result<(String, [u8; 12], [u8; 16], Vec<u8>), String> {
     if bytes.len() < 4 + 2 + 12 + 16 {
         return Err("envelope too short".into());

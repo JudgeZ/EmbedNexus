@@ -6,6 +6,9 @@ use std::sync::{Arc, Mutex};
 use crate::error::StoreError;
 use crate::ledger::build_replay_entry;
 use storage_ledger::ReplayEntry;
+// Aliases to reduce clippy::type_complexity noise without changing behavior
+type RepoKey = (String, String);
+type Blob = Vec<u8>;
 pub mod fs;
 
 #[derive(Debug, Default, Clone)]
@@ -30,7 +33,7 @@ pub trait Store: Send + Sync {
 
 /// An in-memory store stub to enable TDD. Future work may add FS-backed shards.
 pub struct VectorStore {
-    inner: Arc<Mutex<HashMap<(String, String), Vec<u8>>>>,
+    inner: Arc<Mutex<HashMap<RepoKey, Blob>>>,
     next_sequence: AtomicU64,
     fs_root: Option<PathBuf>,
     #[cfg(feature = "encryption")]
