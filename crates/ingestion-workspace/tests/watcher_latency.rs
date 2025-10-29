@@ -8,6 +8,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
 struct LatencyFixture {
+    #[allow(dead_code)]
     scenario: String,
     workspace: String,
     latency_windows: Vec<LatencyWindowFixture>,
