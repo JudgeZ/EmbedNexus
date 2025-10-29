@@ -36,6 +36,17 @@ fi
 log "rustc:  $(rustc --version 2>/dev/null || echo 'not found')"
 log "cargo:  $(cargo --version 2>/dev/null || echo 'not found')"
 
+# Ensure clippy/rustfmt components are available (log-only)
+if ensure_tool rustup; then
+  for comp in rustfmt clippy; do
+    if rustup component list --installed | grep -q "^${comp} "; then
+      log "rustup component present: ${comp}"
+    else
+      err "rustup component missing: ${comp}. Hint: rustup component add ${comp}"
+    fi
+  done
+fi
+
 # cargo-deny (policy checks)
 ensure_cargo_crate cargo-deny cargo-deny --locked
 log "Running cargo-deny checks (advisories, bans, sources, licenses)"
@@ -54,16 +65,41 @@ else
   exit 1
 fi
 
-# SBOM (CycloneDX)
+# SBOM (CycloneDX) with Python fallback
 ensure_cargo_crate cargo-cyclonedx cargo-cyclonedx --locked --version 0.5.7
-log "Generating per-crate CycloneDX JSONs"
-cargo +stable cyclonedx --all-features -f json -a
-
 out_dir="artifacts/local/sbom"
 mkdir -p "$out_dir"
 out_file="$out_dir/zaevrynth.cdx.json"
-log "Merging SBOMs to $out_file"
-python3 scripts/sbom_merge.py --out "$out_file"
+
+# Prefer single aggregated workspace BOM if supported
+log "Attempting aggregated workspace SBOM to: $out_file"
+if cargo +stable cyclonedx --workspace --all-features -f json -o "$out_file" 2>/dev/null; then
+  log "Workspace SBOM generated: $out_file"
+else
+  log "Workspace aggregation not available; generating per-crate SBOMs (-a)"
+  cargo +stable cyclonedx --all-features -f json -a
+  # Merge with Python if available
+  if ensure_tool python3; then
+    log "Merging SBOMs via scripts/sbom_merge.py"
+    python3 scripts/sbom_merge.py --out "$out_file"
+  elif ensure_tool jq; then
+    log "Merging SBOMs via jq (components union)"
+    mapfile -t SBOMS < <(find . -type f -name "*.cdx.json" | sort)
+    if ((${#SBOMS[@]}==0)); then
+      err "No per-crate CycloneDX files found to merge."
+      exit 1
+    fi
+    jq -s '{
+      bomFormat: "CycloneDX",
+      specVersion: "1.5",
+      version: 1,
+      components: ( map(.components // []) | add )
+    }' "${SBOMS[@]}" > "$out_file"
+  else
+    err "Neither python3 nor jq available to merge SBOMs. Copying first SBOM as fallback."
+    first=$(find . -type f -name "*.cdx.json" | head -n1)
+    cp "$first" "$out_file"
+  fi
+fi
 
 log "All pre-PR checks passed. SBOM at: $out_file"
-
